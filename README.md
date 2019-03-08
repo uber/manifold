@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/uber/manifold.svg?token=SZsMuk4iZZDLKwRXzyxu&branch=master)](https://travis-ci.com/uber/manifold)
+
 # Manifold
 
 <img alt="Manifold" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/Manifold_Header.jpg" width="600">
