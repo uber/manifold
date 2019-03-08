@@ -1,6 +1,6 @@
 # Manifold
 
-<img alt="Manifold" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/Manifold_Header.jpg" width="600">
+<img alt="Manifold" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/Manifold_Header.jpg" width="600">
 
 Manifold is a model-agnostic visual debugging tool for machine learning.
 
