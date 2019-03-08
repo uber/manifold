@@ -57,9 +57,11 @@
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.6.0",
     "eslint": "^5.6.1",
+    "eslint-config-fusion": "^4.0.0",
     "eslint-plugin-cup": "^2.0.0",
     "eslint-plugin-flowtype": "^2.50.3",
     "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jest": "^22.3.0",
     "eslint-plugin-prettier": "^3.0.0",
     "eslint-plugin-react": "^7.11.1",
     "flow-bin": "^0.82.0",
@@ -85,6 +87,7 @@
     "webpack": "^4.24.0"
   },
   "scripts": {
+    "lint": "eslint src",
     "test": "jest",
     "sync": "scripts/sync.sh"
   },
