@@ -1,5 +1,5 @@
 SOURCE_DIR="../mlvis-toolkit"
-PACKAGES=("feature-list-view" "manifold" "mlvis-common" "mlvis-common-ui" "multi-way-plot" "segment-filters")
+PACKAGES=("feature-list-view" "manifold" "mlvis-common" "multi-way-plot" "segment-filters")
 
 for i in ${PACKAGES[@]}
 do

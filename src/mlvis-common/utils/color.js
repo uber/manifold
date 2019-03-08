@@ -23,7 +23,8 @@ export const interpolateColorToHex = ({
   const newValue = clamp ? clampValue(0, 1)(value) : value;
 
   if (!Number.isFinite(newValue)) {
-    return defaultColor;
+    // [r, g, b] => `rgb(r, g, b)`
+    return `rgb(${defaultColor.join(', ')})`;
   }
 
   return interpolator(newValue);

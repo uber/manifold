@@ -2,14 +2,14 @@
 import {
   isValidSegmentGroups,
   filterData,
-  assignToNearest,
+  assignClusterId,
   fillEmptyClusters,
   assign,
   updateCentroids,
   computeClusters,
   absoluteError,
 } from '../utils';
-import {tensor, scalar} from '@tensorflow/tfjs';
+import {tensor, scalar} from '@tensorflow/tfjs-core';
 
 test('utils: isValidSegmentGroups', () => {
   // not ok if one group is empty
@@ -54,7 +54,7 @@ test('utils: assign', () => {
 });
 
 test('utils: fillEmptyClusters', () => {
-  const distances1 = tensor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], [3, 4]);
+  const distances1 = tensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
   const min1 = fillEmptyClusters(distances1);
   expect(Array.from(min1.dataSync())).toEqual([1, 2, 0, 0]);
 });
@@ -71,7 +71,7 @@ test('utils: updateCentroids', () => {
 test('utils: assignToNearest', () => {
   const samples1 = tensor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [10, 1]);
   const centroids1 = tensor([0, 5.5, 10], [3, 1]);
-  const nearest1 = assignToNearest(samples1, centroids1, 3);
+  const nearest1 = assignClusterId(samples1, centroids1, 3);
 
   expect(nearest1.shape).toEqual([10]);
   const nearest1Arr = Array.from(nearest1.dataSync());

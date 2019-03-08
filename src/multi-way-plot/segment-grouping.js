@@ -1,8 +1,15 @@
 // @noflow
 import React, {PureComponent} from 'react';
+import styled from 'styled-components';
+import {withDerivedData} from './utils';
 
 const COLORS = ['#ff0099', '#999999'];
 const TEXTS = ['Treatment', 'Control'];
+
+const Container = styled.div`
+  padding-top: ${props => props.paddingTop}px;
+  padding-left: ${props => props.paddingLeft}px;
+`;
 
 const SegmentGroupingUnit = ({
   segmentGroup,
@@ -18,6 +25,7 @@ const SegmentGroupingUnit = ({
       height: `${segmentGroup.length * yScale.step() -
         yScale.paddingInner() * yScale.step()}px`,
       transition: '0.5s linear',
+      fontSize: '12px',
       display: 'flex',
       align: 'center',
       justifyContent: 'space-between',
@@ -37,8 +45,8 @@ const SegmentGroupingUnit = ({
         color,
         position: 'absolute',
         top: '50%',
-        left: '50%',
-        transform: 'translateX(-50%) translateY(-50%) rotate(90deg)',
+        left: '100%',
+        transform: 'translate(-50%, -50%) rotate(90deg)',
         height: '12px',
       }}
     >
@@ -47,11 +55,9 @@ const SegmentGroupingUnit = ({
   </div>
 );
 
-export default class SegmentGrouping extends PureComponent {
-  static displayName = 'SegmentGrouping';
-
+class SegmentGrouping extends PureComponent {
   static defaultProps = {
-    width: '36px',
+    width: '16px',
     bracketWidth: '6px',
     segmentGroups: [],
     yScale: () => 0,
@@ -60,18 +66,10 @@ export default class SegmentGrouping extends PureComponent {
     },
   };
 
-  get style() {
-    return {
-      main: {
-        paddingTop: this.props.padding.top,
-      },
-    };
-  }
-
   render() {
-    const {segmentGroups, yScale, width, bracketWidth} = this.props;
+    const {segmentGroups, yScale, width, bracketWidth, padding} = this.props;
     return (
-      <div style={this.style.main}>
+      <Container paddingTop={padding.top} paddingLeft={8} width={width}>
         {segmentGroups.map((segmentGroup, i) => (
           <SegmentGroupingUnit
             key={i}
@@ -83,7 +81,9 @@ export default class SegmentGrouping extends PureComponent {
             text={TEXTS[i]}
           />
         ))}
-      </div>
+      </Container>
     );
   }
 }
+
+export default withDerivedData(SegmentGrouping);

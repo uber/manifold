@@ -1,5 +1,5 @@
 // @noflow
-import * as tf from '@tensorflow/tfjs';
+import * as tf from '@tensorflow/tfjs-core';
 import {FEATURE_TYPE} from '../constants';
 
 // dotRange(3) ==> [0, 1, 2];
@@ -20,8 +20,9 @@ export const computeFeatureMeta = (
   invalidPercentageThreshold = INVALID_PERCENTAGE_THRESHOLD
 ) => {
   const uniques = Array.from(new Set(data));
+  const hasNaN = uniques.some(isNaN);
   const isInvalid =
-    isNaN(uniques[0]) &&
+    hasNaN &&
     uniques.length > data.length * invalidPercentageThreshold &&
     uniques.length > invalidCountThreshold;
 
@@ -35,7 +36,8 @@ export const computeFeatureMeta = (
   const isCategorical =
     (uniques.length < uniqCountThreshold &&
       uniques.length < data.length * uniqPercentageThreshold) ||
-    isNaN(uniques[0]);
+    hasNaN;
+
   const domain = isCategorical
     ? uniques
     : computeNumericFeatureDomain(uniques, resolution);

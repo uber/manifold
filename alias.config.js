@@ -1,8 +1,16 @@
+//@noflow
+
 const resolve = require('path').resolve;
 const fs = require('fs');
 
 const ROOT = resolve(__dirname, '.');
-const PACKAGES = ['feature-list-view', 'manifold', 'mlvis-common', 'mlvis-common-ui', 'multi-way-plot', 'segment-filters'];
+const PACKAGES = [
+  'feature-list-view',
+  'manifold',
+  'mlvis-common',
+  'multi-way-plot',
+  'segment-filters',
+];
 const PACKAGES_ROOT = resolve(ROOT, 'src');
 
 // this function looks into all packages under ./src and creates alias for local dev

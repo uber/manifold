@@ -1,6 +1,7 @@
 // @noflow
 import React, {PureComponent} from 'react';
 import {scaleLinear} from 'd3-scale';
+import {withDerivedData} from './utils';
 import MultiWayGroup from './multi-way-group';
 import {Axis, axisPropsFromTickScale} from 'react-d3-axis';
 
@@ -8,7 +9,7 @@ const FONT_STYLE = {
   fontSize: 12,
 };
 
-export default class MultiWayPlot extends PureComponent {
+class MultiWayPlot extends PureComponent {
   static defaultProps = {
     width: 0,
     height: 0,
@@ -20,7 +21,7 @@ export default class MultiWayPlot extends PureComponent {
   _renderAxis = () => {
     const {padding, width, height, xScale, xLabel} = this.props;
     return (
-      <g transform={`translate(${padding.left}, ${height - 32})`}>
+      <g transform={`translate(${padding.left}, ${height - padding.bottom})`}>
         <Axis
           {...axisPropsFromTickScale(xScale, 10)}
           style={{strokeColor: '#666'}}
@@ -69,8 +70,7 @@ export default class MultiWayPlot extends PureComponent {
     });
     return (
       <g transform={`translate(${padding.left}, ${padding.top})`}>
-        {' '}
-        {groupContent}{' '}
+        {groupContent}
       </g>
     );
   };
@@ -88,3 +88,5 @@ export default class MultiWayPlot extends PureComponent {
     );
   }
 }
+
+export default withDerivedData(MultiWayPlot);

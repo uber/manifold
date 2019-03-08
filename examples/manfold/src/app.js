@@ -1,7 +1,7 @@
 // @noflow
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import window from 'global/window';
+import styled from 'styled-components';
 
 import {loadLocalData} from './actions';
 import FileUploader from './file-uploader';
@@ -26,12 +26,18 @@ export const SAMPLE_DATA_S3 = {
   ],
 };
 
+const Container = styled.div`
+  position: absolute;
+  width: 100vw;
+  height: calc(100vh + 100px);
+  padding: 50px 80px 50px;
+  background: #eee;
+`;
+
 class App extends Component {
   state = {
     showUploadModal: false,
     fileList: [],
-    width: window.innerWidth,
-    height: window.innerHeight,
   };
 
   componentDidMount = () => {
@@ -65,18 +71,12 @@ class App extends Component {
   };
 
   render() {
-    const {dispatch} = this.props;
-    const {width, height, showUploadModal} = this.state;
+    const {showUploadModal} = this.state;
     return (
-      <div style={{position: 'absolute', width: '100%', height: '100%'}}>
+      <Container>
         <Manifold
-          /*
-           * Specify path to Manifold state, because it is not mount at the root
-           */
+          // Specify path to Manifold state, because it is not mount at the root
           getState={state => state.demo.manifold}
-          dispatch={dispatch}
-          width={width}
-          height={height}
         />
         <FileUploader
           showUploadModal={showUploadModal}
@@ -85,7 +85,7 @@ class App extends Component {
           handleFileChange={this._handleFileChange}
           handleSampleFileChange={this._handleSampleFileChange}
         />
-      </div>
+      </Container>
     );
   }
 }

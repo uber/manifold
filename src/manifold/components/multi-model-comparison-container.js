@@ -1,12 +1,13 @@
 // @noflow
 import React, {PureComponent} from 'react';
+import ContainerDimensions from 'react-container-dimensions';
+import styled from 'styled-components';
 import {connect} from '../custom-connect';
-import {Row, Col} from 'antd';
-import {scaleBand, scaleLinear, scaleOrdinal} from 'd3-scale';
+import {scaleOrdinal} from 'd3-scale';
 import {schemeSet2 as colorScheme} from 'd3-scale-chromatic';
 
 import MultiWayPlot from '@uber/multi-way-plot/';
-import LegendGroup from '@uber/mlvis-common-ui/legend-group/';
+import {LegendGroup} from '@uber/mlvis-common/ui';
 import SegmentGrouping from '@uber/multi-way-plot/segment-grouping';
 
 import {updateSelectedModels} from '../actions';
@@ -26,21 +27,35 @@ import {
 } from '../selectors/base';
 
 const PADDING = {
-  left: 15,
-  right: 15,
+  left: 5,
+  right: 5,
   top: 0,
-  bottom: 45,
+  bottom: 50,
 };
+
+const LEGEND_HEIGHT = 20;
+const GROUPING_WIDTH = 16;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+`;
+
+const StyledLegend = styled(LegendGroup)`
+  margin-bottom: 50px;
+`;
+
+const Content = styled.div`
+  display: flex;
+`;
 
 const mapDispatchToProps = {
   updateSelectedModels,
 };
 
 const mapStateToProps = (state, props) => {
-  const {width, height} = props;
-  const innerWidth = width - PADDING.left - PADDING.right;
-  const innerHeight = height - PADDING.top - PADDING.bottom;
-
   const segmentIds = getRawSegmentIds(state);
   const modelIds = getModelIds(state);
   const rawDataRange = getRawDataRange(state);
@@ -56,13 +71,6 @@ const mapStateToProps = (state, props) => {
     metric: getDisplayMetric(state),
     segmentGroups,
 
-    xScale: scaleLinear()
-      .domain(rawDataRange)
-      .range([0, innerWidth]),
-    yScale: scaleBand()
-      .domain(segmentIds)
-      .range([innerHeight, 0])
-      .padding(0.1),
     colorScale: scaleOrdinal(colorScheme).domain(modelIds),
     selectedModels: getSelectedModels(state),
     segmentOrdering: getSegmentOrdering(state),
@@ -71,86 +79,63 @@ const mapStateToProps = (state, props) => {
 
 class MultiModelComparisonContainer extends PureComponent {
   static propTypes = {};
-  get style() {
-    return {
-      root: {
-        display: 'flex',
-        padding: '20px 12px',
-      },
-      padded: {
-        paddingBottom: '50px',
-      },
-    };
-  }
 
-  _renderModels = () => {
-    const {modelMeta, colorScale, selectedModels} = this.props;
-    return (
-      <div id={'legendGroup'} style={this.style.padded}>
-        <LegendGroup
-          data={modelMeta}
-          colorScale={colorScale}
-          onModelSelect={this.props.updateSelectedModels}
-          selectedModels={selectedModels}
-        />
-      </div>
-    );
-  };
-
-  _renderGrouping = () => {
-    const {data, segmentGroups, yScale} = this.props;
-    if (!data) {
-      return null;
-    }
-    return (
-      <SegmentGrouping
-        segmentGroups={segmentGroups}
-        yScale={yScale}
-        padding={PADDING}
-      />
-    );
-  };
-
-  _renderChart = () => {
+  render() {
     const {
-      width,
-      height,
       data,
+      modelMeta,
       metric,
+      segmentIds,
+      rawDataRange,
       segmentOrdering,
       densityRange,
       xScale,
       yScale,
       colorScale,
       selectedModels,
+      segmentGroups,
     } = this.props;
     if (!data) {
       return null;
     }
     return (
-      <MultiWayPlot
-        width={width}
-        height={height}
-        padding={PADDING}
-        data={data}
-        ordering={segmentOrdering}
-        xLabel={metric}
-        xScale={xScale}
-        yScale={yScale}
-        colorScale={colorScale}
-        yScaleGroupRange={densityRange}
-        selectedModels={selectedModels}
-      />
-    );
-  };
-
-  render() {
-    return (
-      <Row style={this.style.root}>
-        <Col span={2}>{this._renderModels()}</Col>
-        <Col span={21}>{this._renderChart()}</Col>
-        <Col span={1}>{this._renderGrouping()}</Col>
-      </Row>
+      <Container>
+        <StyledLegend
+          data={modelMeta}
+          colorScale={colorScale}
+          onModelSelect={this.props.updateSelectedModels}
+          selectedModels={selectedModels}
+        />
+        <ContainerDimensions>
+          {({width, height}) => (
+            <Content>
+              <MultiWayPlot
+                width={width - GROUPING_WIDTH}
+                height={height - LEGEND_HEIGHT}
+                segmentIds={segmentIds}
+                rawDataRange={rawDataRange}
+                padding={PADDING}
+                data={data}
+                ordering={segmentOrdering}
+                xLabel={metric}
+                xScale={xScale}
+                yScale={yScale}
+                colorScale={colorScale}
+                yScaleGroupRange={densityRange}
+                selectedModels={selectedModels}
+              />
+              <SegmentGrouping
+                height={height - LEGEND_HEIGHT}
+                width={GROUPING_WIDTH}
+                segmentGroups={segmentGroups}
+                rawDataRange={rawDataRange}
+                segmentIds={segmentIds}
+                padding={PADDING}
+              />
+            </Content>
+          )}
+        </ContainerDimensions>
+      </Container>
     );
   }
 }

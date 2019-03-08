@@ -1,9 +1,13 @@
 // @noflow
 import React, {PureComponent} from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import ContainerDimensions from 'react-container-dimensions';
 import {connect} from '../custom-connect';
-import {console} from 'global';
-import Headline from '@uber/mlvis-common-ui/headline';
-import {Row, Col, Button, Input, Select, Radio} from 'antd';
+import {Control} from '@uber/mlvis-common/ui';
+import {Button, Input, Select, Radio} from 'antd';
+import {CONTROL_MARGIN} from '../constants';
+import {computeWidthLadder} from '../utils';
 
 import {
   fetchModels,
@@ -14,15 +18,25 @@ import {
   updateSegmentFilters,
   updateSegmentGroups,
 } from '../actions';
-import {isValidSegmentGroups} from '../utils';
 import {
   getHasBackend,
   getIsModelsComparisonLoading,
   getModelsComparisonParams,
-  getFeatureDistributionParams,
   getIsManualSegmentation,
 } from '../selectors/base';
 import {getMetaData} from '../selectors/data';
+
+const CONTROL_WIDTH = [130, 120, 100];
+// remove some elements based on parent width
+const WIDTH_LADDER = computeWidthLadder(CONTROL_WIDTH, CONTROL_MARGIN);
+
+const StyledControl = styled(Control)`
+  display: ${props => (props.isHidden ? 'none' : 'flex')};
+  margin-top: 12px;
+  :not(:last-child) {
+    margin-right: ${CONTROL_MARGIN}px;
+  }
+`;
 
 const mapDispatchToProps = {
   fetchFeatures,
@@ -39,43 +53,32 @@ const mapStateToProps = (state, props) => {
     hasBackend: getHasBackend(state),
     modelMetaData,
     modelComparisonParams: getModelsComparisonParams(state),
-    featureDistributionParams: getFeatureDistributionParams(state),
     isModelsComparisonLoading: getIsModelsComparisonLoading(state),
     isManualSegmentation: getIsManualSegmentation(state),
   };
 };
-
 class MultiComparisonControlContainer extends PureComponent {
-  get style() {
-    return {
-      root: {
-        padding: 12,
-      },
-      flex: {
-        display: 'flex',
-        alignItems: 'center',
-      },
-      nonFlex: {
-        // display: 'flex',
-        // alignItems: 'center'
-      },
-      label: {
-        fontSize: '13px',
-        margin: '0 6px',
-      },
-      control: {
-        margin: '0 6px',
-      },
-      treatmentLabel: {
-        paddingBottom: '2px',
-        borderBottom: '2px solid #ff0099',
-      },
-      controlLabel: {
-        paddingBottom: '2px',
-        borderBottom: '2px solid #999999',
-      },
-    };
-  }
+  static propTypes = {
+    className: PropTypes.string,
+    flexDirection: PropTypes.string,
+    modelComparisonParams: PropTypes.shape({
+      nClusters: PropTypes.number,
+    }),
+    isModelsComparisonLoading: PropTypes.bool,
+    isManualSegmentation: PropTypes.bool,
+    hasBackend: PropTypes.bool,
+    modelMetaData: PropTypes.object,
+  };
+
+  static defaultProps = {
+    className: '',
+    flexDirection: 'row',
+    modelComparisonParams: {nClusters: 4},
+    isModelsComparisonLoading: false,
+    isManualSegmentation: false,
+    hasBackend: false,
+    modelMetaData: {},
+  };
 
   _onUpdateNClusters = ({isInc}) => {
     const {modelComparisonParams, hasBackend} = this.props;
@@ -101,31 +104,6 @@ class MultiComparisonControlContainer extends PureComponent {
     }
   };
 
-  _updateSegmentGroups = () => {
-    const {
-      featureDistributionParams,
-      modelComparisonParams: {nClusters} = {},
-    } = this.props;
-    // segmentGroups is a list of 2 lists of segment id's
-    const segmentGroups = [
-      this.cgInput0.input.value,
-      this.cgInput1.input.value,
-    ].map(g => g.match(/\d+/g).map(Number));
-    segmentGroups.forEach(segmentGroup => segmentGroup.sort((a, b) => a - b));
-
-    if (isValidSegmentGroups(segmentGroups, nClusters)) {
-      this.props.updateSegmentGroups(segmentGroups);
-      this.props.fetchFeatures({
-        ...featureDistributionParams,
-        segmentGroups,
-      });
-    } else {
-      /* eslint-disable no-console */
-      console.warn('invalid segment groups');
-      /* eslint-enable no-console */
-    }
-  };
-
   _onUpdateSegmentationMethod = e => {
     this.props.updateSegmentationMethod(e.target.value);
   };
@@ -133,114 +111,81 @@ class MultiComparisonControlContainer extends PureComponent {
   render() {
     // todo: support comparison view for multi-class cases
     const {
+      className,
+      flexDirection,
       modelComparisonParams,
-      featureDistributionParams,
       isModelsComparisonLoading,
       isManualSegmentation,
       modelMetaData: {nClasses = 1} = {},
     } = this.props;
     const {nClusters} = modelComparisonParams;
-    const {segmentGroups = [[], []]} = featureDistributionParams;
+    const isHorizontal = flexDirection === 'row';
     return (
-      <Row style={this.style.root}>
-        <Col span={12}>
-          <Headline
-            title={'Compare'}
-            description={'Performance of models by data segment'}
-            howTo={''}
-          />
-          <Row>
-            <Col span={12}>
-              <div style={this.style.nonFlex}>
-                <div style={this.style.label}> {`segmentation method:`} </div>
-                <div style={this.style.control}>
-                  <Radio.Group
-                    defaultValue="auto"
-                    style={{width: 170}}
-                    size="small"
-                    disabled={isModelsComparisonLoading}
-                    value={isManualSegmentation ? 'manual' : 'auto'}
-                    onChange={this._onUpdateSegmentationMethod}
-                  >
-                    <Radio value="auto">Auto</Radio>
-                    <Radio value="manual">Manual</Radio>
-                  </Radio.Group>
-                </div>
-              </div>
-            </Col>
-            <Col span={9} push={3}>
-              <div style={this.style.flex}>
-                <div style={this.style.label}> {`metric:`} </div>
-                <Select
-                  defaultValue="performance"
-                  style={{width: 120}}
-                  size="small"
-                  disabled={isModelsComparisonLoading}
-                  onChange={this._onUpdateMetric}
-                >
-                  <Select.Option value="actual" disabled={nClasses > 2}>
-                    Actual
-                  </Select.Option>
-                  <Select.Option value="performance">Performance</Select.Option>
-                </Select>
-              </div>
-              <div style={this.style.flex}>
-                <div style={this.style.label}>
-                  {' '}
-                  {`n_clusters: ${nClusters}`}{' '}
-                </div>
+      <ContainerDimensions>
+        {({width, height}) => (
+          <div className={className}>
+            <StyledControl
+              name={'segmentation method'}
+              isHidden={isHorizontal && width < WIDTH_LADDER[0]}
+            >
+              <Radio.Group
+                defaultValue="auto"
+                size="small"
+                disabled={isModelsComparisonLoading}
+                value={isManualSegmentation ? 'manual' : 'auto'}
+                onChange={this._onUpdateSegmentationMethod}
+              >
+                <Radio.Button value="auto">Auto</Radio.Button>
+                <Radio.Button value="manual">Manual</Radio.Button>
+              </Radio.Group>
+            </StyledControl>
+            <StyledControl
+              name={'metric'}
+              isHidden={isHorizontal && width < WIDTH_LADDER[1]}
+            >
+              <Select
+                defaultValue="performance"
+                style={{width: CONTROL_WIDTH[1]}}
+                size="small"
+                disabled={isModelsComparisonLoading}
+                onChange={this._onUpdateMetric}
+              >
+                <Select.Option value="actual" disabled={nClasses > 2}>
+                  Actual
+                </Select.Option>
+                <Select.Option value="performance">Performance</Select.Option>
+              </Select>
+            </StyledControl>
+            <StyledControl
+              name={'n_clusters'}
+              isHidden={isHorizontal && width < WIDTH_LADDER[2]}
+            >
+              <Input.Group
+                style={{width: CONTROL_WIDTH[2], display: 'flex'}}
+                compact
+              >
+                <Input value={nClusters} size="small" readOnly />
                 <Button
                   size="small"
-                  disabled={isModelsComparisonLoading || isManualSegmentation}
-                  onClick={() => this._onUpdateNClusters({isInc: true})}
-                >
-                  +
-                </Button>
-                <Button
-                  size="small"
+                  style={{width: 24}}
                   disabled={isModelsComparisonLoading || isManualSegmentation}
                   onClick={() => this._onUpdateNClusters({isInc: false})}
                 >
                   -
                 </Button>
-              </div>
-            </Col>
-          </Row>
-        </Col>
-
-        <Col span={6} push={6}>
-          <Headline
-            title={'Slice'}
-            description={'Select data subset(s) of interest'}
-            howTo={''}
-          />
-
-          <div style={this.style.flex}>
-            <div style={this.style.label}> {'compare'} </div>
-            <div style={this.style.treatmentLabel}>
-              <Input
-                size="small"
-                placeholder={segmentGroups[0].join(',')}
-                ref={input => {
-                  this.cgInput0 = input;
-                }}
-                onPressEnter={this._updateSegmentGroups}
-              />
-            </div>
-            <div style={this.style.label}> {'vs.'} </div>
-            <div style={this.style.controlLabel}>
-              <Input
-                size="small"
-                placeholder={segmentGroups[1].join(',')}
-                ref={input => {
-                  this.cgInput1 = input;
-                }}
-                onPressEnter={this._updateSegmentGroups}
-              />
-            </div>
+                <Button
+                  size="small"
+                  style={{width: 24}}
+                  disabled={isModelsComparisonLoading || isManualSegmentation}
+                  onClick={() => this._onUpdateNClusters({isInc: true})}
+                >
+                  +
+                </Button>
+              </Input.Group>
+            </StyledControl>
           </div>
-        </Col>
-      </Row>
+        )}
+      </ContainerDimensions>
     );
   }
 }

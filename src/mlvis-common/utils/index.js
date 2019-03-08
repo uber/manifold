@@ -46,3 +46,23 @@ export const discrete = values =>
 export * from './color';
 export * from './feature';
 export * from './computation';
+
+// 12345 => 12,345
+// 123456789 => 1.235e+8
+// 0.123456789 => 0.123
+// 0.0012345 => 0.001
+export const formatNumber = n => {
+  if (n === null || n === undefined) {
+    return '';
+  }
+  if (Number.isNaN(n)) {
+    return NaN.toLocaleString();
+  }
+  if (n === 0) {
+    return '0';
+  }
+  if (Math.abs(n) > 1e8 || Math.abs(n) < 1e-4) {
+    return n.toExponential(3).toLocaleString();
+  }
+  return n.toLocaleString();
+};
