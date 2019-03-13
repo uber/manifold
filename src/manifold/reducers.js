@@ -2,8 +2,6 @@
 import {handleActions} from 'redux-actions';
 import {
   UPDATE_DIVERGENCE_THRESHOLD,
-  UPDATE_VIEWPORT,
-  TOGGLE_UPLOAD_MODAL,
   FETCH_BACKEND_DATA_START,
   FETCH_BACKEND_DATA_SUCCESS,
   FETCH_MODELS_START,
@@ -23,13 +21,11 @@ import {
 import {getDefaultSegmentGroups} from './utils';
 
 export const DEFAULT_STATE = {
-  width: 0,
-  height: 0,
-  showUploadModal: false,
-
+  // TODO: these are fields used with Python backend. Consider consolidate/remove
   metaData: undefined,
   models: undefined,
   features: undefined,
+
   rawPredData: [],
   rawFeatureData: undefined,
   isBackendDataLoading: false,
@@ -46,17 +42,6 @@ export const DEFAULT_STATE = {
   baseModels: [],
   segmentGroups: [[3], [0, 1, 2]],
 };
-
-const handleUpdateViewport = (state, {payload}) => ({
-  ...state,
-  width: payload.width,
-  height: payload.height,
-});
-
-const handleToggleUploadModal = (state, {payload}) => ({
-  ...state,
-  showUploadModal: payload,
-});
 
 // -- remote data source -- //
 const handleUpdateDivergenceThreshold = (state, {payload}) => ({
@@ -185,8 +170,6 @@ export default handleActions(
     [LOAD_LOCAL_DATA_START]: handleLoadLocalDataStart,
     [LOAD_LOCAL_DATA_SUCCESS]: handleLoadLocalDataSuccess,
     [UPDATE_DIVERGENCE_THRESHOLD]: handleUpdateDivergenceThreshold,
-    [UPDATE_VIEWPORT]: handleUpdateViewport,
-    [TOGGLE_UPLOAD_MODAL]: handleToggleUploadModal,
     [UPDATE_SELECTED_MODELS]: handleUpdateSelectModels,
     [UPDATE_N_CLUSTERS]: handleUpdateNClusters,
     [UPDATE_METRIC]: handleUpdateMetric,

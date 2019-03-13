@@ -3,12 +3,7 @@ import React, {PureComponent} from 'react';
 import {connect} from '../custom-connect';
 import {SegmentFilters} from '@uber/segment-filters';
 
-import {
-  fetchBackendData,
-  fetchModels,
-  loadLocalData,
-  updateSegmentFilters,
-} from '../actions';
+import {fetchBackendData, fetchModels, updateSegmentFilters} from '../actions';
 import {
   getHasBackend,
   getModelsComparisonParams,
@@ -19,7 +14,6 @@ import {getSegmentFilterAttributes} from '../selectors/adaptors';
 const mapDispatchToProps = {
   fetchBackendData,
   fetchModels,
-  loadLocalData,
   updateSegmentFilters,
 };
 const mapStateToProps = (state, props) => {

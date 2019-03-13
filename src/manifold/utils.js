@@ -322,16 +322,6 @@ export function isValidSegmentGroups(segmentGroups, nSegments) {
   return true;
 }
 
-// whether an input csv is feature file (or prediction file)
-export function isFeatureCsv(fields) {
-  for (let i = 0; i < fields.length; i++) {
-    if (fields[i].startsWith('@prediction:')) {
-      return false;
-    }
-  }
-  return true;
-}
-
 /**
  * filter data items w/ a set of filters
  * @param  {[object]} data    [an array of data items]

@@ -1,68 +1,30 @@
 // @noflow
-import {createAction} from 'redux-actions';
-import {parse} from 'papaparse';
+import {loadLocalData} from '@uber/manifold/actions';
 
 export const UPDATE_VIEWPORT = 'UPDATE_VIEWPORT';
-export const LOAD_LOCAL_DATA_START = 'LOAD_LOCAL_DATA_START';
-export const LOAD_LOCAL_DATA_SUCCESS = 'LOAD_LOCAL_DATA_SUCCESS';
 
-export const updateViewport = createAction(UPDATE_VIEWPORT);
-export const loadLocalDataStart = createAction(LOAD_LOCAL_DATA_START);
-export const loadLocalDataSuccess = createAction(LOAD_LOCAL_DATA_SUCCESS);
-
-const loadCsvFileWithoutWorker = (path, onComplete) => {
-  const batchId = Date.now();
-  parse(path, {
-    delimiter: ',',
-    download: true,
-    dynamicTyping: true,
-    header: true,
-    newline: '',
-    quotes: false,
-    quoteChar: '"',
-    skipEmptyLines: true,
-    complete: results => {
-      const {
-        data,
-        meta: {fields},
-      } = results;
-      onComplete({data, fields, batchId});
-    },
+export const loadManifoldData = fileList =>
+  loadLocalData({
+    fileList,
+    dataTransformer,
   });
-};
 
-const parsePromise = file => {
-  return new Promise((onComplete, onError) => {
-    loadCsvFileWithoutWorker(file.originFileObj || file, onComplete);
+export const dataTransformer = values => {
+  // convert data from Michelangelo format to Manifold format
+  // Michelangelo format: one csv file per model, each contains features and predictions
+  // Manifold format: one prediction csv per model, plus one additional feature csv for all models
+  const fieldsList = values.map(v => v.fields);
+  const dataList = values.map(v => v.data);
+  const featureFieldsList = dedupFields(fieldsList.map(featureFields));
+  const featureData = joinFields(featureFieldsList, dataList);
+  const predFieldsList = fieldsList.map(predFields);
+  const predData = predFieldsList.map((fields, modelId) => {
+    return selectFields(fields, dataList[modelId]);
   });
-};
-
-export const loadLocalData = fileList => dispatch => {
-  dispatch(loadLocalDataStart());
-
-  const allPromises = fileList.map(parsePromise);
-
-  Promise.all(allPromises)
-    .then(values => {
-      // convert data from Michelangelo format to Manifold format
-      // Michelangelo format: one csv file per model, each contains features and predictions
-      // Manifold format: one prediction csv per model, plus one additional feature csv for all models
-      const fieldsList = values.map(v => v.fields);
-      const dataList = values.map(v => v.data);
-      const featureFieldsList = dedupFields(fieldsList.map(featureFields));
-      const featureData = joinFields(featureFieldsList, dataList);
-      const predFieldsList = fieldsList.map(predFields);
-      const predData = predFieldsList.map((fields, modelId) => {
-        return selectFields(fields, dataList[modelId]);
-      });
-      return {
-        featureData,
-        predData,
-      };
-    })
-    .then(result => {
-      dispatch(loadLocalDataSuccess(result));
-    });
+  return {
+    featureData,
+    predData,
+  };
 };
 
 // fields in michelangelo csvs that are not needed in manifold

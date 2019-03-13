@@ -3,9 +3,9 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
 
-import {loadLocalData} from './actions';
 import FileUploader from './file-uploader';
 import Manifold from '@uber/manifold';
+import {loadManifoldData} from './actions';
 
 // NOTE: this only works locally with the alias
 // @uber/manifold/style.scss => /packages/manifold/src/style.scss
@@ -63,7 +63,7 @@ class App extends Component {
       return;
     }
     this._toggleDataUploadModal(false);
-    this.props.dispatch(loadLocalData(fileList));
+    this.props.dispatch(loadManifoldData(fileList));
   };
 
   _toggleDataUploadModal = show => {

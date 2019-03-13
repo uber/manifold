@@ -5,7 +5,7 @@ import {saveAs} from 'file-saver';
 
 const toParam = p => encodeURIComponent(JSON.stringify(p));
 
-export const loadCsvFileWithoutWorker = (path, onComplete) => {
+const loadCsvFileWithoutWorker = (path, onComplete) => {
   const batchId = Date.now();
   parse(path, {
     delimiter: ',',
@@ -23,6 +23,12 @@ export const loadCsvFileWithoutWorker = (path, onComplete) => {
       } = results;
       onComplete({data, fields, batchId});
     },
+  });
+};
+
+export const parsePromise = file => {
+  return new Promise((onComplete, onError) => {
+    loadCsvFileWithoutWorker(file.originFileObj || file, onComplete);
   });
 };
 

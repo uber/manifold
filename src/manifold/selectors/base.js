@@ -15,18 +15,6 @@ export const rootSelector = state => state;
 export const getHasBackend = state =>
   Boolean(get(state, ['_env', 'hasBackend']));
 
-export const getScreenDimension = createSelector(
-  rootSelector,
-  state => ({
-    width: state.width,
-    height: state.height,
-  })
-);
-export const getShowUploadModal = createSelector(
-  rootSelector,
-  state => state.showUploadModal
-);
-
 export const getModelsComparisonParams = createSelector(
   rootSelector,
   (state = {}) => {
@@ -50,10 +38,6 @@ export const getFeatureDistributionParams = createSelector(
   }
 );
 
-export const getIsBackendDataLoading = createSelector(
-  rootSelector,
-  state => state.isBackendDataLoading
-);
 export const getIsLocalDataLoading = createSelector(
   rootSelector,
   state => state.isLocalDataLoading
