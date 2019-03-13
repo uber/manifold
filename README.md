@@ -61,6 +61,20 @@ const Main = props => (
 );
 ```
 
+### 3. Load Data
+In order to load your data files to Manifold, use `loadLocalData` action. You could also reshape your data into
+the required Manifold format using `dataTransformer`.
+
+```js
+import {loadLocalData} from '@uber/manifold/actions';
+
+// create the following action and pass to dispatch
+loadLocalData({
+  fileList,
+  dataTransformer,
+});
+```
+
 ## Built With
 - [TensorFlow.js](https://js.tensorflow.org/)
 - [React](https://reactjs.org/)
