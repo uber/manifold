@@ -29,7 +29,7 @@ class FeatureAttributionContainer extends PureComponent {
   };
 
   render() {
-    const {features, rawFeatures, geoPositions} = this.props;
+    const {features} = this.props;
     if (!features || features.length === 0) {
       return null;
     }

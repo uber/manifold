@@ -8,6 +8,6 @@ do
   cp -r $SOURCE_DIR"/packages/"$i"/src/"* "./src/"$i
 done
 
-rm -rf "./examples/manfold/src"
-mkdir "./examples/manfold/src"
-cp -r $SOURCE_DIR"/examples/manifold/src/"* "./examples/manfold/src"
+rm -rf "./examples/manifold/src"
+mkdir "./examples/manifold/src"
+cp -r $SOURCE_DIR"/examples/manifold/src/"* "./examples/manifold/src"
