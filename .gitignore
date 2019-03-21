@@ -5,6 +5,6 @@ examples/**/*-lock.json
 *.log
 .cache/
 coverage*/
-engdocs
+jsconfig.json
 dist
 data/
