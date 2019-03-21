@@ -1,14 +1,19 @@
 // @noflow
 import React, {PureComponent} from 'react';
+import ContainerDimensions from 'react-container-dimensions';
+import styled from 'styled-components';
 import {connect} from '../custom-connect';
-import {Row, Col} from 'antd';
 
 import {updateDivergenceThreshold, exportFeatureEncoder} from '../actions';
 import {getDivergenceThreshold} from '../selectors/base';
 import {getFeatures} from '../selectors/adaptors';
 import FeatureListView from '@uber/feature-list-view';
 
-const PADDING = 15;
+const Container = styled.div`
+  overflow: scroll;
+  width: 100%;
+  height: 100%;
+`;
 
 const mapDispatchToProps = {updateDivergenceThreshold, exportFeatureEncoder};
 const mapStateToProps = (state, props) => {
@@ -20,36 +25,24 @@ const mapStateToProps = (state, props) => {
 
 class FeatureAttributionContainer extends PureComponent {
   static defaultProps = {
-    height: 700,
-    width: 500,
     features: [],
-    padding: PADDING,
-  };
-
-  get style() {
-    const {height, padding} = this.props;
-    return {
-      root: {
-        overflow: 'scroll',
-        height,
-        padding,
-      },
-    };
-  }
-
-  _renderFeatureListView = () => {
-    const {features, width, padding} = this.props;
-    if (!features || features.length === 0) {
-      return null;
-    }
-    return <FeatureListView features={features} width={width - 2 * padding} />;
   };
 
   render() {
+    const {features, rawFeatures, geoPositions} = this.props;
+    if (!features || features.length === 0) {
+      return null;
+    }
     return (
-      <Row style={this.style.root}>
-        <Col span={24}>{this._renderFeatureListView()}</Col>
-      </Row>
+      <Container>
+        <ContainerDimensions>
+          {({width, height}) => (
+            <div>
+              <FeatureListView features={features} width={width} />
+            </div>
+          )}
+        </ContainerDimensions>
+      </Container>
     );
   }
 }

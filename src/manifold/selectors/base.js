@@ -4,7 +4,7 @@ import {Array} from 'global';
 import get from 'lodash.get';
 
 // selector  dependencies:
-// having BE: base -> misc -> data -> adaptor -> UI components
+// having BE: base -> compute -> data -> adaptor -> UI components
 // not having BE: base -> data -> adaptor -> UI components
 
 // ---------------------------------------------------------------------------- //

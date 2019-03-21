@@ -4,9 +4,10 @@ import {
   getFeaturesMeta,
   getDataPerformance,
   getClusteringInput,
-  getDataIdsInSegments,
+  getDataIdsInSegmentsUnsorted,
+  getModelPerfHistogramsUnsorted,
   getModelPerfHistograms,
-} from '../selectors/misc';
+} from '../selectors/compute';
 import {METRIC, FEATURE_TYPE} from '../constants';
 import {dotRange} from '@uber/mlvis-common/utils';
 
@@ -31,7 +32,7 @@ const rawPred2 = [
   ],
 ];
 
-test('selector: misc/getModelsMeta', () => {
+test('selector: compute/getModelsMeta', () => {
   expect(getModelsMeta.resultFunc(rawPred1, [{}])).toEqual({
     nModels: 2,
     nClasses: 1,
@@ -45,7 +46,7 @@ test('selector: misc/getModelsMeta', () => {
   });
 });
 
-test('selector: misc/getFeaturesMeta', () => {
+test('selector: compute/getFeaturesMeta', () => {
   const featureVals1 = [0, 1, 2, 3, 4, 5];
   const featureVals2 = ['A', 'B', 'B', 'C', 'D', 'D'];
   const featureData = dotRange(6).map(i => ({
@@ -70,7 +71,7 @@ test('selector: misc/getFeaturesMeta', () => {
   expect(Array.from(result1.domain)).toEqual(['A', 'B', 'C', 'D']);
 });
 
-test('selector: misc/getDataPerformance', () => {
+test('selector: compute/getDataPerformance', () => {
   const perf1 = getDataPerformance.resultFunc(rawPred1, {
     nClasses: 1,
     classLabels: [],
@@ -108,7 +109,7 @@ test('selector: misc/getDataPerformance', () => {
   expect(perf2[0].model_0).toBeGreaterThan(perf2[1].model_0);
 });
 
-test('selector: misc/getClusteringInput', () => {
+test('selector: compute/getClusteringInput', () => {
   const perfArr1 = [
     {
       modelClass_0_0: 1,
@@ -149,9 +150,9 @@ test('selector: misc/getClusteringInput', () => {
   expect(input3).toMatchObject([[expect.any(Number), expect.any(Number)]]);
 });
 
-test('selector: misc/getDataIdsInSegments', () => {
+test('selector: compute/getDataIdsInSegmentsUnsorted', () => {
   const nClusters = 3;
-  const result = getDataIdsInSegments.resultFunc(
+  const result = getDataIdsInSegmentsUnsorted.resultFunc(
     [[1, 2], [3, 4], [5, 6], [7, 8]],
     null,
     nClusters,
@@ -163,7 +164,7 @@ test('selector: misc/getDataIdsInSegments', () => {
   });
 });
 
-test('selector: misc/getModelPerfHistograms', () => {
+test('selector: compute/getModelPerfHistogramsUnsorted, getModelPerfHistograms', () => {
   // todo: test segment id ordering after segments reordering
   const numData = 20;
   const nModels = 2;
@@ -180,8 +181,7 @@ test('selector: misc/getModelPerfHistograms', () => {
     [0, 1, 2, 4, 5, 6],
     [7, 9, 10, 11, 12, 14, 15, 17, 18],
   ];
-  const expOut = {
-    segmentId: expect.any(String),
+  const expOutUnsorted = {
     numDataPoints: expect.any(Number),
     dataIds: expect.arrayContaining([expect.any(Number)]),
     modelsPerformance: expect.arrayContaining([
@@ -193,12 +193,28 @@ test('selector: misc/getModelPerfHistograms', () => {
       }),
     ]),
   };
-  const result = getModelPerfHistograms.resultFunc(
+  const expOut = {
+    ...expOutUnsorted,
+    segmentId: expect.any(String),
+  };
+  const resultUnsorted = getModelPerfHistogramsUnsorted.resultFunc(
     perfArr,
     idsInSegments,
     {nModels: nModels},
     METRIC.PERFORMANCE
   );
+
+  resultUnsorted.forEach(segment => {
+    expect(segment).toMatchObject(expOutUnsorted);
+    segment.modelsPerformance.forEach(model => {
+      expect(model.density.length).toBe(2);
+      expect(model.density[0].length).toEqual(model.density[1].length);
+    });
+  });
+
+  const order = [3, 1, 0, 2];
+  const result = getModelPerfHistograms.resultFunc(resultUnsorted, order);
+
   result.forEach(segment => {
     expect(segment).toMatchObject(expOut);
     segment.modelsPerformance.forEach(model => {

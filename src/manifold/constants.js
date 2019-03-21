@@ -1,10 +1,7 @@
 // @noflow
-export const FILTER_TYPE = {
-  RANGE: 'range',
-  INCLUDE: 'include',
-  EXCLUDE: 'exclude',
-  FUNC: 'func',
-};
+import {FEATURE_TYPE, FILTER_TYPE} from '@uber/mlvis-common/constants';
+
+export {FEATURE_TYPE, FILTER_TYPE};
 
 // urls for sample data
 export const SAMPLE_DATA_S3 = {
@@ -23,9 +20,10 @@ export const METRIC = {
   ACTUAL: 'actual',
 };
 
-export const FEATURE_TYPE = {
-  CATEGORICAL: 'categorical',
-  NUMERICAL: 'numerical',
+export const defaultFeatureTypes = {
+  [FEATURE_TYPE.CATEGORICAL]: [],
+  [FEATURE_TYPE.NUMERICAL]: [],
+  [FEATURE_TYPE.GEO]: [],
 };
 
 export const PRED_PREFIX = '@prediction:';

@@ -10,6 +10,7 @@ import {
   FETCH_FEATURES_SUCCESS,
   LOAD_LOCAL_DATA_START,
   LOAD_LOCAL_DATA_SUCCESS,
+  UPDATE_FEATURE_TYPES,
   UPDATE_SELECTED_MODELS,
   UPDATE_N_CLUSTERS,
   UPDATE_METRIC,
@@ -18,6 +19,7 @@ import {
   UPDATE_BASE_MODELS,
   UPDATE_SEGMENT_GROUPS,
 } from './actions';
+import {defaultFeatureTypes} from './constants';
 import {getDefaultSegmentGroups} from './utils';
 
 export const DEFAULT_STATE = {
@@ -32,6 +34,7 @@ export const DEFAULT_STATE = {
   isModelsComparisonLoading: false,
   isFeaturesDistributionLoading: false,
 
+  featureTypes: defaultFeatureTypes,
   divergenceThreshold: 0,
   selectedModelMap: {},
 
@@ -107,6 +110,16 @@ const handleLoadLocalDataSuccess = (state, {payload}) => {
     isLocalDataLoading: false,
   };
 };
+
+export const handleUpdateFeatureTypes = (state, {payload}) => {
+  return {
+    ...state,
+    featureTypes: {
+      ...state.featureTypes,
+      ...payload,
+    },
+  };
+};
 // -- local data source -- //
 
 const handleUpdateSelectModels = (state, {payload}) => ({
@@ -169,6 +182,7 @@ export default handleActions(
     [FETCH_FEATURES_SUCCESS]: handleFetchFeaturesSuccess,
     [LOAD_LOCAL_DATA_START]: handleLoadLocalDataStart,
     [LOAD_LOCAL_DATA_SUCCESS]: handleLoadLocalDataSuccess,
+    [UPDATE_FEATURE_TYPES]: handleUpdateFeatureTypes,
     [UPDATE_DIVERGENCE_THRESHOLD]: handleUpdateDivergenceThreshold,
     [UPDATE_SELECTED_MODELS]: handleUpdateSelectModels,
     [UPDATE_N_CLUSTERS]: handleUpdateNClusters,

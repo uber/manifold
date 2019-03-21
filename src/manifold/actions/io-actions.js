@@ -39,11 +39,11 @@ export const loadLocalDataSuccess = createAction(LOAD_LOCAL_DATA_SUCCESS);
  * Main data action to be exported into applications
  * Loads model performance and feature data into Manifold
  * @param: {Object[][]} fileList, a list of files containing all relevant data needed for Manifold, in csv format
- * @param: {Function} dataTransformer, see `defaultDataTransformer` for its signature
+ * @param: {Function} dataTransformer, see `defaultInputDataTransformer` for its signature
  */
 export const loadLocalData = ({
   fileList,
-  dataTransformer = defaultDataTransformer,
+  dataTransformer = defaultInputDataTransformer,
 }) => dispatch => {
   dispatch(loadLocalDataStart());
   const allPromises = fileList.map(parsePromise);
@@ -72,7 +72,7 @@ export const loadLocalData = ({
  *   [{@prediction:target: 9.4, @prediction:predict: 8.2}, {@prediction:target: 8.3, @prediction:predict: 6.4}]
  * ]
  */
-const defaultDataTransformer = values => {
+const defaultInputDataTransformer = values => {
   return {
     featureData: [],
     predData: [],

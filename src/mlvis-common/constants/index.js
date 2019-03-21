@@ -1,7 +1,16 @@
 // @noflow
 export const FEATURE_TYPE = {
+  BOOLEAN: 'boolean',
   CATEGORICAL: 'categorical',
   NUMERICAL: 'numerical',
+  GEO: 'geo',
+};
+
+export const FILTER_TYPE = {
+  RANGE: 'range',
+  INCLUDE: 'include',
+  EXCLUDE: 'exclude',
+  FUNC: 'func',
 };
 
 export const COLOR = {

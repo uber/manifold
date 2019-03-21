@@ -1,10 +1,14 @@
 // @noflow
 import {rootSelector, getHasBackend} from './base';
-import {getMetaDataFromRaw, getFeatures, getModelPerfHistograms} from './misc';
+import {
+  getMetaDataFromRaw,
+  getSegmentedFeatures,
+  getModelPerfHistograms,
+} from './compute';
 import {createSelector} from 'reselect';
 
 // ----------------------------------------------------------------------------------------------------------- //
-// -- THE DATA SELECTORS SELECTS DATA FROM EITHER API RESPONSES OR FRONT END TRANSFORMATION RESULTS IN MISC -- //
+// -- THE DATA SELECTORS SELECTS DATA FROM EITHER API RESPONSES OR FRONT END TRANSFORMATION RESULTS IN COMPUTE -- //
 // ----------------------------------------------------------------------------------------------------------- //
 
 // -- computed data from API -- //
@@ -43,7 +47,7 @@ export const getModelsPerformance = createSelector(
 export const getFeaturesDistribution = createSelector(
   getHasBackend,
   getApiFeatures,
-  getFeatures,
+  getSegmentedFeatures,
   (hasBackend, apiFeatures, feFeatures) => {
     return hasBackend ? apiFeatures : feFeatures;
   }

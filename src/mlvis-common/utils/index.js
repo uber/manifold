@@ -43,10 +43,6 @@ export const generateRandomSteps = k =>
 export const discrete = values =>
   values.some(isNaN) || values.map(Number).every(Number.isInteger);
 
-export * from './color';
-export * from './feature';
-export * from './computation';
-
 // 12345 => 12,345
 // 123456789 => 1.235e+8
 // 0.123456789 => 0.123
@@ -66,3 +62,8 @@ export const formatNumber = n => {
   }
   return n.toLocaleString();
 };
+
+export * from './color';
+export * from './feature';
+export * from './computation';
+export * from './kmeans';

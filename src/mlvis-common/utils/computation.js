@@ -1,5 +1,6 @@
 // @noflow
 import * as tf from '@tensorflow/tfjs-core';
+import {kldivergence} from 'mathjs';
 import {FEATURE_TYPE} from '../constants';
 
 // dotRange(3) ==> [0, 1, 2];
@@ -47,6 +48,8 @@ export const computeFeatureMeta = (
     domain,
   };
 };
+
+export function computeClusterOrder() {}
 
 const FEATURE_HISTOGRAM_RESOLUTION = 100;
 
@@ -151,4 +154,60 @@ export function binCount(data, bins) {
       0
     );
   });
+}
+
+/**
+ * @param {String} type - data type
+ * @param {[Number|String]} domain - an array representing the domain of the distribution
+ * @param {[Array]} values - an array of 2 arrays, each containing feature values of the 2 segment groups
+ * @return {[Array]} an array of 2 arrays, each containing histogram values of the 2 segment groups
+ */
+export function computeSegmentedFeatureDistributions(type, domain, values) {
+  if (![FEATURE_TYPE.CATEGORICAL, FEATURE_TYPE.NUMERICAL].includes(type)) {
+    throw new Error('unknown or invalid feature type: ', type);
+  }
+  const histogramFunc =
+    type === FEATURE_TYPE.CATEGORICAL ? computeHistogramCat : computeHistogram;
+  // use same bins for every segmented distributions
+  // use `[0]` to get only histogram values and not domains
+  const T = histogramFunc(values[0], domain)[0];
+  const C = histogramFunc(values[1], domain)[0];
+  return [T, C];
+}
+
+/**
+ * @param {[Array]} distributions - an array of 2 arrays,
+ * each containing unnormalized distributions of the 2 segment groups
+ * @return {[Array]} an array of 2 arrays,
+ * each containing normalized distributions of the 2 segment groups
+ */
+export function computeSegmentedFeatureDistributionsNormalized(distributions) {
+  const [T, C] = distributions;
+  const sumT = T.reduce((acc, val) => acc + val, 0);
+  const sumC = C.reduce((acc, val) => acc + val, 0);
+
+  // equalize both count distribution to [0, 1]
+  const equalizedT = T.map(val => val / sumT);
+  const equalizedC = C.map(val => val / sumC);
+
+  const all = equalizedT.concat(equalizedC);
+  const min = Math.min(...all) - 1e-9;
+  const max = Math.max(...all);
+  const range = max - min;
+
+  const normT = equalizedT.map(val => (val - min) / range);
+  const normC = equalizedC.map(val => (val - min) / range);
+
+  return [normT, normC];
+}
+
+/**
+ * @param {[Array]} distributions - an array of 2 arrays, 2 normalized distributions
+ * @return {Number}
+ */
+export function computeDivergence(distributions) {
+  if (distributions[0].length === distributions[1].length) {
+    return kldivergence(distributions[0], distributions[1]);
+  }
+  return Number.MAX_SAFE_INTEGER;
 }

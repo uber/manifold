@@ -1,12 +1,12 @@
 // @noflow
 // todo: utilize tenforflow to speed up histogram computation
 import {createSelector} from 'reselect';
-import {kldivergence} from 'mathjs';
-import {COLOR, FEATURE_TYPE} from '@uber/mlvis-common/constants';
+import {COLOR} from '@uber/mlvis-common/constants';
 import {
-  computeHistogram,
-  computeHistogramCat,
   computeFeatureMeta,
+  computeSegmentedFeatureDistributions,
+  computeSegmentedFeatureDistributionsNormalized,
+  computeDivergence,
 } from '@uber/mlvis-common/utils';
 
 export const featureSelector = props => props.feature;
@@ -62,18 +62,7 @@ export const getFeatureDistributions = createSelector(
     if (feature.distributions && feature.distributions.length) {
       return feature.distributions;
     }
-    if (![FEATURE_TYPE.CATEGORICAL, FEATURE_TYPE.NUMERICAL].includes(type)) {
-      throw new Error('unknown or invalid feature type: ', type);
-    }
-    const histogramFunc =
-      type === FEATURE_TYPE.CATEGORICAL
-        ? computeHistogramCat
-        : computeHistogram;
-    // use same bins for every segmented distributions
-    // use `[0]` to get only histogram values and not domains
-    const T = histogramFunc(values[0], domain)[0];
-    const C = histogramFunc(values[1], domain)[0];
-    return [T, C];
+    return computeSegmentedFeatureDistributions(type, domain, values);
   }
 );
 
@@ -83,23 +72,7 @@ export const getFeatureDistributionsNormalized = createSelector(
     if (feature.distributionsNormalized) {
       return feature.distributionsNormalized;
     }
-    const [T, C] = distributions;
-    const sumT = T.reduce((acc, val) => acc + val, 0);
-    const sumC = C.reduce((acc, val) => acc + val, 0);
-
-    // equalize both count distribution to [0, 1]
-    const equalizedT = T.map(val => val / sumT);
-    const equalizedC = C.map(val => val / sumC);
-
-    const all = equalizedT.concat(equalizedC);
-    const min = Math.min(...all) - 1e-9;
-    const max = Math.max(...all);
-    const range = max - min;
-
-    const normT = equalizedT.map(val => (val - min) / range);
-    const normC = equalizedC.map(val => (val - min) / range);
-
-    return [normT, normC];
+    return computeSegmentedFeatureDistributionsNormalized(distributions);
   }
 );
 
@@ -109,9 +82,6 @@ export const getFeatureDivergence = createSelector(
     if (feature.divergence !== undefined) {
       return feature.divergence;
     }
-    if (distributions[0].length === distributions[1].length) {
-      return kldivergence(distributions[0], distributions[1]);
-    }
-    return Number.MAX_SAFE_INTEGER;
+    return computeDivergence(distributions);
   }
 );

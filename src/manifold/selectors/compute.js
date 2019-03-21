@@ -1,11 +1,14 @@
 // @noflow
 import {createSelector} from 'reselect';
-import {kldivergence} from 'mathjs';
 
 import {
+  computeClusters,
   computeHistogram,
   computeHistogramCat,
   computeFeatureMeta,
+  computeSegmentedFeatureDistributions,
+  computeSegmentedFeatureDistributionsNormalized,
+  computeDivergence,
 } from '@uber/mlvis-common/utils';
 
 import {
@@ -18,10 +21,10 @@ import {
 } from './base';
 import {
   computePercentiles,
-  computeClusters,
   logLoss,
   absoluteError,
   filterData,
+  computeSortedOrder,
 } from '../utils';
 
 import {
@@ -41,7 +44,7 @@ const FEATURE_VALUE_HISTOGRAM_RESOLUTION = 50;
 const PERCENTILE_LIST = [0.01, 0.1, 0.25, 0.5, 0.75, 0.9, 0.99];
 
 // ---------------------------------------------------------------------------- //
-// ---- THE MISC SELECTORS DO ALL THE DATA TRANSFORMATION IN THE FRONT-END ---- //
+// ---- THE COMPUTE SELECTORS DO ALL THE DATA TRANSFORMATION IN THE FRONT-END ---- //
 // ---------------------------------------------------------------------------- //
 
 // -- raw csv data -- //
@@ -49,7 +52,8 @@ const getRawPredData = createSelector(
   rootSelector,
   state => state.rawPredData
 );
-const getRawFeatureData = createSelector(
+
+export const getRawFeatureData = createSelector(
   rootSelector,
   state => state.rawFeatureData
 );
@@ -87,10 +91,12 @@ const getFeatureDistributionResolution = () =>
 
 /**
  * compute basic information of features
- * @param {Array} featureData - An array of csv raw feature data.
- * @return {Number} nModels
- * @return {Number} nClasses
- * @return {Array} classLabels - array of strings representing class names
+ * @param {[Object]} featureData - An array of csv raw feature data.
+ * @param {Number} resolution - number of bins for the feature distribution histogram.
+ * @return {String} name
+ * @return {[Number|String]} domian
+ * @return {[Number]} histogram
+ * @return {String} type - array of strings representing class names
  */
 export const getFeaturesMeta = createSelector(
   getRawFeatureData,
@@ -224,7 +230,7 @@ export const getClusteringInput = createSelector(
   }
 );
 
-export const getDataIdsInSegments = createSelector(
+export const getDataIdsInSegmentsUnsorted = createSelector(
   [getClusteringInput, getRawFeatureData, getNClusters, getSegmentFilters],
   (clusteringInput = [], rawFeatures, nClusters = 4, segmentFilters = []) => {
     if (segmentFilters && segmentFilters.length) {
@@ -246,8 +252,8 @@ export const getDataIdsInSegments = createSelector(
   }
 );
 
-export const getModelPerfHistograms = createSelector(
-  [getDataPerformance, getDataIdsInSegments, getModelsMeta, getMetric],
+export const getModelPerfHistogramsUnsorted = createSelector(
+  [getDataPerformance, getDataIdsInSegmentsUnsorted, getModelsMeta, getMetric],
   (
     perfArr = [],
     segmentedIds = [],
@@ -264,40 +270,54 @@ export const getModelPerfHistograms = createSelector(
         ? Array.from(Array(nModels).keys()).map(m => PERF_PREFIX + m)
         : Array.from(Array(nModels).keys()).map(m => ACTUAL_PREFIX + m + '_0');
 
-    // sort by the median performance of the first model.
-    // "percentiles" includes [.01, .1, .25, .5, .75, .9, .99] percentiles of model performance
-    const fieldToSortBy = cluster =>
-      cluster.modelsPerformance[0].percentiles[3];
-
-    const result = segmentedIds
-      .map((segment, segmentId) => {
-        // histograms of performance grouped by model, grouped by segment
-        const perfHistogram = modelKeyArr.map(modelId => {
-          const segmentedPerfArr = segment.map(
-            dataId => perfArr[dataId][modelId]
-          );
-
-          const [histo, xVals] = computeHistogram(
-            segmentedPerfArr,
-            MODEL_PERF_HISTOGRAM_RESOLUTION
-          );
-          const domain = xVals.slice(0, histo.length);
-
-          return {
-            modelId,
-            // todo: assign model name
-            modelName: modelId,
-            density: [domain, histo],
-            percentiles: computePercentiles(segmentedPerfArr, PERCENTILE_LIST),
-          };
-        });
+    return segmentedIds.map((segment, segmentId) => {
+      // histograms of performance grouped by model, grouped by segment
+      const perfHistogram = modelKeyArr.map(modelId => {
+        const segmentedPerfArr = segment.map(
+          dataId => perfArr[dataId][modelId]
+        );
+        const [histo, xVals] = computeHistogram(
+          segmentedPerfArr,
+          MODEL_PERF_HISTOGRAM_RESOLUTION
+        );
+        const domain = xVals.slice(0, histo.length);
         return {
-          numDataPoints: segment.length,
-          dataIds: segment,
-          modelsPerformance: perfHistogram,
+          modelId,
+          // todo: assign model name
+          modelName: modelId,
+          density: [domain, histo],
+          // "percentiles" includes [.01, .1, .25, .5, .75, .9, .99] percentiles of model performance
+          percentiles: computePercentiles(segmentedPerfArr, PERCENTILE_LIST),
         };
-      })
-      .sort((a, b) => fieldToSortBy(a) - fieldToSortBy(b));
+      });
+      return {
+        numDataPoints: segment.length,
+        dataIds: segment,
+        modelsPerformance: perfHistogram,
+      };
+    });
+  }
+);
+
+export const getSegmentsSortedOrder = createSelector(
+  getModelPerfHistogramsUnsorted,
+  segments => {
+    if (!segments || !segments.length) {
+      return null;
+    }
+    // sort by the median performance of the first model.
+    const sortingFunc = cluster => cluster.modelsPerformance[0].percentiles[3];
+    return computeSortedOrder(segments, sortingFunc);
+  }
+);
+
+export const getModelPerfHistograms = createSelector(
+  [getModelPerfHistogramsUnsorted, getSegmentsSortedOrder],
+  (segments, order) => {
+    if (!segments || !segments.length) {
+      return null;
+    }
+    const result = order.map(id => segments[id]);
     // reassign segment ids after sorting
     result.forEach((segment, segmentId) => {
       segment.segmentId = 'segment_' + segmentId;
@@ -309,6 +329,15 @@ export const getModelPerfHistograms = createSelector(
 // ------------------------------------------------------------------------- //
 // ---------------------- FEATURE DISTRIBUTION VIEW ------------------------ //
 // ------------------------------------------------------------------------- //
+export const getDataIdsInSegments = createSelector(
+  [getDataIdsInSegmentsUnsorted, getSegmentsSortedOrder],
+  (segments, order) => {
+    if (!segments || !segments.length) {
+      return null;
+    }
+    return order.map(id => segments[id]);
+  }
+);
 
 // combine segmented data ids into treatment and control groups
 export const getDataIdsInSegmentGroups = createSelector(
@@ -326,9 +355,21 @@ export const getDataIdsInSegmentGroups = createSelector(
   }
 );
 
+export const getSegmentedRawFeatures = createSelector(
+  [getRawFeatureData, getDataIdsInSegmentGroups],
+  (data, segments) => {
+    if (!segments || segments.length === 0) {
+      return null;
+    }
+    return segments.map(segment => {
+      return segment.map(dataId => data[dataId]);
+    });
+  }
+);
+
 export const getSegmentedFeatures = createSelector(
-  [getRawFeatureData, getDataIdsInSegmentGroups, getFeaturesMeta],
-  (data, segments, featuresMeta) => {
+  [getSegmentedRawFeatures, getFeaturesMeta],
+  (segments, featuresMeta) => {
     if (
       !segments ||
       segments.length === 0 ||
@@ -337,56 +378,28 @@ export const getSegmentedFeatures = createSelector(
     ) {
       return null;
     }
-    return featuresMeta.map(feature => {
-      const segmentValues = segments.map(segment => {
-        return segment.map(dataId => data[dataId][feature.name]);
-      });
-      return {
-        ...feature,
-        values: segmentValues,
-      };
-    });
-  }
-);
-
-export const getFeatures = createSelector(
-  getSegmentedFeatures,
-  features => {
-    if (!features || features.length === 0) {
-      return null;
-    }
-    return features
+    return featuresMeta
       .map(feature => {
-        const {values, domain, type} = feature;
-        const histogramFunc =
-          type === FEATURE_TYPE.CATEGORICAL
-            ? computeHistogramCat
-            : computeHistogram;
-        // use same bins for every segmented distributions
-        const T = histogramFunc(values[0], domain)[0];
-        const C = histogramFunc(values[1], domain)[0];
+        const {domain, type} = feature;
+        const segmentValues = segments.map(segment => {
+          return segment.map(d => d[feature.name]);
+        });
 
-        // todo: Figure out whether kldivergence need this normalization. If not, put into adaptors.
-        const sumT = T.reduce((acc, d) => acc + d, 0);
-        const sumC = C.reduce((acc, d) => acc + d, 0);
-
-        // equalize both count distribution to [0, 1]
-        const equalizedT = T.map(d => d / sumT);
-        const equalizedC = C.map(d => d / sumC);
-
-        const all = equalizedT.concat(equalizedC);
-        const min = Math.min(...all) - 1e-9;
-        const max = Math.max(...all);
-        const range = max - min;
-
-        const normT = equalizedT.map(d => (d - min) / range);
-        const normC = equalizedC.map(d => (d - min) / range);
-        const divergence = max === 0 ? 0 : kldivergence(normT, normC);
+        const distributions = computeSegmentedFeatureDistributions(
+          type,
+          domain,
+          segmentValues
+        );
+        const distributionsNormalized = computeSegmentedFeatureDistributionsNormalized(
+          distributions
+        );
+        const divergence = computeDivergence(distributionsNormalized);
 
         return {
           ...feature,
-          distributions: [T, C],
-          distributionsNormalized: [normT, normC],
+          values: segmentValues,
+          distributions,
+          distributionsNormalized,
           divergence,
         };
       })
