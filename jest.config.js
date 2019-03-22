@@ -11,7 +11,9 @@ const aliasMapper = Object.keys(packageAliases).reduce((acc, key) => {
 }, {});
 
 module.exports = {
+  collectCoverage: true,
   collectCoverageFrom: ['packages/**/*.js'],
+  coverageDirectory: './coverage/',
   coveragePathIgnorePatterns: ['__fixtures__', 'stories'],
   moduleNameMapper: aliasMapper,
   testPathIgnorePatterns: [

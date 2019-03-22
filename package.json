@@ -94,7 +94,7 @@
   "engines": {
     "node": ">=8.9.4 <9.0.0",
     "npm": ">=5.6.0",
-    "yarn": "1.9.4"
+    "yarn": ">=1.9.4"
   },
   "license": "UNLICENSED",
   "bugs": {
