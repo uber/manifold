@@ -87,4 +87,4 @@ Please read our [code of conduct](CODE_OF_CONDUCT.md) before you contribute! You
 We document versions and changes in our changelog - see the [CHANGELOG.md](CHANGELOG.md) file for details.
 
 ## License
-TBD
+Apache 2.0 License
