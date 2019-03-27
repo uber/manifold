@@ -12,11 +12,75 @@ As a visual analytics tool, Manifold allows ML practitioners to look beyond over
 
 ## Table of content
 
-- [Installation](#installation)
-- [Usage](#usage)
+- [Prepare your data](#prepare-your-data)
+- [Using the Demo App](#using-the-demo-app)
+- [Using the Component](#using-the-component)
 - [Contributing](#contributing)
 - [Versioning](#versioning)
 - [License](#license)
+
+## Prepare Your Data
+
+To generate Manifold visualization, you need to prepare data in the following schema:
+
+```js
+const data = {
+  x:     [...],         // feature data
+  yPred: [[...], ...]   // prediction data
+  yTrue: [...],         // ground truth data
+};
+```
+
+Each element in these arrays represents one data point in your evaluation dataset, and the order of data instances in `x`, `yPred` and `yTrue` should all match.
+Recommended instance count for each of these datasets is 10000 - 15000. If you have a larger dataset that you want to analyze, a random subset of your data generally suffices to reveal the important patterns in it.
+
+There are 2 ways to input the data into Manifold:
+
+- [csv upload](#upload-csv-to-demo-app) if you are using the Manifold demo app, or
+- [convert data programatically](#convert-input-data) if you using the Manifold component in your own app.
+
+##### `x`: {Object[]}
+
+A list of instances with features. Example (2 data instances):
+
+```js
+[
+  {feature_0: 21, feature_1: 'B'},
+  {feature_0: 36, feature_1: 'A'}
+]
+```
+
+##### `yPred`: {Object[][]}
+
+A list of list, each child list is a prediction array from one model for each data instance. Example (3 models, 2 data instances, 2 classes `['false', 'true']`):
+
+```js
+[
+  [{false: 0.1, true: 0.9}, {false: 0.8, true: 0.2}],
+  [{false: 0.3, true: 0.7}, {false: 0.9, true: 0.1}],
+  [{false: 0.6, true: 0.4}, {false: 0.4, true: 0.6}]
+]
+```
+
+##### `yTrue`: {Number[] | String[]}
+
+A list, ground truth for each data instance. Values must be numbers for regression model, must be strings that match object keys in `yPred` for classification models. Example (2 data instances, 2 classes ['false', 'true']):
+
+```js
+[
+  'true',
+  'false'
+]
+```
+
+## Using the Demo App
+
+To do a one-off evaluation using static outputs of your ML models, using the demo app is an easier way for you.
+Otherwise, if you have a system that programmatically generates ML model outputs, you might consider [using the Manifold component](#using-the-component) directly.
+
+### Upload CSV to Demo App
+
+
 
 ## Install Manifold
 ```bash
