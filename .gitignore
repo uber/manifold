@@ -2,6 +2,8 @@ node_modules
 yarn.lock
 package-lock.json
 examples/**/*-lock.json
+scripts/sync.sh
+scripts/traverse.sh
 *.log
 .cache/
 coverage*/

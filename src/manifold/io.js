@@ -39,6 +39,7 @@ export const saveCsvFile = (path, jsonData) => {
   saveAs(new Blob([unparse(jsonData)], {type: 'text/csv;charset=utf-8'}), path);
 };
 
+// [WIP] actions for sending requests if connected to a backend.
 export function loadData({featureDataset, predDatasets, dataFilter}) {
   const h = new Headers({
     Accept: 'application/json',
@@ -57,6 +58,7 @@ export function loadData({featureDataset, predDatasets, dataFilter}) {
   return fetch(req);
 }
 
+// [WIP] actions for sending requests if connected to a backend.
 export function modelsPerformance({
   nClusters = 5,
   metric = 'performance',
@@ -81,6 +83,7 @@ export function modelsPerformance({
   return fetch(req);
 }
 
+// [WIP] actions for sending requests if connected to a backend.
 export function featuresDistribution({
   nClusters = 5,
   segmentGroups = [[1], [0, 2, 3]],
