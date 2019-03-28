@@ -3,6 +3,7 @@ import {
   isValidSegmentGroups,
   filterData,
   absoluteError,
+  logLoss,
   computeSortedOrder,
 } from '../utils';
 
@@ -33,6 +34,18 @@ test('utils: absoluteError', () => {
   const error1 = absoluteError(targets1, predictions1);
 
   expect(Array.from(error1)).toEqual([4, 2, 0]);
+});
+
+test('utils: logLoss', () => {
+  const targets1 = ['true', 'false', 'true'];
+  const predictions1 = [[0.1, 0.9], [0.1, 0.9], [0.5, 0.5]];
+  const labels1 = ['false', 'true'];
+  const error1 = logLoss(targets1, predictions1, labels1);
+  const expectedError1 = [0.11, 2.3, 0.69];
+
+  Array.from(error1).forEach((d, i) => {
+    expect(d).toBeCloseTo(expectedError1[i]);
+  });
 });
 
 test('utils: computeSortedOrder', () => {

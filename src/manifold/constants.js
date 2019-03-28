@@ -1,5 +1,5 @@
 // @noflow
-import {FEATURE_TYPE, FILTER_TYPE} from '@uber/mlvis-common/constants';
+import {FEATURE_TYPE, FILTER_TYPE} from 'packages/mlvis-common/constants';
 
 export {FEATURE_TYPE, FILTER_TYPE};
 
@@ -20,43 +20,17 @@ export const METRIC = {
   ACTUAL: 'actual',
 };
 
-export const defaultFeatureTypes = {
+// Users will be able to provide a list of feature names that they would like to enforce
+// to be a particular type. If non is provided, the enforced list is empty,
+// and every feature's type will be automatically inferred.
+export const DEFAULT_FEATURE_TYPES = {
   [FEATURE_TYPE.CATEGORICAL]: [],
   [FEATURE_TYPE.NUMERICAL]: [],
   [FEATURE_TYPE.GEO]: [],
 };
 
-export const PRED_PREFIX = '@prediction:';
 export const PERF_PREFIX = 'model_';
 export const ACTUAL_PREFIX = `modelClass_`;
-
-export const INDEXED_FEATURE_PREFIX = '@prediction:indexed_';
-
-export const PRED_INDEX = '@prediction:predictedindexedlabel';
-export const TARGET_INDEX = '@prediction:indexedlabel';
-
-// prediction and target column names in input data from Michelangelo
-export const PRED_COL_IN = '@prediction:predict';
-export const TARGET_COL_IN = '@prediction:target';
-
-// prediction and target column names in Manifold representation
-export const TARGET_COL_OUT = m => `groundTruth_{$m}`;
-export const CLASS_LABELS = columns => {
-  const predColsNonClass = [
-    PRED_INDEX,
-    TARGET_INDEX,
-    PRED_COL_IN,
-    TARGET_COL_IN,
-  ];
-  return columns
-    .filter(
-      col =>
-        col.startsWith(PRED_PREFIX) &&
-        !predColsNonClass.includes(col) &&
-        !col.startsWith(INDEXED_FEATURE_PREFIX)
-    )
-    .map(classCol => classCol.replace(PRED_PREFIX, ''));
-};
 
 // view constants
 export const THEME_COLOR = '#276ef1';

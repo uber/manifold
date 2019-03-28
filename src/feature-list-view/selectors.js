@@ -1,13 +1,13 @@
 // @noflow
 // todo: utilize tenforflow to speed up histogram computation
 import {createSelector} from 'reselect';
-import {COLOR} from '@uber/mlvis-common/constants';
+import {COLOR} from 'packages/mlvis-common/constants';
 import {
   computeFeatureMeta,
   computeSegmentedFeatureDistributions,
   computeSegmentedFeatureDistributionsNormalized,
   computeDivergence,
-} from '@uber/mlvis-common/utils';
+} from 'packages/mlvis-common/utils';
 
 export const featureSelector = props => props.feature;
 

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import {connect} from '../custom-connect';
 import {THEME_COLOR, VIEW_MODE, VIEW_TAB, VIEW_NAME, HINTS} from '../constants';
 
-import {Headline, SideBar} from '@uber/mlvis-common/ui';
+import {Headline, SideBar} from 'packages/mlvis-common/ui';
 import MultiComparisonControlContainer from './multi-comparison-control-container';
 import FeaturesControlContainer from './features-control-container';
 import FiltersContainer from './filters-container';
@@ -18,6 +18,7 @@ const mapStateToProps = (state, props) => {
   // i.e. HOC or custom-connect
   const {selector, ...otherProps} = props;
   return {
+    dataLoadingError: state.dataLoadingError,
     ...otherProps,
   };
 };
@@ -33,6 +34,11 @@ const Container = styled.div`
   display: flex;
   background: #fff;
   height: 100vh;
+`;
+
+const ErrorContainer = styled(Container)`
+  align-items: center;
+  justify-content: center;
 `;
 
 const Content = styled.div`
@@ -125,11 +131,14 @@ class Manifold extends PureComponent {
   };
 
   render() {
-    const {selector} = this.props;
+    const {selector, dataLoadingError} = this.props;
     const {isSideBarOpen, viewMode, viewTab, hintType} = this.state;
     const showBoth = viewMode === VIEW_MODE.COORDINATED;
     const showView1 = showBoth || viewTab === VIEW_TAB.PERF;
     const showView2 = showBoth || viewTab === VIEW_TAB.FEATURE;
+    if (dataLoadingError) {
+      return <ErrorContainer> {dataLoadingError.message} </ErrorContainer>;
+    }
     return (
       <Container>
         <Content viewMode={viewMode}>

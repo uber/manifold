@@ -2,7 +2,7 @@
 import {combineReducers} from 'redux';
 import {handleActions} from 'redux-actions';
 import {UPDATE_VIEWPORT} from './actions';
-import manifoldReducer from '@uber/manifold/reducers';
+import manifoldReducer from 'packages/manifold/reducers';
 
 export const DEFAULT_STATE = {
   width: 0,

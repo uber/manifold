@@ -10,6 +10,7 @@ import {
   FETCH_FEATURES_SUCCESS,
   LOAD_LOCAL_DATA_START,
   LOAD_LOCAL_DATA_SUCCESS,
+  LOAD_LOCAL_DATA_FAILURE,
   UPDATE_FEATURE_TYPES,
   UPDATE_SELECTED_MODELS,
   UPDATE_N_CLUSTERS,
@@ -19,7 +20,7 @@ import {
   UPDATE_BASE_MODELS,
   UPDATE_SEGMENT_GROUPS,
 } from './actions';
-import {defaultFeatureTypes} from './constants';
+import {DEFAULT_FEATURE_TYPES} from './constants';
 import {getDefaultSegmentGroups} from './utils';
 
 export const DEFAULT_STATE = {
@@ -28,13 +29,15 @@ export const DEFAULT_STATE = {
   models: undefined,
   features: undefined,
 
-  rawPredData: [],
-  rawFeatureData: undefined,
+  x: undefined,
+  yPred: [],
+  yTrue: undefined,
   isBackendDataLoading: false,
   isModelsComparisonLoading: false,
   isFeaturesDistributionLoading: false,
+  isDataLoadingError: null,
 
-  featureTypes: defaultFeatureTypes,
+  featureTypes: DEFAULT_FEATURE_TYPES,
   divergenceThreshold: 0,
   selectedModelMap: {},
 
@@ -100,16 +103,25 @@ const handleFetchFeaturesSuccess = (state, {payload}) => ({
 const handleLoadLocalDataStart = (state, {payload}) => ({
   ...state,
   isLocalDataLoading: true,
+  dataLoadingFailure: null,
 });
 
 const handleLoadLocalDataSuccess = (state, {payload}) => {
+  const {x, yPred, yTrue} = payload;
   return {
     ...state,
-    rawFeatureData: payload.featureData,
-    rawPredData: payload.predData,
+    x,
+    yPred,
+    yTrue,
     isLocalDataLoading: false,
   };
 };
+
+const handleLoadLocalDataFailure = (state, {payload}) => ({
+  ...state,
+  isLocalDataLoading: false,
+  dataLoadingError: payload,
+});
 
 export const handleUpdateFeatureTypes = (state, {payload}) => {
   return {
@@ -182,6 +194,7 @@ export default handleActions(
     [FETCH_FEATURES_SUCCESS]: handleFetchFeaturesSuccess,
     [LOAD_LOCAL_DATA_START]: handleLoadLocalDataStart,
     [LOAD_LOCAL_DATA_SUCCESS]: handleLoadLocalDataSuccess,
+    [LOAD_LOCAL_DATA_FAILURE]: handleLoadLocalDataFailure,
     [UPDATE_FEATURE_TYPES]: handleUpdateFeatureTypes,
     [UPDATE_DIVERGENCE_THRESHOLD]: handleUpdateDivergenceThreshold,
     [UPDATE_SELECTED_MODELS]: handleUpdateSelectModels,

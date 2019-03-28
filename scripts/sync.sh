@@ -1,11 +1,12 @@
 SOURCE_DIR="../mlvis-toolkit"
+ROOT_DIR="."
 PACKAGES=("feature-list-view" "manifold" "mlvis-common" "multi-way-plot" "segment-filters")
 
 for i in ${PACKAGES[@]}
 do
-  rm -rf "./src/"$i
-  mkdir "./src/"$i
-  cp -r $SOURCE_DIR"/packages/"$i"/src/"* "./src/"$i
+  rm -rf $ROOT_DIR"/src/"$i
+  mkdir $ROOT_DIR"/src/"$i
+  cp -r $SOURCE_DIR"/packages/"$i"/src/"* $ROOT_DIR"/src/"$i
 done
 
 rm -rf "./examples/manifold/src"

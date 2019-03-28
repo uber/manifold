@@ -5,9 +5,14 @@ import styled from 'styled-components';
 import {connect} from '../custom-connect';
 
 import {updateDivergenceThreshold, exportFeatureEncoder} from '../actions';
+import {getSegmentedRawFeatures} from '../selectors/compute';
 import {getDivergenceThreshold} from '../selectors/base';
 import {getFeatures} from '../selectors/adaptors';
-import FeatureListView from '@uber/feature-list-view';
+import FeatureListView from 'packages/feature-list-view';
+// import ContextualMap from 'packages/contextual-map';
+
+const MAPBOX_ACCESS_TOKEN =
+  'pk.eyJ1IjoibGV6aGlsaSIsImEiOiIwZTc1YTlkOTE1ZWIzYzNiNDdiOTYwMDkxM2U1ZmY0NyJ9.SDXoQBpQys6AdTEQ9OhnpQ';
 
 const Container = styled.div`
   overflow: scroll;
@@ -15,11 +20,25 @@ const Container = styled.div`
   height: 100%;
 `;
 
+// todo: dynamically get
+const getGeoPositions = state => d => [
+  [
+    Number(d['@derived:requestedbegin_lng']),
+    Number(d['@derived:requestedbegin_lat']),
+  ],
+  [
+    Number(d['@derived:requestedend_lng']),
+    Number(d['@derived:requestedend_lat']),
+  ],
+];
+
 const mapDispatchToProps = {updateDivergenceThreshold, exportFeatureEncoder};
 const mapStateToProps = (state, props) => {
   return {
     features: getFeatures(state),
     divergenceThreshold: getDivergenceThreshold(state),
+    rawFeatures: getSegmentedRawFeatures(state),
+    geoPositions: getGeoPositions(state),
   };
 };
 
@@ -29,7 +48,7 @@ class FeatureAttributionContainer extends PureComponent {
   };
 
   render() {
-    const {features} = this.props;
+    const {features, rawFeatures, geoPositions} = this.props;
     if (!features || features.length === 0) {
       return null;
     }
@@ -38,6 +57,18 @@ class FeatureAttributionContainer extends PureComponent {
         <ContainerDimensions>
           {({width, height}) => (
             <div>
+              {/* {geoPositions && (
+                <ContextualMap
+                  mapboxToken={
+                    process.env.MAPBOX_ACCESS_TOKEN || MAPBOX_ACCESS_TOKEN
+                  }
+                  data={rawFeatures}
+                  showArcs={false}
+                  getPositions={geoPositions}
+                  width={width}
+                  height={450}
+                />
+              )} */}
               <FeatureListView features={features} width={width} />
             </div>
           )}

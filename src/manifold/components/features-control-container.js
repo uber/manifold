@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import ContainerDimensions from 'react-container-dimensions';
 import {connect} from '../custom-connect';
-import {Control} from '@uber/mlvis-common/ui';
+import {Control} from 'packages/mlvis-common/ui';
 import {Select, Input, Slider} from 'antd';
 import {CONTROL_MARGIN} from '../constants';
 

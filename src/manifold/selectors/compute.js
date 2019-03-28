@@ -9,7 +9,8 @@ import {
   computeSegmentedFeatureDistributions,
   computeSegmentedFeatureDistributionsNormalized,
   computeDivergence,
-} from '@uber/mlvis-common/utils';
+  computePercentiles,
+} from 'packages/mlvis-common/utils';
 
 import {
   rootSelector,
@@ -19,24 +20,9 @@ import {
   getSegmentGroups,
   getBaseModels,
 } from './base';
-import {
-  computePercentiles,
-  logLoss,
-  absoluteError,
-  filterData,
-  computeSortedOrder,
-} from '../utils';
+import {logLoss, absoluteError, filterData, computeSortedOrder} from '../utils';
 
-import {
-  FEATURE_TYPE,
-  METRIC,
-  PRED_PREFIX,
-  PERF_PREFIX,
-  ACTUAL_PREFIX,
-  CLASS_LABELS,
-  PRED_COL_IN,
-  TARGET_COL_IN,
-} from '../constants';
+import {FEATURE_TYPE, METRIC, PERF_PREFIX, ACTUAL_PREFIX} from '../constants';
 import {Array} from 'global';
 
 const MODEL_PERF_HISTOGRAM_RESOLUTION = 50;
@@ -48,14 +34,19 @@ const PERCENTILE_LIST = [0.01, 0.1, 0.25, 0.5, 0.75, 0.9, 0.99];
 // ---------------------------------------------------------------------------- //
 
 // -- raw csv data -- //
-const getRawPredData = createSelector(
+const getX = createSelector(
   rootSelector,
-  state => state.rawPredData
+  state => state.x
 );
 
-export const getRawFeatureData = createSelector(
+const getYPred = createSelector(
   rootSelector,
-  state => state.rawFeatureData
+  state => state.yPred
+);
+
+const getYTrue = createSelector(
+  rootSelector,
+  state => state.yTrue
 );
 
 // ------------------------------------------------------------------------- //
@@ -64,24 +55,24 @@ export const getRawFeatureData = createSelector(
 
 /**
  * compute basic information of models
- * @param {Array} predDataArr - An array of csv raw prediction data.
+ * @param {[Array]} yPred - An array of arrays, predicted values for each class from each models.
  * @return {Number} nModels
  * @return {Number} nClasses
  * @return {Array} classLabels - array of strings representing class names
  */
 export const getModelsMeta = createSelector(
-  getRawPredData,
-  predDataArr => {
-    if (!predDataArr || !predDataArr.length || !predDataArr[0].length) {
+  getYPred,
+  yPred => {
+    if (!yPred || !yPred.length || !yPred[0].length) {
       return;
     }
-    const predDataPoint = predDataArr[0][0];
-    const classLabels = CLASS_LABELS(Object.keys(predDataPoint));
-    const nClasses = classLabels.length !== 0 ? classLabels.length : 1;
+    const predInstance0 = yPred[0][0];
+    const classLabels = Object.keys(predInstance0);
+    const nClasses = classLabels.length > 1 ? classLabels.length : 1;
     return {
-      nModels: predDataArr.length,
+      nModels: yPred.length,
       nClasses,
-      classLabels: classLabels.length !== 0 ? classLabels : undefined,
+      classLabels,
     };
   }
 );
@@ -99,7 +90,7 @@ const getFeatureDistributionResolution = () =>
  * @return {String} type - array of strings representing class names
  */
 export const getFeaturesMeta = createSelector(
-  getRawFeatureData,
+  getX,
   getFeatureDistributionResolution,
   (featureData, resolution) => {
     if (!featureData || !featureData.length) {
@@ -116,9 +107,7 @@ export const getFeaturesMeta = createSelector(
 
           // exit early if feature type is invalid
           if (type === null) {
-            return {
-              type,
-            };
+            return {type};
           }
           const histogramFunc =
             type === FEATURE_TYPE.CATEGORICAL
@@ -156,38 +145,26 @@ export const getMetaDataFromRaw = createSelector(
 // merge predictions and performances of different models into one list.
 // in each element, "model_" are performances, "modelClass_" are raw predictions
 export const getDataPerformance = createSelector(
-  [getRawPredData, getModelsMeta],
-  (predDataArr, modelsMeta) => {
-    if (!predDataArr.length || !predDataArr[0].length || !modelsMeta) {
+  [getYPred, getYTrue, getModelsMeta],
+  (yPred, yTrue, modelsMeta) => {
+    if (!yPred.length || !yPred[0].length || !yTrue.length || !modelsMeta) {
       return [];
     }
     const {nClasses = 2, classLabels = []} = modelsMeta;
-
     // regression vs classification
     const perfFunc = nClasses === 1 ? absoluteError : logLoss;
-
-    // prediction column(s) name(s) in input data
-    const predColsForClasses =
-      classLabels.length === 0
-        ? [PRED_COL_IN]
-        : classLabels.map(classLabel => PRED_PREFIX + classLabel);
-
     // performance arrays by model
-    const perfCols = predDataArr.map(singleModelPredArr => {
+    // TODO: transform the data to array of arrays during data loading action
+    const perfCols = yPred.map(singleModelPredArr => {
       const predictArr = singleModelPredArr.map(instance =>
-        predColsForClasses.map(classCol => instance[classCol])
+        classLabels.map(classCol => instance[classCol])
       );
-      const target = singleModelPredArr.map(instance =>
-        isNaN(instance[TARGET_COL_IN])
-          ? String(instance[TARGET_COL_IN]).toLowerCase()
-          : instance[TARGET_COL_IN]
-      );
-      return perfFunc(target, predictArr, classLabels);
+      return perfFunc(yTrue, predictArr, classLabels);
     });
 
-    return predDataArr[0].map((_, dataId) => {
-      return predDataArr.reduce((acc, singleModelPredArr, modelId) => {
-        predColsForClasses.forEach((classCol, classId) => {
+    return yTrue.map((_, dataId) => {
+      return yPred.reduce((acc, singleModelPredArr, modelId) => {
+        classLabels.forEach((classCol, classId) => {
           acc[ACTUAL_PREFIX + modelId + '_' + classId] =
             singleModelPredArr[dataId][classCol];
         });
@@ -231,7 +208,7 @@ export const getClusteringInput = createSelector(
 );
 
 export const getDataIdsInSegmentsUnsorted = createSelector(
-  [getClusteringInput, getRawFeatureData, getNClusters, getSegmentFilters],
+  [getClusteringInput, getX, getNClusters, getSegmentFilters],
   (clusteringInput = [], rawFeatures, nClusters = 4, segmentFilters = []) => {
     if (segmentFilters && segmentFilters.length) {
       // todo: merge rawPred, rawFeatures, and clusteringInput for manual filters
@@ -248,7 +225,7 @@ export const getDataIdsInSegmentsUnsorted = createSelector(
     for (let i = 0; i < clusterIds.length; i++) {
       result[clusterIds[i]].push(i);
     }
-    return result;
+    return result.filter(r => r.length > 0);
   }
 );
 
@@ -356,7 +333,7 @@ export const getDataIdsInSegmentGroups = createSelector(
 );
 
 export const getSegmentedRawFeatures = createSelector(
-  [getRawFeatureData, getDataIdsInSegmentGroups],
+  [getX, getDataIdsInSegmentGroups],
   (data, segments) => {
     if (!segments || segments.length === 0) {
       return null;

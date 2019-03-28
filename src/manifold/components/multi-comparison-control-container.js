@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import ContainerDimensions from 'react-container-dimensions';
 import {connect} from '../custom-connect';
-import {Control} from '@uber/mlvis-common/ui';
+import {Control} from 'packages/mlvis-common/ui';
 import {Button, Input, Select, Radio} from 'antd';
 import {CONTROL_MARGIN} from '../constants';
 import {computeWidthLadder} from '../utils';
@@ -57,6 +57,7 @@ const mapStateToProps = (state, props) => {
     isManualSegmentation: getIsManualSegmentation(state),
   };
 };
+
 class MultiComparisonControlContainer extends PureComponent {
   static propTypes = {
     className: PropTypes.string,

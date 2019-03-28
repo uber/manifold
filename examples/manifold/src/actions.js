@@ -1,5 +1,5 @@
 // @noflow
-import {loadLocalData} from '@uber/manifold/actions';
+import {loadLocalData} from 'packages/manifold/actions';
 
 export const UPDATE_VIEWPORT = 'UPDATE_VIEWPORT';
 
@@ -19,22 +19,26 @@ export const dataTransformer = values => {
   const featureData = joinFields(featureFieldsList, dataList);
   const predFieldsList = fieldsList.map(predFields);
   const predData = predFieldsList.map((fields, modelId) => {
-    return selectFields(fields, dataList[modelId]);
+    const renameField = f => f.split(':')[1];
+    return selectFields(fields, dataList[modelId], renameField);
   });
+  const targetData = dataList[0].map(d =>
+    typeof d[TARGET_FIELD] !== 'number'
+      ? String(d[TARGET_FIELD]).toLowerCase()
+      : d[TARGET_FIELD]
+  );
   return {
-    featureData,
-    predData,
+    x: featureData,
+    yPred: predData,
+    yTrue: targetData,
   };
 };
 
 // fields in michelangelo csvs that are not needed in manifold
 const EXTRA_FIELDS = ['_RowIndex', '_model_id', '_project_id', '_predicted_at'];
-const PRED_FIELDS = [
-  '@prediction:predict',
-  '@prediction:target',
-  '@prediction:true',
-  '@prediction:false',
-];
+const PRED_FIELDS_REG = ['@prediction:predict'];
+const PRED_FIELDS_BINARY = ['@prediction:true', '@prediction:false'];
+const TARGET_FIELD = '@prediction:target';
 
 function featureFields(fields) {
   return fields.filter(
@@ -43,7 +47,12 @@ function featureFields(fields) {
 }
 
 function predFields(fields) {
-  return fields.filter(field => PRED_FIELDS.includes(field));
+  // todo: better filtering of prediction fields to allow multi-class
+  const fieldsSet = new Set(fields);
+  if (PRED_FIELDS_BINARY.every(field => fieldsSet.has(field))) {
+    return PRED_FIELDS_BINARY;
+  }
+  return PRED_FIELDS_REG;
 }
 
 /*
@@ -53,12 +62,13 @@ function predFields(fields) {
  * selectFields(['field1', 'field2'], [{'field1': 1, 'field2': 2, 'field3': 3}]);
  * @param: {String[]} fields
  * @param: {Object[]} data
+ * @param: {Function} transformer of field name into target object field name
  * @return: {Object[]} a list of data, fields or each item are filtered based on `fields`
  */
-function selectFields(fields, data) {
+function selectFields(fields, data, renameField) {
   return data.map(dataPoint =>
     fields.reduce((acc, field) => {
-      acc[field] = dataPoint[field];
+      acc[renameField(field)] = dataPoint[field];
       return acc;
     }, {})
   );

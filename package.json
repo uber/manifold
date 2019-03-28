@@ -89,7 +89,8 @@
   "scripts": {
     "lint": "eslint src",
     "test": "jest",
-    "sync": "scripts/sync.sh"
+    "sync": "scripts/sync.sh",
+    "traverse": "scripts/traverse.sh"
   },
   "engines": {
     "node": ">=8.9.4 <9.0.0",

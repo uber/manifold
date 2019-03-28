@@ -1,10 +1,14 @@
 // @noflow
 import * as tf from '@tensorflow/tfjs-core';
-import {kldivergence} from 'mathjs';
+import {kldivergence, quantileSeq} from 'mathjs';
 import {FEATURE_TYPE} from '../constants';
 
 // dotRange(3) ==> [0, 1, 2];
 export const dotRange = n => Array.from(Array(n).keys());
+
+export const computePercentiles = (data, percentiles) => {
+  return quantileSeq(data, percentiles);
+};
 
 const UNIQ_COUNT_THRESHOLD = 8;
 const UNIQ_PERCENTAGE_THRESHOLD = 0.1;
@@ -48,8 +52,6 @@ export const computeFeatureMeta = (
     domain,
   };
 };
-
-export function computeClusterOrder() {}
 
 const FEATURE_HISTOGRAM_RESOLUTION = 100;
 

@@ -1,8 +1,70 @@
 // @noflow
 import {Array} from 'global';
 import {FILTER_TYPE} from './constants';
-import {quantileSeq} from 'mathjs';
 import * as tf from '@tensorflow/tfjs-core';
+
+export function validateInputData(data) {
+  const inputKeys = ['x', 'yTrue', 'yPred'];
+  if (
+    typeof data !== 'object' ||
+    inputKeys.some(key => Object.keys(data).indexOf(key) < 0)
+  ) {
+    throw new Error(
+      'Input data must contain these keys: `x`, `yTrue`, `yPred`.'
+    );
+  }
+  const {x, yTrue, yPred} = data;
+  if (!x || !yTrue || !yPred || !x.length || !yTrue.length || !yPred.length) {
+    throw new Error('One or more required fields in input data is empty.');
+  }
+  const nInstances = x.length;
+  if (yTrue.length !== nInstances || yPred.some(y => y.length !== nInstances)) {
+    throw new Error(
+      'Number of data instances in `x`, `yTrue` and `yPred` are not consistant. ' +
+        'Check the shape of your input data.'
+    );
+  }
+  const predInstance0 = yPred[0][0];
+  if (typeof predInstance0 !== 'object') {
+    throw new Error(
+      '`yPred` must be an array of array of objects. ' +
+        'Check the shape of your input data.'
+    );
+  }
+  const predObjKeys = Object.keys(predInstance0);
+
+  yPred.forEach((predArr, i) => {
+    predArr.forEach((predEle, j) => {
+      if (Object.keys(predEle).some(key => predObjKeys.indexOf(key) < 0)) {
+        throw new Error(
+          `yPred[${i}][${j}] has a different shape than other element in yPred.
+          Check your input data.`
+        );
+      }
+    });
+  });
+
+  yTrue.forEach((trueEle, i) => {
+    // regression
+    if (predObjKeys.length === 1) {
+      if (typeof yTrue[i] !== 'number') {
+        throw new Error(
+          `yTrue[${i}] has wrong data type. Check your input data.`
+        );
+      }
+    }
+    // classification
+    else {
+      if (predObjKeys.indexOf(trueEle) < 0) {
+        throw new Error(
+          `Class label at yTrue[${i}] is not found in corresbonding yPred.
+            Check your input data.`
+        );
+      }
+    }
+  });
+  return data;
+}
 
 export const computeWidthLadder = (widths, margin) => {
   const result = [];
@@ -12,10 +74,6 @@ export const computeWidthLadder = (widths, margin) => {
     result.push(lastWidth);
   });
   return result;
-};
-
-export const computePercentiles = (data, percentiles) => {
-  return quantileSeq(data, percentiles);
 };
 
 /**
@@ -159,10 +217,10 @@ export const filterData = (data, filters) => {
 };
 
 /**
- * filter data items w/ a set of filters
+ * compute the order after sorting an array, useful when the order is needed for sorting anothe array
  * @param  {Array} arr - array to sort
  * @param  {Function} sortingFunc - function based on which `arr` is sorted
- * @return {[Number]} item ids in the original `arr` in the order of a sorted array
+ * @return {[Number]} item indices in the original `arr` in the order of a sorted array
  */
 export function computeSortedOrder(arr, sortingFunc) {
   const orderedArr = arr

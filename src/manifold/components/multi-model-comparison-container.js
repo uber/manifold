@@ -6,9 +6,9 @@ import {connect} from '../custom-connect';
 import {scaleOrdinal} from 'd3-scale';
 import {schemeSet2 as colorScheme} from 'd3-scale-chromatic';
 
-import MultiWayPlot from '@uber/multi-way-plot/';
-import {LegendGroup} from '@uber/mlvis-common/ui';
-import SegmentGrouping from '@uber/multi-way-plot/segment-grouping';
+import MultiWayPlot from 'packages/multi-way-plot/';
+import {LegendGroup} from 'packages/mlvis-common/ui';
+import SegmentGrouping from 'packages/multi-way-plot/segment-grouping';
 
 import {updateSelectedModels} from '../actions';
 import {

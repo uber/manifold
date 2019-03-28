@@ -6,6 +6,7 @@ import {
   modelsPerformance,
   featuresDistribution,
 } from '../io';
+import {validateInputData} from '../utils';
 
 // -- remote data source -- //
 export const FETCH_BACKEND_DATA_START = 'FETCH_BACKEND_DATA_START';
@@ -18,6 +19,7 @@ export const FETCH_FEATURES_SUCCESS = 'FETCH_FEATURES_SUCCESS';
 // -- local data source -- //
 export const LOAD_LOCAL_DATA_START = 'LOAD_LOCAL_DATA_START';
 export const LOAD_LOCAL_DATA_SUCCESS = 'LOAD_LOCAL_DATA_SUCCESS';
+export const LOAD_LOCAL_DATA_FAILURE = 'LOAD_LOCAL_DATA_FAILURE';
 
 // -- remote data source -- //
 export const fetchBackendDataStart = createAction(FETCH_BACKEND_DATA_START);
@@ -30,6 +32,7 @@ export const fetchFeaturesSuccess = createAction(FETCH_FEATURES_SUCCESS);
 // -- local data source -- //
 export const loadLocalDataStart = createAction(LOAD_LOCAL_DATA_START);
 export const loadLocalDataSuccess = createAction(LOAD_LOCAL_DATA_SUCCESS);
+export const loadLocalDataFailure = createAction(LOAD_LOCAL_DATA_FAILURE);
 
 // ---------------- ASYNC DATA I/O ACTIONS ---------------- //
 
@@ -50,32 +53,48 @@ export const loadLocalData = ({
 
   Promise.all(allPromises)
     .then(dataTransformer)
+    .then(validateInputData)
     .then(result => {
       dispatch(loadLocalDataSuccess(result));
     });
+  // TODO: catch errors
+  // .catch(error => dispatch(loadLocalDataFailure(error)));
 };
 
 /*
  * default data transformer, transforming a list of parsed files to feature data and performance data,
  * to be inputted into Manifold
  * @param: {Object[][]} values, a list of parsed results of `fileList`
- * @return: {Object} containing 2 fields: `featureData` and `predData`
- * `featureData`: {Object[]} a list of instances,
- * example (2 data instances): [
+ * @return: {Object} containing 3 fields: `x`, `yPred` and `yTrue`
+ *
+ * `x`: {Object[]} a list of instances with features,
+ * example (2 data instances):
+ * [
  *   {feature_0: 21, feature_1: 'B'},
  *   {feature_0: 36, feature_1: 'A'}
  * ]
- * `predData`: {Object[][]} a list of list, each child list is a prediction array from one model
- * example (3 models, 2 data instances): [
- *   [{@prediction:target: 9.4, @prediction:predict: 5.7}, {@prediction:target: 8.3, @prediction:predict: 7.6}],
- *   [{@prediction:target: 9.4, @prediction:predict: 10.1}, {@prediction:target: 8.3, @prediction:predict: 9.8}],
- *   [{@prediction:target: 9.4, @prediction:predict: 8.2}, {@prediction:target: 8.3, @prediction:predict: 6.4}]
+ *
+ * `yPred`: {Object[][]} a list of list, each child list is a prediction array from one model for each data instance
+ * example (3 models, 2 data instances, 2 classes ['false', 'true']):
+ * [
+ *   [{false: 0.1, true: 0.9}, {false: 0.8, true: 0.2}],
+ *   [{false: 0.3, true: 0.7}, {false: 0.9, true: 0.1}],
+ *   [{false: 0.6, true: 0.4}, {false: 0.4, true: 0.6}]
+ * ]
+ *
+ * `yTrue`: {Object[]} a list, ground truth for each data instance.
+ * Values must be numbers for regression model, must be strings that match object keys in `yPred` for classification models
+ * example (2 data instances, 2 classes ['false', 'true']):
+ * [
+ *   'true',
+ *   'false'
  * ]
  */
 const defaultInputDataTransformer = values => {
   return {
-    featureData: [],
-    predData: [],
+    x: [],
+    yTrue: [],
+    yPred: [],
   };
 };
 

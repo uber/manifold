@@ -4,16 +4,17 @@ import {connect} from 'react-redux';
 import styled from 'styled-components';
 
 import FileUploader from './file-uploader';
-import Manifold from '@uber/manifold';
+import Manifold from 'packages/manifold';
 import {loadManifoldData} from './actions';
 
 // NOTE: this only works locally with the alias
-// @uber/manifold/style.scss => /packages/manifold/src/style.scss
-// in production, we probably should change to @uber/manifold/dist/style.css
-import '@uber/manifold/style.scss';
+// packages/manifold/style.scss => /packages/manifold/src/style.scss
+// in production, we probably should change to packages/manifold/dist/style.css
+// import 'mapbox-gl/dist/mapbox-gl.css';
+import 'packages/manifold/style.scss';
 
 // todo: remove cdn url
-// import cdnUrl from '@uber/bedrock/cdn-url';
+// import cdnUrl from 'packages/bedrock/cdn-url';
 const cdnUrl = 'fakeUrl';
 
 // urls for sample data
@@ -29,8 +30,7 @@ export const SAMPLE_DATA_S3 = {
 const Container = styled.div`
   position: absolute;
   width: 100vw;
-  height: calc(100vh + 100px);
-  padding: 50px 80px 50px;
+  height: 100vh;
   background: #eee;
 `;
 
@@ -41,7 +41,12 @@ class App extends Component {
   };
 
   componentDidMount = () => {
-    // this.props.dispatch(loadLocalData(['../data/ma_reg_1_0.csv']));
+    // this.props.dispatch(
+    //   loadManifoldData([
+    //     '../data/ma_geo_partition.csv',
+    //     '../data/ma_geo_nopartition.csv',
+    //   ])
+    // );
     this._toggleDataUploadModal(true);
   };
 

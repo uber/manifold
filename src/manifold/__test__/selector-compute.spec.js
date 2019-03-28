@@ -9,41 +9,28 @@ import {
   getModelPerfHistograms,
 } from '../selectors/compute';
 import {METRIC, FEATURE_TYPE} from '../constants';
-import {dotRange} from '@uber/mlvis-common/utils';
+import {dotRange} from 'packages/mlvis-common/utils';
 
-const rawPred1 = [
-  [{'@prediction:predict': 10, '@prediction:target': 20}],
-  [{'@prediction:predict': 30, '@prediction:target': 40}],
+const yPred1 = [[{predict: 10}], [{predict: 30}]];
+const yPred2 = [
+  [{cat1: 0.1, cat2: 0.5, cat3: 0.4}, {cat1: 0.6, cat2: 0.3, cat3: 0.1}],
 ];
-const rawPred2 = [
-  [
-    {
-      '@prediction:cat1': 0.1,
-      '@prediction:cat2': 0.5,
-      '@prediction:cat3': 0.4,
-      '@prediction:target': 'cat2',
-    },
-    {
-      '@prediction:cat1': 0.6,
-      '@prediction:cat2': 0.3,
-      '@prediction:cat3': 0.1,
-      '@prediction:target': 'cat1',
-    },
-  ],
-];
+const yTrue1 = [20];
+const yTrue2 = ['cat2', 'cat1'];
+const meta1 = {
+  nModels: 2,
+  nClasses: 1,
+  classLabels: ['predict'],
+};
+const meta2 = {
+  nModels: 1,
+  nClasses: 3,
+  classLabels: ['cat1', 'cat2', 'cat3'],
+};
 
 test('selector: compute/getModelsMeta', () => {
-  expect(getModelsMeta.resultFunc(rawPred1, [{}])).toEqual({
-    nModels: 2,
-    nClasses: 1,
-    classLabels: undefined,
-  });
-
-  expect(getModelsMeta.resultFunc(rawPred2, [{}])).toEqual({
-    nModels: 1,
-    nClasses: 3,
-    classLabels: ['cat1', 'cat2', 'cat3'],
-  });
+  expect(getModelsMeta.resultFunc(yPred1)).toEqual(meta1);
+  expect(getModelsMeta.resultFunc(yPred2)).toEqual(meta2);
 });
 
 test('selector: compute/getFeaturesMeta', () => {
@@ -72,14 +59,8 @@ test('selector: compute/getFeaturesMeta', () => {
 });
 
 test('selector: compute/getDataPerformance', () => {
-  const perf1 = getDataPerformance.resultFunc(rawPred1, {
-    nClasses: 1,
-    classLabels: [],
-  });
-  const perf2 = getDataPerformance.resultFunc(rawPred2, {
-    nClasses: 2,
-    classLabels: ['cat1', 'cat2', 'cat3'],
-  });
+  const perf1 = getDataPerformance.resultFunc(yPred1, yTrue1, meta1);
+  const perf2 = getDataPerformance.resultFunc(yPred2, yTrue2, meta2);
 
   const expOut1 = {
     modelClass_0_0: expect.any(Number),
@@ -139,15 +120,18 @@ test('selector: compute/getClusteringInput', () => {
     METRIC.PERFORMANCE
   );
   const input3 = getClusteringInput.resultFunc(
-    perfArr2,
-    {nClasses: 3},
+    perfArr1,
+    {nClasses: 1},
     [],
     METRIC.ACTUAL
   );
 
   expect(input1).toMatchObject([[expect.any(Number), expect.any(Number)]]);
+  expect(input1).toEqual([[2, 4]]);
   expect(input2).toMatchObject([[expect.any(Number)]]);
+  expect(input2).toEqual([[8]]);
   expect(input3).toMatchObject([[expect.any(Number), expect.any(Number)]]);
+  expect(input3).toEqual([[1, 3]]);
 });
 
 test('selector: compute/getDataIdsInSegmentsUnsorted', () => {
