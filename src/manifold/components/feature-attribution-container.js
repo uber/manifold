@@ -11,9 +11,6 @@ import {getFeatures} from '../selectors/adaptors';
 import FeatureListView from 'packages/feature-list-view';
 // import ContextualMap from 'packages/contextual-map';
 
-const MAPBOX_ACCESS_TOKEN =
-  'pk.eyJ1IjoibGV6aGlsaSIsImEiOiIwZTc1YTlkOTE1ZWIzYzNiNDdiOTYwMDkxM2U1ZmY0NyJ9.SDXoQBpQys6AdTEQ9OhnpQ';
-
 const Container = styled.div`
   overflow: scroll;
   width: 100%;
@@ -48,7 +45,7 @@ class FeatureAttributionContainer extends PureComponent {
   };
 
   render() {
-    const {features, rawFeatures, geoPositions} = this.props;
+    const {features} = this.props;
     if (!features || features.length === 0) {
       return null;
     }
