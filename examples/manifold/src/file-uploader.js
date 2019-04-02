@@ -1,93 +1,165 @@
 // @noflow
 import React, {PureComponent} from 'react';
-import {Row, Col, Upload, Button, Modal, Icon, Select} from 'antd';
+import {Upload, Modal, Icon, Select} from 'antd';
+import styled from 'styled-components';
+import {DATASET, SAMPLE_DATA_S3, convertToCdnUrl} from './constants';
+import {isDatasetIncomplete} from './utils';
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const CustomDataSection = styled.div`
+  margin-bottom: 20px;
+`;
+
+const UploadButtons = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 0;
+`;
+
+const UploadButton = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  max-width: 150px;
+  background-color: #fafafa;
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  :hover {
+    border: 1px dashed #1890ff;
+  }
+`;
 
 export default class FileUploader extends PureComponent {
   get style() {
     return {
-      modalInner: {
-        display: 'flex',
-        alignItems: 'center',
+      modal: {
+        width: '400px',
       },
       choicePanel: {
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
       },
-      choicePanelText: {
-        padding: '0 0 15px 0',
+      uploadButtons: {
+        display: 'flex',
+        alignItems: 'center',
       },
     };
   }
 
+  state = {
+    x: undefined,
+    yPred: [],
+    yTrue: undefined,
+  };
+
+  _handleFileChange = (fileInfo, key) => {
+    this.setState({
+      [key]: fileInfo.fileList,
+    });
+  };
+
+  _handleSampleFileChange = sampleType => {
+    const dataset = SAMPLE_DATA_S3[sampleType];
+    const {x, yPred, yTrue} = dataset;
+    this.setState({
+      x: convertToCdnUrl(x),
+      yPred: yPred.map(convertToCdnUrl),
+      yTrue: convertToCdnUrl(yTrue),
+    });
+  };
+
+  _handleUpload = () => {
+    const {handleUpload} = this.props;
+    const {x, yPred, yTrue} = this.state;
+    if (isDatasetIncomplete({x, yPred, yTrue})) {
+      this.setState({
+        isDatasetIncomplete: true,
+      });
+    } else {
+      handleUpload({x, yPred, yTrue});
+    }
+  };
+
   render() {
-    const {
-      showUploadModal,
-      toggleUploadModal,
-      handleUpload,
-      handleFileChange,
-      handleSampleFileChange,
-    } = this.props;
+    const {showUploadModal, toggleUploadModal} = this.props;
     return (
       <Modal
+        width={600}
         title="Load Data Files"
         visible={showUploadModal}
-        onOk={handleUpload}
+        onOk={this._handleUpload}
         onCancel={() => toggleUploadModal(false)}
       >
-        <Row style={this.style.modalInner}>
-          <Col span={10} style={this.style.choicePanel}>
-            <div style={this.style.choicePanelText}>
+        <Content>
+          <CustomDataSection>
+            <div>
               Follow the
               <a
-                href={
-                  'https://engdocs.uberinternal.com/manifold-python/head_get_started.html'
-                }
+                href={'https://github.com/uber/manifold#prepare-your-data'}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {' '}
-                instructions{' '}
+                {' instructions '}
               </a>
               to prepare <b>one</b> feature file and <b>one or more</b>{' '}
               prediction files.
             </div>
-            <Upload
-              style={{width: '100%'}}
-              accept={'.csv'}
-              beforeUpload={() => false}
-              onChange={handleFileChange}
-              multiple={true}
-            >
-              <Button>
-                <Icon type="upload" /> Select Local Data
-              </Button>
-            </Upload>
-          </Col>
+            <UploadButtons>
+              <Upload
+                accept={'.csv'}
+                beforeUpload={() => false}
+                onChange={fileInfo => this._handleFileChange(fileInfo, 'x')}
+              >
+                <UploadButton>
+                  <Icon type="upload" /> Select Feature Data Set
+                </UploadButton>
+              </Upload>
+              <Upload
+                accept={'.csv'}
+                beforeUpload={() => false}
+                onChange={fileInfo => this._handleFileChange(fileInfo, 'yPred')}
+                multiple={true}
+              >
+                <UploadButton>
+                  <Icon type="upload" /> Select Prediction Data Set(s)
+                </UploadButton>
+              </Upload>
+              <Upload
+                accept={'.csv'}
+                beforeUpload={() => false}
+                onChange={fileInfo => this._handleFileChange(fileInfo, 'yTrue')}
+              >
+                <UploadButton>
+                  <Icon type="upload" /> Select Ground Truth Data Set
+                </UploadButton>
+              </Upload>
+            </UploadButtons>
+          </CustomDataSection>
 
-          <Col span={4} style={this.style.choicePanel}>
-            {' '}
-            OR{' '}
-          </Col>
-          <Col span={10} style={this.style.choicePanel}>
+          <CustomDataSection>
             <div style={this.style.choicePanelText}>
               No data? Try the data sets from one of the example cases.
             </div>
             <Select
               style={{width: '100%'}}
               placeholder={'Load sample data'}
-              onChange={handleSampleFileChange}
+              onChange={this._handleSampleFileChange}
             >
-              <Select.Option value="REGRESSION">
-                {' '}
+              <Select.Option value={DATASET.REG}>
                 Regression example
               </Select.Option>
-              <Select.Option value="BIN_CLASSIFICATION">
+              {/* todo: add binary classification data to S3
+              <Select.Option value={DATASET.BIN}>
                 Classification example
-              </Select.Option>
+              </Select.Option> */}
             </Select>
-          </Col>
-        </Row>
+          </CustomDataSection>
+        </Content>
       </Modal>
     );
   }

@@ -5,27 +5,16 @@ import styled from 'styled-components';
 
 import FileUploader from './file-uploader';
 import Manifold from 'packages/manifold';
-import {loadManifoldData} from './actions';
+// todo: temp
+// import {updateFeatureTypes} from 'packages/manifold/actions';
+// import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
+import {loadUserData} from './actions';
 
 // NOTE: this only works locally with the alias
 // packages/manifold/style.scss => /packages/manifold/src/style.scss
 // in production, we probably should change to packages/manifold/dist/style.css
-// import 'mapbox-gl/dist/mapbox-gl.css';
 import 'packages/manifold/style.scss';
-
-// todo: remove cdn url
-// import cdnUrl from 'packages/bedrock/cdn-url';
-const cdnUrl = 'fakeUrl';
-
-// urls for sample data
-export const SAMPLE_DATA_S3 = {
-  REGRESSION: ['/manifold/feature.csv', '/manifold/pred_reg.csv'],
-  BIN_CLASSIFICATION: [
-    '/manifold/feature.csv',
-    '/manifold/pred_bin_0.csv',
-    '/manifold/pred_bin_1.csv',
-  ],
-};
+// import 'mapbox-gl/dist/mapbox-gl.css';
 
 const Container = styled.div`
   position: absolute;
@@ -42,33 +31,29 @@ class App extends Component {
 
   componentDidMount = () => {
     // this.props.dispatch(
-    //   loadManifoldData([
+    //   loadMAData([
     //     '../data/ma_geo_partition.csv',
     //     '../data/ma_geo_nopartition.csv',
     //   ])
     // );
+    // setTimeout(
+    //   () =>
+    //     this.props.dispatch(
+    //       updateFeatureTypes({
+    //         [FEATURE_TYPE.GEO]: [
+    //           ['@derived:requestedbegin_lng', '@derived:requestedbegin_lat'],
+    //           ['@derived:requestedend_lng', '@derived:requestedend_lat'],
+    //         ],
+    //       })
+    //     ),
+    //   0
+    // );
     this._toggleDataUploadModal(true);
   };
 
-  _handleFileChange = fileInfo => {
-    this.setState({
-      fileList: fileInfo.fileList,
-    });
-  };
-
-  _handleSampleFileChange = sampleType => {
-    this.setState({
-      fileList: SAMPLE_DATA_S3[sampleType].map(cdnUrl),
-    });
-  };
-
-  _handleUpload = () => {
-    const {fileList} = this.state;
-    if (!fileList || !fileList.length) {
-      return;
-    }
+  _handleUpload = userData => {
     this._toggleDataUploadModal(false);
-    this.props.dispatch(loadManifoldData(fileList));
+    this.props.dispatch(loadUserData(userData));
   };
 
   _toggleDataUploadModal = show => {
@@ -87,8 +72,6 @@ class App extends Component {
           showUploadModal={showUploadModal}
           toggleUploadModal={this._toggleDataUploadModal}
           handleUpload={this._handleUpload}
-          handleFileChange={this._handleFileChange}
-          handleSampleFileChange={this._handleSampleFileChange}
         />
       </Container>
     );

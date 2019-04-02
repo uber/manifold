@@ -92,9 +92,9 @@ export const loadLocalData = ({
  */
 const defaultInputDataTransformer = values => {
   return {
-    x: [],
-    yTrue: [],
-    yPred: [],
+    x: values[0],
+    yTrue: values.slice(1, -2),
+    yPred: values[values.length - 1],
   };
 };
 

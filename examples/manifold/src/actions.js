@@ -1,15 +1,16 @@
 // @noflow
 import {loadLocalData} from 'packages/manifold/actions';
+import {isDatasetIncomplete} from './utils';
 
 export const UPDATE_VIEWPORT = 'UPDATE_VIEWPORT';
 
-export const loadManifoldData = fileList =>
+export const loadMAData = fileList =>
   loadLocalData({
     fileList,
-    dataTransformer,
+    dataTransformer: michelangeloDataTransformer,
   });
 
-export const dataTransformer = values => {
+export const michelangeloDataTransformer = values => {
   // convert data from Michelangelo format to Manifold format
   // Michelangelo format: one csv file per model, each contains features and predictions
   // Manifold format: one prediction csv per model, plus one additional feature csv for all models
@@ -34,9 +35,36 @@ export const dataTransformer = values => {
   };
 };
 
+/**
+ * @param {Object} userData - {x: <file>, yPred: [<file>], yTrue: file}
+ */
+export const loadUserData = userData => {
+  if (isDatasetIncomplete(userData)) {
+    return;
+  }
+  const {x, yPred, yTrue} = userData;
+  return loadLocalData({
+    fileList: [x, ...yPred, yTrue],
+    dataTransformer: userDataTransformer,
+  });
+};
+
+export const userDataTransformer = fileList => {
+  const dataList = fileList.map(v => v.data);
+  // todo: yTrue should accept object as values as well
+  const yTrue = dataList[dataList.length - 1].map(d => Object.values(d)[0]);
+  return {
+    x: dataList[0],
+    yPred: dataList.slice(1, -1),
+    yTrue,
+  };
+};
+
+// -------------------- helper functions of `maDataTransformer`-----------------------
+
 // fields in michelangelo csvs that are not needed in manifold
 const EXTRA_FIELDS = ['_RowIndex', '_model_id', '_project_id', '_predicted_at'];
-const PRED_FIELDS_REG = ['@prediction:predict'];
+const PRED_FIELDS_REGRESSION = ['@prediction:predict'];
 const PRED_FIELDS_BINARY = ['@prediction:true', '@prediction:false'];
 const TARGET_FIELD = '@prediction:target';
 
@@ -52,7 +80,7 @@ function predFields(fields) {
   if (PRED_FIELDS_BINARY.every(field => fieldsSet.has(field))) {
     return PRED_FIELDS_BINARY;
   }
-  return PRED_FIELDS_REG;
+  return PRED_FIELDS_REGRESSION;
 }
 
 /*

@@ -15,7 +15,9 @@ export function validateInputData(data) {
   }
   const {x, yTrue, yPred} = data;
   if (!x || !yTrue || !yPred || !x.length || !yTrue.length || !yPred.length) {
-    throw new Error('One or more required fields in input data is empty.');
+    throw new Error(
+      'One or more required fields (`x`, `yTrue`, `yPred`) in input data is empty.'
+    );
   }
   const nInstances = x.length;
   if (yTrue.length !== nInstances || yPred.some(y => y.length !== nInstances)) {

@@ -6,28 +6,19 @@ import {connect} from '../custom-connect';
 
 import {updateDivergenceThreshold, exportFeatureEncoder} from '../actions';
 import {getSegmentedRawFeatures} from '../selectors/compute';
-import {getDivergenceThreshold} from '../selectors/base';
+import {getDivergenceThreshold, getGeoPositions} from '../selectors/base';
 import {getFeatures} from '../selectors/adaptors';
 import FeatureListView from 'packages/feature-list-view';
 // import ContextualMap from 'packages/contextual-map';
+
+// const MAPBOX_ACCESS_TOKEN =
+//   'pk.eyJ1IjoibGV6aGlsaSIsImEiOiIwZTc1YTlkOTE1ZWIzYzNiNDdiOTYwMDkxM2U1ZmY0NyJ9.SDXoQBpQys6AdTEQ9OhnpQ';
 
 const Container = styled.div`
   overflow: scroll;
   width: 100%;
   height: 100%;
 `;
-
-// todo: dynamically get
-const getGeoPositions = state => d => [
-  [
-    Number(d['@derived:requestedbegin_lng']),
-    Number(d['@derived:requestedbegin_lat']),
-  ],
-  [
-    Number(d['@derived:requestedend_lng']),
-    Number(d['@derived:requestedend_lat']),
-  ],
-];
 
 const mapDispatchToProps = {updateDivergenceThreshold, exportFeatureEncoder};
 const mapStateToProps = (state, props) => {
