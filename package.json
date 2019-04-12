@@ -2,6 +2,7 @@
   "name": "manifold",
   "version": "0.0.1",
   "description": "Model-Agnostic Visual Debugging Tool for Machine Learning",
+  "license": "Apache 2.0",
   "author": "Firenze11 <lezhi.li@uber.com>",
   "main": "dist/index.js",
   "repository": {
@@ -97,7 +98,6 @@
     "npm": ">=5.6.0",
     "yarn": ">=1.9.4"
   },
-  "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/uber/manifold/issues"
   },

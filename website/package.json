@@ -1,0 +1,29 @@
+{
+  "name": "manifold",
+  "description": "Website for manifold",
+  "license": "Apache 2.0",
+  "author": "Firenze11 <lezhi.li@uber.com>",
+  "main": "dist/index.js",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=8.9.4 <9.0.0",
+    "npm": ">=5.6.0",
+    "yarn": ">=1.9.4"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --mode development --env.prod --progress --open",
+    "start-prod": "webpack-dev-server -p --env.prod --content-base ./src/static --progress --open",
+    "build-clean": "rm -rf ./dist && mkdir dist",
+    "build-static": "cp -r ./src/static/* dist && cd `git rev-parse --show-toplevel`",
+    "build-script": "webpack -p --env.prod",
+    "build": "npm run build-clean && npm run build-static && npm run build-script",
+    "lint": "eslint src"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
+  },
+  "peerDependencies": {}
+}

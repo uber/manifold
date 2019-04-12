@@ -22,13 +22,11 @@ module.exports = {
   },
 
   resolve: {
-    alias: Object.assign(
-      {},
-      {
-        react: resolve(NODE_MODULES, 'react'),
-        ...packageAliases(),
-      }
-    ),
+    alias: {
+      react: resolve(NODE_MODULES, 'react'),
+      'styled-components': resolve(NODE_MODULES, 'styled-components'),
+      ...packageAliases(),
+    },
   },
 
   module: {
