@@ -91,7 +91,12 @@
     "lint": "eslint src",
     "test": "jest",
     "sync": "scripts/sync.sh",
-    "traverse": "scripts/traverse.sh"
+    "traverse": "scripts/traverse.sh",
+    "clean": "rm -rf node_modules examples/**/node_modules website/node_modules",
+    "install:all": "npm run clean && npm install && npm run install:web",
+    "install:web": "npm run install:example && cd website && npm install",
+    "install:example": "cd examples/manifold && npm install",
+    "deploy": "cd website && npm run build && git checkout gh-pages && cp -r dist/* .. && git add .. && git commit -m 'Update website' && git push origin gh-pages && git checkout master"
   },
   "engines": {
     "node": ">=8.9.4 <9.0.0",

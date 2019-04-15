@@ -38,6 +38,34 @@ const COMMON_CONFIG = {
         exclude: [/node_modules/],
       },
       {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+              modules: true,
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: () => [require('autoprefixer')],
+              sourceMap: true,
+            },
+          },
+        ],
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          'style-loader', // creates style nodes from JS strings
+          'css-loader', // translates CSS into CommonJS
+          'sass-loader', // compiles Sass to CSS, using Node Sass by default
+        ],
+      },
+      {
         test: /\.(eot|svg|ico|ttf|woff|woff2|gif|jpe?g|png)$/,
         loader: 'url-loader',
       },

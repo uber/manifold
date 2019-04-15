@@ -12,14 +12,25 @@
   },
   "scripts": {
     "start": "webpack-dev-server --mode development --env.prod --progress --open",
-    "start-prod": "webpack-dev-server -p --env.prod --content-base ./src/static --progress --open",
+    "start-prod": "webpack-dev-server -p --env.prod --progress --open",
     "build-clean": "rm -rf ./dist && mkdir dist",
-    "build-static": "cp -r ./src/static/* dist && cd `git rev-parse --show-toplevel`",
     "build-script": "webpack -p --env.prod",
-    "build": "npm run build-clean && npm run build-static && npm run build-script",
+    "build": "npm run build-clean && npm run build-script",
     "lint": "eslint src"
   },
-  "dependencies": {},
+  "dependencies": {
+    "global": "^4.3.2",
+    "prop-types": "^15.6.2",
+    "react": "^16.7.0",
+    "react-dom": "^16.5.2",
+    "react-redux": "^5.0.7",
+    "react-router": "^4.3.1",
+    "react-router-redux": "^4.0.8",
+    "redux": "^4.0.0",
+    "redux-actions": "^2.6.1",
+    "redux-thunk": "^2.3.0",
+    "styled-components": "^4.0.0"
+  },
   "devDependencies": {
     "webpack": "^4.27.1",
     "webpack-cli": "^3.1.2",
