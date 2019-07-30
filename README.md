@@ -12,6 +12,7 @@ As a visual analytics tool, Manifold allows ML practitioners to look beyond over
 
 ## Table of content
 - [Prepare your data](#prepare-your-data)
+- [Interpret visualizations](#interpret-visualizations)
 - [Using Demo App](#using-demo-app)
 - [Using the Component](#using-the-component)
 - [Contributing](#contributing)
@@ -67,6 +68,105 @@ A list, ground truth for each data instance. Values must be numbers for regressi
   'false'
 ]
 ```
+
+## Interpret visualizations
+
+This guide explains how to interpret Manifold visualizations.
+
+Manifold consists of:
+
+  - `Performance Comparison View <performance_comparison_view>` which compares
+    prediction performance across models, across data subsets
+  - `Feature Attribution View <feature_distribution>` which visualizes feature
+    distributions of data subsets with various performance levels
+
+<br/>
+
+### Performance Comparison View
+
+This visualization is an overview of performance of your model(s) across
+different segments of your data. It helps you identify under-performing data subsets for further inspection.
+
+#### Reading the chart
+
+<img alt="performance comparison view" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/performance_comparison_1.png" width="600">
+
+  1. **X axis:** performance metric. Could be log-loss, squared-error or raw prediction.
+  2. **Segments:** your dataset is automatically divided into segments based on performance similarity between instances, across models.
+  3. **Colors:** represent different models.
+
+<img alt="performance comparison view unit" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/performance_comparison_2.png" width="600">
+
+  1. **Curve:** performance distribution (of one model, for one segment).
+  2. **Y axis:** Data count/density.
+  3. **Cross:** left end, center line, and right end are 25, 50 and 75th percentile of the distribution.
+
+#### Explaination
+Manifold uses a clustering algorithm (k-Means) to break prediction data into N segments
+based on performance similarity.
+
+The input of the k-Means is per-instance performance scores. By default, that is log-loss value for classification models and squared-error value for regression models. Models with a lower log-loss/squared-error perform better than models with a higher log-loss/squared-error.
+
+If you're analyzing multiple models, all models' performance metrics will be included in the input.
+
+#### Usage
+
+  - Look for segments of data where error is higher (plotted to the right). These are areas you should analyze and try to improve.
+
+  - If you're comparing models, look for segments where the log-loss is different for each model. If two models perform differently on the same set of data, consider using the better-performing model for that part of the data to boost performance.
+
+  - After you notice any performance patterns/issues in the segments, slice the data to compare feature distribution for the data subset(s) of interest. You can create two segment groups to compare (colored pink and blue), and each group can have 1 or more segments.
+
+**Example**
+
+<img alt="performance comparison view example" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/performance_comparison_3.png" width="600">
+
+Data in Segment 0 has lower log-loss prediction error compared to Segments 1 and 2, since curves in Segment 0 is closer to the left side.
+
+In Segments 1 and 2, the XGBoost model performs better than the DeepLearning model, but DeepLearning outperforms XGBoost in Segment 0.
+
+<br/>
+
+### Feature Attribution View
+
+This visualization shows feature values of your data, aggregated by user-defined segments. It helps you identify any input feature distribution that might correlate with inaccurate prediction output.
+
+#### Reading the chart
+
+<img alt="feature attribution view" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/feature_attribution_1.png" width="600">
+
+1. **Histogram / heatmap:** distribution of data from each data slice, shown in corresponding color.
+2. **Segment groups:** indicates data slices you choose to compare against each other.
+3. **Ranking:** features are ranked by distribution difference between slices.
+
+<img alt="feature attribution view unit" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/feature_attribution_2.png" width="600">
+
+1. **X axis:** feature value.
+2. **Y axis:** Data count/density.
+3. **Divergence score:** measure of difference in distributions between slices.
+
+#### Explanation
+
+After you slice the data to create segment groups, feature distribution histograms/heatmaps from the two segment groups are shown in this view.
+
+Depending on the feature type, features can be shown as heatmaps on map for geo features, distribution curve for numerical features, or distribution bar chart for categorical features (In bar charts, categories on x-axis are sorted by instance count differenceLook for differences between the two distributions in each feature.)
+
+Features are ranked by their KL-Divergence - a measure of *difference* between the two contrasting distributions. The higher the divergence is, the more likely this feature is correlated with the factor that differentiates the two Segment Groups.
+
+#### Usage
+
+  - Look for the differences between the two distributions (pink and blue) in each feature. They represent the difference in data from the two segment groups you selected in the Performance Comparison View.
+
+**Example**
+
+<img alt="feature attribution view example" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/feature_attribution_3.png" width="600">
+
+Data in Groups 0 and 1 have obvious difference in Features 0, 1, 2 and 3; but they are not so different in features 4 and 5.
+
+Suppose Data Groups 0 and 1 correspond to data instances with low and high prediction error respectively, this means that data with higher errors tend to have *lower* feature values in Features 0 and 1, since peak of pink curve is to the left side of the blue curve.
+
+<!-- images in this doc are created from https://docs.google.com/presentation/d/1EqvjMyBLNX7wfEQPFKAoaE39bW0pXbBa8WIznQN49vE/edit?usp=sharing -->
+
 
 ## Using Demo App
 To do a one-off evaluation using static outputs of your ML models, using the demo app is an easier way for you.
