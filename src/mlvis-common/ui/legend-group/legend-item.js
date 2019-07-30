@@ -23,7 +23,8 @@ export default class LegendItem extends PureComponent {
   static propTypes = {
     text: PropTypes.string,
     color: PropTypes.string,
-    selected: PropTypes.bool,
+    // todo: fix the type in manifold
+    // selected: PropTypes.bool,
     onModelClick: PropTypes.func,
   };
 

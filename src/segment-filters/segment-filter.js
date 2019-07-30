@@ -95,7 +95,7 @@ export default class SegmentFilter extends PureComponent {
     }
   };
 
-  render = () => {
+  render() {
     const {attribute, filter} = this.props;
     if (!attribute || !filter) {
       return null;
@@ -111,5 +111,5 @@ export default class SegmentFilter extends PureComponent {
         {this._renderFilterControl()}
       </SegmentFilterContainer>
     );
-  };
+  }
 }

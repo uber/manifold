@@ -1,5 +1,9 @@
 // @noflow
-import {generateRandomId, generateRandomSteps} from './index';
+import {
+  generateRandomId,
+  generateRandomSteps,
+  generateRandomNormal,
+} from './gen-data';
 import {COLOR, FEATURE_TYPE, STATES} from '../constants';
 
 const DOMAIN_SIZE = 100;
@@ -39,7 +43,10 @@ export const generateRawNumericalFeature = () => {
   return {
     name: `dummy-raw-numerical-feature-${generateRandomId()}`,
     type: FEATURE_TYPE.NUMERICAL,
-    values: [generateRandomNumericalValues(), generateRandomNumericalValues()],
+    values: [
+      generateRandomNormal(2500, 2, 0.5),
+      generateRandomNormal(7500, 0, 1),
+    ],
   };
 };
 

@@ -1,7 +1,6 @@
 // @noflow
-// todo: utilize tenforflow to speed up histogram computation
 import {createSelector} from 'reselect';
-import {COLOR} from 'packages/mlvis-common/constants';
+import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
 import {
   computeFeatureMeta,
   computeSegmentedFeatureDistributions,
@@ -9,16 +8,11 @@ import {
   computeDivergence,
 } from 'packages/mlvis-common/utils';
 
-export const featureSelector = props => props.feature;
+export const featureSelector = props => props.data;
 
 export const getFeatureName = createSelector(
   featureSelector,
   feature => feature.name
-);
-
-export const getFeatureColors = createSelector(
-  featureSelector,
-  feature => feature.colors || [COLOR.GREEN, COLOR.PURPLE]
 );
 
 export const getFeatureValues = createSelector(
@@ -66,6 +60,16 @@ export const getFeatureDistributions = createSelector(
   }
 );
 
+export const getDistributionsValueRange = createSelector(
+  [featureSelector, getFeatureDistributions],
+  (feature, distributions) => {
+    if (feature.distributionValueRange) {
+      return feature.distributionValueRange;
+    }
+    return [0, Math.max(...distributions[0], ...distributions[1])];
+  }
+);
+
 export const getFeatureDistributionsNormalized = createSelector(
   [featureSelector, getFeatureDistributions],
   (feature, distributions) => {
@@ -83,5 +87,22 @@ export const getFeatureDivergence = createSelector(
       return feature.divergence;
     }
     return computeDivergence(distributions);
+  }
+);
+
+export const getCategoriesSortedOrder = createSelector(
+  [getFeatureType, getFeatureDistributionsNormalized],
+  (type, distributions) => {
+    if (type !== FEATURE_TYPE.CATEGORICAL) {
+      return null;
+    }
+    const [dist0, dist1] = distributions;
+    return Array.from(Array(dist0.length))
+      .map((_, i) => i)
+      .sort((a, b) => {
+        const deltaA = dist0[a] - dist1[a];
+        const deltaB = dist0[b] - dist1[b];
+        return deltaA > deltaB ? 1 : -1;
+      });
   }
 );

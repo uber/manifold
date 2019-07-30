@@ -1,30 +1,16 @@
 // @noflow
 import {createSelector} from 'reselect';
-import {getDivergenceThreshold, getMetric, getIsLocalDataLoading} from './base';
+import {dotRange} from 'packages/mlvis-common/utils';
+import {getDivergenceThreshold, getMetric} from './base';
 import {
   getMetaData,
   getModelsPerformance,
   getFeaturesDistribution,
 } from './data';
 
-const COLOR = {
-  T: '#ff0099',
-  C: '#999999',
-};
-
 // ------------------------------------------------------------------------------------------- //
 // -- THE ADAPTOR SELECTORS DO NECESSARY TRANSFORMATION TO THE OUTPUTS OF THE DATA SELECTOR -- //
 // ------------------------------------------------------------------------------------------- //
-
-export const isComputing = createSelector(
-  [getIsLocalDataLoading, getModelsPerformance, getFeaturesDistribution],
-  (isLocalDataLoading, modelsPerformance = [], featuresDistribution = []) => {
-    return (
-      isLocalDataLoading &&
-      (!modelsPerformance.length || !featuresDistribution.length)
-    );
-  }
-);
 
 // segment filters
 export const getSegmentFilterAttributes = createSelector(
@@ -48,14 +34,14 @@ export const getModels = getModelsPerformance;
 
 export const getRawDataRange = createSelector(
   getModelsPerformance,
-  data => {
-    if (!data) {
+  perfBySegment => {
+    if (!perfBySegment) {
       return [];
     }
     let min = Infinity;
     let max = -Infinity;
-    data.forEach(({modelsPerformance = []}) => {
-      modelsPerformance.forEach(({percentiles}) => {
+    perfBySegment.forEach(({data = []}) => {
+      data.forEach(({percentiles}) => {
         if (percentiles[0] < min) {
           min = percentiles[0];
         }
@@ -71,19 +57,17 @@ export const getRawDataRange = createSelector(
 // density range by segment
 export const getDensityRange = createSelector(
   getModelsPerformance,
-  data => {
-    if (!data) {
+  perfBySegment => {
+    if (!perfBySegment) {
       return null;
     }
-    const densityRange = {};
-    data.forEach(({segmentId, modelsPerformance}) => {
+    const densityRange = Array(perfBySegment.length).fill([]);
+    perfBySegment.forEach(({segmentId, data}) => {
       densityRange[segmentId] = [0, -Infinity];
-      modelsPerformance.forEach(m => {
-        /* eslint-disable no-unused-vars */
+      data.forEach(singleModelData => {
         const {
-          density: [_, densityVals],
-        } = m;
-        /* eslint-enable no-unused-vars */
+          density: [densityVals],
+        } = singleModelData;
         const localMax = Math.max(...densityVals);
         if (localMax > densityRange[segmentId][1]) {
           densityRange[segmentId][1] = localMax;
@@ -94,37 +78,28 @@ export const getDensityRange = createSelector(
   }
 );
 
-export const getSegmentIds = createSelector(
-  getModelsPerformance,
-  data => {
-    if (!data || data.length === 0) {
-      return [];
-    }
-    return data.map(d => d.segmentId);
-  }
-);
-
 export const getModelIds = createSelector(
   getModelsPerformance,
-  data => {
-    if (!data || data.length === 0) {
+  perfBySegment => {
+    if (!perfBySegment || perfBySegment.length === 0) {
       return [];
     }
-    const {modelsPerformance = []} = data[0];
-    return modelsPerformance.map(d => d.modelId);
+    const {data = []} = perfBySegment[0];
+    return dotRange(data.length);
   }
 );
 
+// todo: use real model names / allow users to set model names
 export const getModelMeta = createSelector(
   getModelsPerformance,
-  data => {
-    if (!data || data.length === 0) {
+  perfBySegment => {
+    if (!perfBySegment || perfBySegment.length === 0) {
       return [];
     }
-    const {modelsPerformance = []} = data[0];
-    return modelsPerformance.map(d => ({
-      id: d.modelId,
-      name: d.modelName,
+    const {data = []} = perfBySegment[0];
+    return data.map((d, i) => ({
+      id: i,
+      name: d.modelName || `model_${i}`,
     }));
   }
 );
@@ -137,15 +112,7 @@ export const getFeatures = createSelector(
       return null;
     }
 
-    return rawFeatures
-      .filter(feature => feature.divergence >= threshold)
-      .map(feature => {
-        return {
-          ...feature,
-          // todo: input colors from the application side
-          colors: [COLOR.T, COLOR.C],
-        };
-      });
+    return rawFeatures.filter(feature => feature.divergence >= threshold);
   }
 );
 
@@ -162,7 +129,7 @@ export const getDisplayMetric = createSelector(
           ? 'unknown'
           : nClasses >= 2
           ? 'log_loss'
-          : 'squared_log_error';
+          : 'squared_error';
       default:
         return 'unknown';
     }

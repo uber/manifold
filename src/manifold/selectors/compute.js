@@ -2,8 +2,10 @@
 import {createSelector} from 'reselect';
 
 import {
+  dotRange,
   computeClusters,
   computeHistogram,
+  computeDensity,
   computeHistogramCat,
   computeFeatureMeta,
   computeSegmentedFeatureDistributions,
@@ -19,11 +21,11 @@ import {
   getSegmentFilters,
   getSegmentGroups,
   getBaseModels,
+  getIsManualSegmentation,
 } from './base';
 import {logLoss, absoluteError, filterData, computeSortedOrder} from '../utils';
 
 import {FEATURE_TYPE, METRIC, PERF_PREFIX, ACTUAL_PREFIX} from '../constants';
-import {Array} from 'global';
 
 const MODEL_PERF_HISTOGRAM_RESOLUTION = 50;
 const FEATURE_VALUE_HISTOGRAM_RESOLUTION = 50;
@@ -113,6 +115,9 @@ export const getFeaturesMeta = createSelector(
             type === FEATURE_TYPE.CATEGORICAL
               ? computeHistogramCat
               : computeHistogram;
+          // TODO we need to move the computation to the worker thread, freezes the UI completely
+          // Or use async/await, leveraging tensor.data() in TF.js
+          // Right now tensor.dataSync() is the bottleneck.
           const [histogram, domain] = histogramFunc(values, bins);
 
           return {
@@ -209,13 +214,13 @@ export const getClusteringInput = createSelector(
 
 export const getDataIdsInSegmentsUnsorted = createSelector(
   [getClusteringInput, getX, getNClusters, getSegmentFilters],
-  (clusteringInput = [], rawFeatures, nClusters = 4, segmentFilters = []) => {
+  (clusteringInput = [], rawFeatures, nClusters = 4, segmentFilters) => {
+    if (!clusteringInput.length || !clusteringInput[0].length) {
+      return [];
+    }
     if (segmentFilters && segmentFilters.length) {
       // todo: merge rawPred, rawFeatures, and clusteringInput for manual filters
       return segmentFilters.map(filter => filterData(rawFeatures, filter));
-    }
-    if (!clusteringInput.length || !clusteringInput[0].length) {
-      return;
     }
     const clusterIds = computeClusters(clusteringInput, nClusters);
     const result = [];
@@ -244,25 +249,20 @@ export const getModelPerfHistogramsUnsorted = createSelector(
     // todo: consider cases with more than one class
     const modelKeyArr =
       metric === METRIC.PERFORMANCE
-        ? Array.from(Array(nModels).keys()).map(m => PERF_PREFIX + m)
-        : Array.from(Array(nModels).keys()).map(m => ACTUAL_PREFIX + m + '_0');
+        ? dotRange(nModels).map(m => PERF_PREFIX + m)
+        : dotRange(nModels).map(m => ACTUAL_PREFIX + m + '_0');
 
-    return segmentedIds.map((segment, segmentId) => {
+    return segmentedIds.map(segment => {
       // histograms of performance grouped by model, grouped by segment
       const perfHistogram = modelKeyArr.map(modelId => {
         const segmentedPerfArr = segment.map(
           dataId => perfArr[dataId][modelId]
         );
-        const [histo, xVals] = computeHistogram(
-          segmentedPerfArr,
-          MODEL_PERF_HISTOGRAM_RESOLUTION
-        );
-        const domain = xVals.slice(0, histo.length);
         return {
-          modelId,
-          // todo: assign model name
-          modelName: modelId,
-          density: [domain, histo],
+          density: computeDensity(
+            segmentedPerfArr,
+            MODEL_PERF_HISTOGRAM_RESOLUTION
+          ),
           // "percentiles" includes [.01, .1, .25, .5, .75, .9, .99] percentiles of model performance
           percentiles: computePercentiles(segmentedPerfArr, PERCENTILE_LIST),
         };
@@ -270,7 +270,7 @@ export const getModelPerfHistogramsUnsorted = createSelector(
       return {
         numDataPoints: segment.length,
         dataIds: segment,
-        modelsPerformance: perfHistogram,
+        data: perfHistogram,
       };
     });
   }
@@ -283,7 +283,7 @@ export const getSegmentsSortedOrder = createSelector(
       return null;
     }
     // sort by the median performance of the first model.
-    const sortingFunc = cluster => cluster.modelsPerformance[0].percentiles[3];
+    const sortingFunc = cluster => cluster.data[0].percentiles[3];
     return computeSortedOrder(segments, sortingFunc);
   }
 );
@@ -297,7 +297,7 @@ export const getModelPerfHistograms = createSelector(
     const result = order.map(id => segments[id]);
     // reassign segment ids after sorting
     result.forEach((segment, segmentId) => {
-      segment.segmentId = 'segment_' + segmentId;
+      segment.segmentId = segmentId;
     });
     return result;
   }
@@ -307,12 +307,23 @@ export const getModelPerfHistograms = createSelector(
 // ---------------------- FEATURE DISTRIBUTION VIEW ------------------------ //
 // ------------------------------------------------------------------------- //
 export const getDataIdsInSegments = createSelector(
-  [getDataIdsInSegmentsUnsorted, getSegmentsSortedOrder],
-  (segments, order) => {
+  [
+    getDataIdsInSegmentsUnsorted,
+    getIsManualSegmentation,
+    getSegmentsSortedOrder,
+  ],
+  (segments, isManual, order) => {
     if (!segments || !segments.length) {
       return null;
     }
-    return order.map(id => segments[id]);
+    if (!isManual) {
+      // don't mutate segments to prevent re-rendering when only "segmentation method" is changed
+      segments.sort(
+        (segmentA, segmentB) =>
+          order.indexOf(segmentA.id) - order.indexOf(segmentB.id)
+      );
+    }
+    return segments;
   }
 );
 

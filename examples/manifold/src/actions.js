@@ -1,6 +1,5 @@
 // @noflow
 import {loadLocalData} from 'packages/manifold/actions';
-import {isDatasetIncomplete} from './utils';
 
 export const UPDATE_VIEWPORT = 'UPDATE_VIEWPORT';
 
@@ -32,31 +31,6 @@ export const michelangeloDataTransformer = values => {
     x: featureData,
     yPred: predData,
     yTrue: targetData,
-  };
-};
-
-/**
- * @param {Object} userData - {x: <file>, yPred: [<file>], yTrue: file}
- */
-export const loadUserData = userData => {
-  if (isDatasetIncomplete(userData)) {
-    return;
-  }
-  const {x, yPred, yTrue} = userData;
-  return loadLocalData({
-    fileList: [x, ...yPred, yTrue],
-    dataTransformer: userDataTransformer,
-  });
-};
-
-export const userDataTransformer = fileList => {
-  const dataList = fileList.map(v => v.data);
-  // todo: yTrue should accept object as values as well
-  const yTrue = dataList[dataList.length - 1].map(d => Object.values(d)[0]);
-  return {
-    x: dataList[0],
-    yPred: dataList.slice(1, -1),
-    yTrue,
   };
 };
 

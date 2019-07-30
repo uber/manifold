@@ -1,43 +1,6 @@
-// @noflow
-import {parse, unparse} from 'papaparse';
-import {fetch, Blob, Request, Headers} from 'global';
-import {saveAs} from 'file-saver';
+import {fetch, Request, Headers} from 'global';
 
 const toParam = p => encodeURIComponent(JSON.stringify(p));
-
-const loadCsvFileWithoutWorker = (path, onComplete) => {
-  const batchId = Date.now();
-  parse(path, {
-    delimiter: ',',
-    download: true,
-    dynamicTyping: true,
-    header: true,
-    newline: '',
-    quotes: false,
-    quoteChar: '"',
-    skipEmptyLines: true,
-    complete: results => {
-      const {
-        data,
-        meta: {fields},
-      } = results;
-      onComplete({data, fields, batchId});
-    },
-  });
-};
-
-export const parsePromise = file => {
-  return new Promise((onComplete, onError) => {
-    loadCsvFileWithoutWorker(file.originFileObj || file, onComplete);
-  });
-};
-
-export const saveCsvFile = (path, jsonData) => {
-  if (!path || !jsonData || Object.keys(jsonData).length === 0) {
-    return;
-  }
-  saveAs(new Blob([unparse(jsonData)], {type: 'text/csv;charset=utf-8'}), path);
-};
 
 // [WIP] actions for sending requests if connected to a backend.
 export function loadData({featureDataset, predDatasets, dataFilter}) {

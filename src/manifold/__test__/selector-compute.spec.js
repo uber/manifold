@@ -168,10 +168,8 @@ test('selector: compute/getModelPerfHistogramsUnsorted, getModelPerfHistograms',
   const expOutUnsorted = {
     numDataPoints: expect.any(Number),
     dataIds: expect.arrayContaining([expect.any(Number)]),
-    modelsPerformance: expect.arrayContaining([
+    data: expect.arrayContaining([
       expect.objectContaining({
-        modelId: expect.any(String),
-        modelName: expect.any(String),
         density: expect.anything(), //expect.arrayContaining([expect.any(Array)]),
         percentiles: expect.arrayContaining([expect.any(Number)]),
       }),
@@ -179,7 +177,7 @@ test('selector: compute/getModelPerfHistogramsUnsorted, getModelPerfHistograms',
   };
   const expOut = {
     ...expOutUnsorted,
-    segmentId: expect.any(String),
+    segmentId: expect.any(Number),
   };
   const resultUnsorted = getModelPerfHistogramsUnsorted.resultFunc(
     perfArr,
@@ -190,9 +188,10 @@ test('selector: compute/getModelPerfHistogramsUnsorted, getModelPerfHistograms',
 
   resultUnsorted.forEach(segment => {
     expect(segment).toMatchObject(expOutUnsorted);
-    segment.modelsPerformance.forEach(model => {
+    segment.data.forEach(model => {
       expect(model.density.length).toBe(2);
-      expect(model.density[0].length).toEqual(model.density[1].length);
+      // density[0]: counts; density[1]: binEdges. binEdges.length = counts.length + 1
+      expect(model.density[0].length + 1).toEqual(model.density[1].length);
     });
   });
 
@@ -201,9 +200,9 @@ test('selector: compute/getModelPerfHistogramsUnsorted, getModelPerfHistograms',
 
   result.forEach(segment => {
     expect(segment).toMatchObject(expOut);
-    segment.modelsPerformance.forEach(model => {
+    segment.data.forEach(model => {
       expect(model.density.length).toBe(2);
-      expect(model.density[0].length).toEqual(model.density[1].length);
+      expect(model.density[0].length + 1).toEqual(model.density[1].length);
     });
   });
 });

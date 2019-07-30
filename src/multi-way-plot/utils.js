@@ -1,24 +1,20 @@
-// @noflow
 import React from 'react';
-import {scaleBand, scaleLinear} from 'd3-scale';
+import {getPercentiles, getDensity, getNumDataPoints} from './selectors';
 
 /**
- * HOC function to check if feature meta is precomputed, if not, compute and inject result
+ * HOC function to compute derived data for multi-way-unit, multi-way-group, and multi-way-plot
  */
-export const withDerivedData = Chart => props => {
-  const {width, height, rawDataRange, segmentIds, padding} = props;
-  const innerWidth = width - padding.left - padding.right;
-  const innerHeight = height - padding.top - padding.bottom;
-
+export const withDerivedDataUnit = WrappedComponent => props => {
   const derivedData = {
-    xScale: scaleLinear()
-      .domain(rawDataRange)
-      .range([0, innerWidth]),
-    yScale: scaleBand()
-      .domain(segmentIds)
-      .range([innerHeight, 0])
-      .padding(0.1),
+    percentiles: getPercentiles(props),
+    density: getDensity(props),
   };
+  return <WrappedComponent {...props} {...derivedData} />;
+};
 
-  return <Chart {...props} {...derivedData} />;
+export const withDerivedDataGroup = WrappedComponent => props => {
+  const derivedData = {
+    numDataPoints: getNumDataPoints(props),
+  };
+  return <WrappedComponent {...props} {...derivedData} />;
 };

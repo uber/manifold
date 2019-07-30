@@ -1,39 +1,45 @@
 // @noflow
 import React, {PureComponent} from 'react';
+import PropTypes from 'prop-types';
 import ContainerDimensions from 'react-container-dimensions';
 import FeatureView from './feature-view';
+import {COLOR} from 'packages/mlvis-common/constants';
 
-const ITEM_HEIGHT = 64;
-const HEADER_HEIGHT = 16;
-const FOOTER_HEIGHT = 16;
-const LEFT_SIDER_WIDTH = 16;
-const RIGHT_SIDER_WIDTH = 16;
+import {ITEM_HEIGHT} from './constants';
 
 export default class FeatureListView extends PureComponent {
   static defaultProps = {
-    width: 0,
-    height: 0,
-    features: [],
+    data: [],
+    selectedInstances: [],
+    colors: [COLOR.GREEN, COLOR.PURPLE],
+  };
+
+  static propTypes = {
+    data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    colors: PropTypes.arrayOf(PropTypes.string),
+    selectedInstances: PropTypes.arrayOf(PropTypes.object),
   };
 
   _renderFeatureList = width => {
-    const {features} = this.props;
-    if (!features || features.length === 0) {
+    const {data, selectedInstances, colors} = this.props;
+    if (!data || data.length === 0) {
       return null;
     }
 
-    const featureList = features.map((feature, i) => {
+    const featureList = data.map((feature, i) => {
       const layout = {
         x: 0,
         y: ITEM_HEIGHT * i,
-        width: width - LEFT_SIDER_WIDTH - RIGHT_SIDER_WIDTH,
+        width,
         height: ITEM_HEIGHT,
       };
       return (
         <FeatureView
           key={i}
           id={`${feature.name}`}
-          feature={feature}
+          data={feature}
+          colors={colors}
+          selectedInstances={selectedInstances}
           {...layout}
         />
       );
@@ -41,10 +47,8 @@ export default class FeatureListView extends PureComponent {
 
     return (
       <svg
-        x={LEFT_SIDER_WIDTH}
-        y={HEADER_HEIGHT}
         width={width}
-        height={ITEM_HEIGHT * features.length + HEADER_HEIGHT + FOOTER_HEIGHT}
+        height={ITEM_HEIGHT * data.length}
         pointerEvents="none"
       >
         {featureList}

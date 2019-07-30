@@ -1,5 +1,6 @@
 // @noflow
 import React, {PureComponent} from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -20,6 +21,15 @@ export const Tab = styled.div`
 `;
 
 export class TabGroup extends PureComponent {
+  static defaultProps = {
+    /** An array of tab titles */
+    tabs: PropTypes.arrayOf(PropTypes.string),
+    /** Callback on tab change */
+    onTabChange: PropTypes.func,
+    /** Theme colorof the tab */
+    themeColor: PropTypes.string,
+  };
+
   static defaultProps = {
     tabs: [],
     onTabChange: () => {},

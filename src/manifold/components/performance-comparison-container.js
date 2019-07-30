@@ -3,7 +3,7 @@ import React, {PureComponent} from 'react';
 import ContainerDimensions from 'react-container-dimensions';
 import styled from 'styled-components';
 import {connect} from '../custom-connect';
-import {scaleOrdinal} from 'd3-scale';
+import {scaleBand, scaleLinear, scaleOrdinal} from 'd3-scale';
 import {schemeSet2 as colorScheme} from 'd3-scale-chromatic';
 
 import MultiWayPlot from 'packages/multi-way-plot/';
@@ -27,14 +27,22 @@ import {
 } from '../selectors/base';
 
 const PADDING = {
-  left: 5,
-  right: 5,
+  left: 2,
+  right: 2,
   top: 0,
-  bottom: 50,
+  bottom: 45,
+};
+const PADDING_THUMBNAIL = {
+  left: 8,
+  right: 8,
+  top: 0,
+  bottom: 2,
 };
 
-const LEGEND_HEIGHT = 20;
-const GROUPING_WIDTH = 16;
+const GET_YSCALE = () => scaleBand().padding(0.1);
+
+const LEGEND_HEIGHT = 30;
+const GROUPING_WIDTH = 20;
 
 const Container = styled.div`
   display: flex;
@@ -44,7 +52,7 @@ const Container = styled.div`
 `;
 
 const StyledLegend = styled(LegendGroup)`
-  margin-bottom: 50px;
+  margin-top: 10px;
 `;
 
 const Content = styled.div`
@@ -56,28 +64,25 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state, props) => {
-  const segmentIds = getRawSegmentIds(state);
   const modelIds = getModelIds(state);
-  const rawDataRange = getRawDataRange(state);
   const {segmentGroups} = getFeatureDistributionParams(state);
 
   return {
     data: getModels(state),
-    segmentIds,
-    modelIds,
-    rawDataRange,
+    segmentIds: getRawSegmentIds(state),
+
+    rawDataRange: getRawDataRange(state),
     densityRange: getDensityRange(state),
     modelMeta: getModelMeta(state),
     metric: getDisplayMetric(state),
     segmentGroups,
-
     colorScale: scaleOrdinal(colorScheme).domain(modelIds),
     selectedModels: getSelectedModels(state),
     segmentOrdering: getSegmentOrdering(state),
   };
 };
 
-class MultiModelComparisonContainer extends PureComponent {
+export class PerformanceComparisonContainer extends PureComponent {
   static propTypes = {};
 
   render() {
@@ -89,48 +94,52 @@ class MultiModelComparisonContainer extends PureComponent {
       rawDataRange,
       segmentOrdering,
       densityRange,
-      xScale,
-      yScale,
       colorScale,
       selectedModels,
       segmentGroups,
+      isThumbnail,
     } = this.props;
     if (!data) {
       return null;
     }
+    const padding = isThumbnail ? PADDING_THUMBNAIL : PADDING;
     return (
       <Container>
-        <StyledLegend
-          data={modelMeta}
-          colorScale={colorScale}
-          onModelSelect={this.props.updateSelectedModels}
-          selectedModels={selectedModels}
-        />
+        {!isThumbnail && (
+          <StyledLegend
+            data={modelMeta}
+            colorScale={colorScale}
+            onModelSelect={this.props.updateSelectedModels}
+            selectedModels={selectedModels}
+          />
+        )}
         <ContainerDimensions>
           {({width, height}) => (
             <Content>
               <MultiWayPlot
                 width={width - GROUPING_WIDTH}
-                height={height - LEGEND_HEIGHT}
-                segmentIds={segmentIds}
-                rawDataRange={rawDataRange}
-                padding={PADDING}
+                height={isThumbnail ? height : height - LEGEND_HEIGHT}
+                padding={padding}
                 data={data}
+                metaData={modelMeta}
                 ordering={segmentOrdering}
                 xLabel={metric}
-                xScale={xScale}
-                yScale={yScale}
+                getXScale={scaleLinear}
+                xDomain={rawDataRange}
+                getYScale={GET_YSCALE}
+                yDomain={segmentIds}
                 colorScale={colorScale}
-                yScaleGroupRange={densityRange}
-                selectedModels={selectedModels}
+                yRangeByGroup={densityRange}
+                isThumbnail={isThumbnail}
               />
               <SegmentGrouping
-                height={height - LEGEND_HEIGHT}
+                height={isThumbnail ? height : height - LEGEND_HEIGHT}
                 width={GROUPING_WIDTH}
+                getYScale={GET_YSCALE}
+                yDomain={segmentIds}
                 segmentGroups={segmentGroups}
-                rawDataRange={rawDataRange}
-                segmentIds={segmentIds}
-                padding={PADDING}
+                padding={padding}
+                isThumbnail={isThumbnail}
               />
             </Content>
           )}
@@ -143,4 +152,4 @@ class MultiModelComparisonContainer extends PureComponent {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(MultiModelComparisonContainer);
+)(PerformanceComparisonContainer);

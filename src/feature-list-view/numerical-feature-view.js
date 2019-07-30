@@ -1,29 +1,17 @@
 // @noflow
 import React, {PureComponent} from 'react';
 import {pointsToPolyline} from './utils';
-
-const HEADER_HEIGHT = 12;
-const FOOTER_HEIGHT = 18;
+import {CHART_PROP_TYPES, CHART_DEFAULT_PROPS} from './constants';
 
 class NumericalFeatureView extends PureComponent {
-  static defaultProps = {
-    id: 'default-numerical-feature-id',
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-    feature: null,
-  };
+  static propTypes = CHART_PROP_TYPES;
 
-  state = {
-    hoveredId: null,
-  };
-
-  _updateHoverId = id => this.setState({hoveredId: id});
+  static defaultProps = CHART_DEFAULT_PROPS;
 
   _renderPatternDefs = () => {
     const {
-      feature: {name, colors},
+      data: {name},
+      colors,
     } = this.props;
 
     const [colorT, colorC] = colors;
@@ -60,7 +48,8 @@ class NumericalFeatureView extends PureComponent {
   _renderFeatureDistribution = () => {
     const {width, height} = this.props;
     const {
-      feature: {name, distributionsNormalized, colors},
+      data: {name, distributionsNormalized},
+      colors,
     } = this.props;
 
     const [T, C] = distributionsNormalized;
@@ -69,13 +58,12 @@ class NumericalFeatureView extends PureComponent {
     // remove spaces in id
     const idName = name.replace(/\s+/g, '_');
     const dx = width / T.length;
-    const dy = height - HEADER_HEIGHT - FOOTER_HEIGHT;
 
-    const pointsT = pointsToPolyline(T, dx, dy);
-    const pointsC = pointsToPolyline(C, dx, dy);
+    const pointsT = pointsToPolyline(T, dx, height);
+    const pointsC = pointsToPolyline(C, dx, height);
 
     return (
-      <g transform={`translate(0, ${height - FOOTER_HEIGHT}) scale(1,-1)`}>
+      <g transform={`translate(0, ${height}) scale(1,-1)`}>
         <defs>
           <polygon id={`T-${idName}`} points={pointsT} />
           <polygon id={`C-${idName}`} points={pointsC} />
@@ -112,109 +100,15 @@ class NumericalFeatureView extends PureComponent {
     );
   };
 
-  _renderFeatureLabel = () => {
-    const {height} = this.props;
-    const {
-      feature: {name, divergence},
-    } = this.props;
-
+  render() {
+    const {x, y} = this.props;
     return (
-      <text
-        y={height - FOOTER_HEIGHT + 4}
-        fill="#AAA"
-        alignmentBaseline="hanging"
-      >
-        {`${Number.isFinite(divergence) ? divergence.toFixed(2) : ''} ${name}`}
-      </text>
-    );
-  };
-
-  _renderMasks = () => {
-    const {width, height} = this.props;
-    const {
-      feature: {domain},
-    } = this.props;
-
-    // domain.length = distributions[0].length + 1
-    const dx = width / (domain.length - 1);
-    const dy = height - HEADER_HEIGHT - FOOTER_HEIGHT;
-
-    const masks = Array.from(Array(domain.length - 1)).map((_, i) => {
-      return (
-        <rect
-          key={i}
-          x={dx * i}
-          width={dx}
-          height={dy}
-          onMouseOver={() => this._updateHoverId(i)}
-        />
-      );
-    });
-
-    return (
-      <g
-        id="masks"
-        fill="none"
-        transform={`translate(0, ${HEADER_HEIGHT})`}
-        onMouseOut={() => this._updateHoverId(null)}
-        pointerEvents="all"
-      >
-        {masks}
-      </g>
-    );
-  };
-
-  _renderMarkers = () => {
-    const {hoveredId} = this.state;
-    if (!hoveredId) {
-      return null;
-    }
-
-    const {width, height} = this.props;
-    const {
-      feature: {domain, distributions, distributionsNormalized, colors},
-    } = this.props;
-
-    const [colorT, colorC] = colors;
-    const [T, C] = distributionsNormalized;
-
-    const idx = Number(hoveredId);
-    const x0 = (width / domain.length - 1) * idx;
-    const dy = height - HEADER_HEIGHT - FOOTER_HEIGHT;
-    const yTreatment = (1 - T[idx]) * dy;
-    const yControl = (1 - C[idx]) * dy;
-
-    return (
-      <g id="markers" transform={`translate(${x0}, ${HEADER_HEIGHT})`}>
-        <circle cy={yTreatment} r={3} fill="#FFF" stroke={colorT} />
-        <circle cy={yControl} r={3} fill="#FFF" stroke={colorC} />
-        <text x={50} fill={colorC}>
-          {distributions[1][idx].toFixed(2)}
-        </text>
-        <text x={100} fill={colorT}>
-          {distributions[0][idx].toFixed(2)}
-        </text>
-        <text fill="#333">{domain[idx].toFixed(2)}</text>
-      </g>
-    );
-  };
-
-  render = () => {
-    const {x, y, width, height, feature} = this.props;
-    if (width <= 0 || height <= 0 || !feature) {
-      return null;
-    }
-
-    return (
-      <svg x={x} y={y} width={width} height={height}>
+      <g transform={`translate(${x}, ${y})`}>
         {this._renderPatternDefs()}
-        {this._renderFeatureLabel()}
         {this._renderFeatureDistribution()}
-        {this._renderMasks()}
-        {this._renderMarkers()}
-      </svg>
+      </g>
     );
-  };
+  }
 }
 
 export default NumericalFeatureView;
