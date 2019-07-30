@@ -1,4 +1,3 @@
-// @flow
 /* global module */
 const packageAliases = require('./alias.config')();
 
@@ -11,19 +10,26 @@ const aliasMapper = Object.keys(packageAliases).reduce((acc, key) => {
 }, {});
 
 module.exports = {
+  verbose: true,
   collectCoverage: true,
   collectCoverageFrom: ['packages/**/*.js'],
-  coverageDirectory: './coverage/',
+  coverageDirectory: './coverage',
   coveragePathIgnorePatterns: ['__fixtures__', 'stories'],
+  coverageReporters: ['cobertura', 'text', 'html'],
   moduleNameMapper: aliasMapper,
+  modulePathIgnorePatterns: ['/dist/'],
+  testMatch: ['**/*.(spec|test).js', '**/*-(spec|test).js', '**/test/*.js'],
   testPathIgnorePatterns: [
     '/node_modules/',
     '/dist/',
     'src/(?:.+?)/__tests__/',
+    '__fixtures__',
+    'stories',
     '.cache',
   ],
   // jest defaults to browser environment which raises errors in tfjs during testing
   // https://github.com/tensorflow/tfjs/issues/540#issuecomment-408716995
   testEnvironment: 'node',
-  transformIgnorePatterns: ['node_modules/(?!(gatsby)/)'],
+  transformIgnorePatterns: ['node_modules/(?!(gatsby|apache-arrow)/)'],
+  setupTestFrameworkScriptFile: './utils/setupTests.js',
 };

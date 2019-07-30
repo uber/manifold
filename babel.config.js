@@ -1,4 +1,3 @@
-// @flow
 /* global module */
 module.exports = {
   plugins: ['@babel/plugin-proposal-class-properties'],
@@ -8,6 +7,7 @@ module.exports = {
       '@babel/preset-env',
       {
         useBuiltIns: 'entry',
+        corejs: "3",
       },
     ],
     '@babel/preset-flow',

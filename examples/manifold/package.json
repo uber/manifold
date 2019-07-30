@@ -7,5 +7,12 @@
   "scripts": {
     "start": "webpack-dev-server --progress --hot --open",
     "start-local": "webpack-dev-server --env.local --progress --hot --open"
+  },
+  "dependencies": {
+    "react-dom": "^16.8.6",
+    "react-router": "^5.0.1",
+    "react-router-dom": "^5.0.1",
+    "react-router-redux": "^4.0.8",
+    "redux-thunk": "^2.3.0"
   }
 }
