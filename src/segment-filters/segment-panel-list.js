@@ -151,7 +151,7 @@ export default class SegmentPanelList extends PureComponent {
     );
   };
 
-  render = () => {
+  render() {
     const {attributes} = this.props;
     if (!attributes || !attributes.length) {
       return null;
@@ -163,5 +163,5 @@ export default class SegmentPanelList extends PureComponent {
         {this._renderFooter()}
       </SegmentPanelListContainer>
     );
-  };
+  }
 }

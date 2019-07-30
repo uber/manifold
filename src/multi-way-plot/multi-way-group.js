@@ -1,18 +1,23 @@
-// @noflow
 import React, {PureComponent} from 'react';
+import PropTypes from 'prop-types';
 import MultiWayUnit from './multi-way-unit';
+import {withDerivedDataGroup as withDerivedData} from './utils';
+import {
+  CHART_DEFAULT_PROPS,
+  CHART_PROP_TYPES,
+} from 'packages/mlvis-common/constants';
 
-export default class MultiWayGroup extends PureComponent {
-  static defaultProps = {
-    width: 0,
-    height: 0,
-    xScale: d => d,
-    yScale: d => d,
-    data: {},
+class MultiWayGroup extends PureComponent {
+  static propTypes = {
+    ...CHART_PROP_TYPES,
+    numDataPoints: PropTypes.number,
+    selectedIds: PropTypes.arrayOf(PropTypes.number),
   };
 
-  state = {
-    hoveredId: null,
+  static defaultProps = {
+    ...CHART_DEFAULT_PROPS,
+    numDataPoints: 0,
+    selectedIds: [],
   };
 
   _renderMultiWayUnit = () => {
@@ -23,34 +28,37 @@ export default class MultiWayGroup extends PureComponent {
       data,
       width,
       height,
-      selectedModels,
+      selectedIds,
     } = this.props;
-    const {modelsPerformance} = data;
     return (
       <g id="segment">
-        {modelsPerformance.map((m, i) => (
-          <MultiWayUnit
-            id={m.modelId}
-            key={i}
-            data={m}
-            xScale={xScale}
-            yScale={yScale}
-            colorScale={colorScale}
-            selectedModels={selectedModels}
-            width={width}
-            height={height}
-          />
-        ))}
+        {data.map((element, i) => {
+          // If element is an object, the component will think of it as pre-computed data (instead of raw data).
+          const elementObj = Array.isArray(element) ? {} : element;
+          return (
+            <MultiWayUnit
+              key={i}
+              id={i}
+              data={element}
+              xScale={xScale}
+              yScale={yScale}
+              colorScale={colorScale}
+              isSelected={
+                selectedIds.length === 0 || selectedIds.indexOf(i) > -1
+              }
+              width={width}
+              height={height}
+              // Pre-computed data will contain contents in derivedData, its keys can be direclty passed as props to children components.
+              {...elementObj}
+            />
+          );
+        })}
       </g>
     );
   };
 
   _renderLabel = () => {
-    const {
-      data: {numDataPoints},
-      width,
-      id,
-    } = this.props;
+    const {numDataPoints, width, id, isThumbnail} = this.props;
 
     return (
       <g id="patterns">
@@ -65,25 +73,44 @@ export default class MultiWayGroup extends PureComponent {
         />
         <text
           x={width}
-          dy={4}
-          fill="#AAA"
+          dy="1em"
+          fill="#000"
+          fontSize={isThumbnail ? '0.7em' : '1em'}
           textAnchor="end"
           alignmentBaseline="hanging"
         >
-          {`${id} (${numDataPoints} data points)`}
+          {`segment_${id}`}
         </text>
+
+        {!isThumbnail && (
+          <text
+            x={width}
+            dy="1em"
+            y="1.5em"
+            fill="#AAA"
+            textAnchor="end"
+            alignmentBaseline="hanging"
+          >
+            {`${numDataPoints} data points`}
+          </text>
+        )}
       </g>
     );
   };
 
-  render = () => {
-    const {y = 0} = this.props;
+  render() {
+    const {x, y} = this.props;
 
     return (
-      <g transform={`translate(0, ${y})`} style={{transition: '0.5s linear'}}>
+      <g
+        transform={`translate(${x}, ${y})`}
+        style={{transition: '0.5s linear'}}
+      >
         {this._renderMultiWayUnit()}
         {this._renderLabel()}
       </g>
     );
-  };
+  }
 }
+
+export default withDerivedData(MultiWayGroup);

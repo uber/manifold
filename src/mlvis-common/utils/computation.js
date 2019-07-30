@@ -25,11 +25,12 @@ export const computeFeatureMeta = (
   invalidPercentageThreshold = INVALID_PERCENTAGE_THRESHOLD
 ) => {
   const uniques = Array.from(new Set(data));
-  const hasNaN = uniques.some(isNaN);
+  const hasNaN = uniques.some(d => isNaN(d) || d === null);
   const isInvalid =
-    hasNaN &&
-    uniques.length > data.length * invalidPercentageThreshold &&
-    uniques.length > invalidCountThreshold;
+    uniques.length < 2 ||
+    (hasNaN &&
+      uniques.length > data.length * invalidPercentageThreshold &&
+      uniques.length > invalidCountThreshold);
 
   if (isInvalid) {
     return {
@@ -104,30 +105,34 @@ export function computeHistogram(data, bins) {
     if (dt.dtype === 'string') {
       return computeHistogramCat(data, bins);
     }
-    const minEdge = tf.min(dt).dataSync()[0];
-    const maxEdge = tf.max(dt).dataSync()[0];
+    const minVal = tf.min(dt).dataSync()[0];
+    const maxVal = tf.max(dt).dataSync()[0];
 
     // parse the overloaded bins argument
-    let nBins, binEdges;
+    let nBins, binEdges, firstEdge, lastEdge;
 
     if (Number.isInteger(bins)) {
       nBins = bins;
-      binEdges = tf.linspace(minEdge, maxEdge, nBins + 1);
+      binEdges = tf.linspace(minVal, maxVal, nBins + 1);
+      firstEdge = minVal;
+      lastEdge = maxVal;
     } else if (bins.length) {
       nBins = bins.length - 1;
       binEdges = tf.tensor1d(bins);
+      firstEdge = bins[0];
+      lastEdge = bins[bins.length - 1];
     } else {
       throw '`bins` must be a number or an array';
     }
 
     // histogram scaling factor
-    const norm = nBins / (maxEdge - minEdge);
+    const norm = nBins / (lastEdge - firstEdge);
 
     const indicesRaw = tf
-      .mul(tf.sub(dt, tf.scalar(minEdge)), tf.scalar(norm))
+      .mul(tf.sub(dt, tf.scalar(firstEdge)), tf.scalar(norm))
       .toInt();
 
-    // for values that lie exactly on maxEdge we need to subtract one
+    // for values that lie exactly on lastEdge we need to subtract one
     const indices = tf.sub(
       indicesRaw,
       tf.equal(indicesRaw, tf.scalar(nBins).toInt()).toInt()
@@ -138,6 +143,21 @@ export function computeHistogram(data, bins) {
 
     return [Array.from(hist.dataSync()), Array.from(binEdges.dataSync())];
   });
+}
+
+/**
+ * @param {Array} data - 1-D array of data points
+ * @param {Number|Array} bins - number of bins, or bin edges
+ * @return {Array<Array>} an array of 2 arrays:
+ * 0: density, histogram where each element is divided by the range of domain;
+ * 1: binEdges, an array of edge values (X values) of bins, length = hist.length + 1.
+ */
+export function computeDensity(data, bins) {
+  const [hist, binEdges] = computeHistogram(data, bins);
+  // prevent dividing by 0
+  const yScalingFactor =
+    binEdges.length < 2 ? 1 : 1 / (binEdges[binEdges.length - 1] - binEdges[0]);
+  return [hist.map(h => h * yScalingFactor), binEdges];
 }
 
 /**

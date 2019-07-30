@@ -1,7 +1,7 @@
 // @noflow
 
 // Reducers
-export * from './reducers';
+export {default as manifoldReducer} from './reducers';
 
 // Actions
 export * from './actions';

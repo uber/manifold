@@ -1,12 +1,8 @@
 // @noflow
 import {createAction} from 'redux-actions';
-import {
-  parsePromise,
-  loadData,
-  modelsPerformance,
-  featuresDistribution,
-} from '../io';
-import {validateInputData} from '../utils';
+import {parsePromise} from 'packages/mlvis-common/utils';
+import {loadData, modelsPerformance, featuresDistribution} from '../io';
+import {isDatasetIncomplete, validateInputData} from '../utils';
 
 // -- remote data source -- //
 export const FETCH_BACKEND_DATA_START = 'FETCH_BACKEND_DATA_START';
@@ -61,6 +57,22 @@ export const loadLocalData = ({
   // .catch(error => dispatch(loadLocalDataFailure(error)));
 };
 
+/**
+ * Use this loader when the data has already been loaded via a 3rd party loader
+ * @param {array} data, an array of objects loaded from e.g. .csv or .arrow files
+ * @param {function} dataTransformer, see `defaultInputDataTransformer` for its signature
+ * TODO: combine with the loadLocalData util above, make parsing logic optional.
+ */
+export const loadPrefetchedData = ({
+  data,
+  dataTransformer = defaultInputDataTransformer,
+}) => dispatch => {
+  dispatch(loadLocalDataStart());
+  const processedData = dataTransformer(data);
+  const validatedData = validateInputData(processedData);
+  dispatch(loadLocalDataSuccess(validatedData));
+};
+
 /*
  * default data transformer, transforming a list of parsed files to feature data and performance data,
  * to be inputted into Manifold
@@ -93,8 +105,36 @@ export const loadLocalData = ({
 const defaultInputDataTransformer = values => {
   return {
     x: values[0],
-    yTrue: values.slice(1, -2),
+    yTrue: values.slice(1, -1),
     yPred: values[values.length - 1],
+  };
+};
+
+/**
+ * Convenient wrapper around `loadLocalData`, taking `x`, `yPred`, `yTrue` as input.
+ * @param {Object} userData - {x: <file>, yPred: [<file>], yTrue: <file>}
+ */
+export const loadUserData = ({x, yPred, yTrue}) => {
+  if (isDatasetIncomplete({x, yPred, yTrue})) {
+    /* eslint-disable no-console */
+    console.error('Dataset is incomplete');
+    /* eslint-enable no-console */
+    return;
+  }
+  return loadLocalData({
+    fileList: [x, ...yPred, yTrue],
+    dataTransformer: userDataTransformer,
+  });
+};
+
+const userDataTransformer = fileList => {
+  const dataList = fileList.map(v => v.data);
+  // todo: yTrue should accept object as values as well
+  const yTrue = dataList[dataList.length - 1].map(d => Object.values(d)[0]);
+  return {
+    x: dataList[0],
+    yPred: dataList.slice(1, -1),
+    yTrue,
   };
 };
 

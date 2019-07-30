@@ -81,6 +81,11 @@ export const getSelectedModels = createSelector(
   state => state.selectedModelMap
 );
 
+export const getSelectedInstances = createSelector(
+  rootSelector,
+  state => state.selectedInstances
+);
+
 export const getRawSegmentIds = createSelector(
   rootSelector,
   (state = {}) => {
@@ -108,7 +113,7 @@ export const getIsManualSegmentation = createSelector(
   (state = {}) => state.isManualSegmentation
 );
 
-const getPresetFeatureTypes = createSelector(
+export const getPresetFeatureTypes = createSelector(
   rootSelector,
   state => state.featureTypes
 );

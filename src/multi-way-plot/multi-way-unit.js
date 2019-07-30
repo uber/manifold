@@ -1,36 +1,37 @@
 // @noflow
 import React, {PureComponent} from 'react';
-import {Array} from 'global';
+import PropTypes from 'prop-types';
 import {area} from 'd3-shape';
+import {dotRange} from 'packages/mlvis-common/utils';
+import {withDerivedDataUnit as withDerivedData} from './utils';
 
-export default class MultiWayUnit extends PureComponent {
-  static defaultProps = {
-    width: 0,
-    height: 0,
-    xScale: d => d,
-    yScale: d => d,
-    data: {},
+import {
+  CHART_DEFAULT_PROPS,
+  CHART_PROP_TYPES,
+} from 'packages/mlvis-common/constants';
+
+class MultiWayUnit extends PureComponent {
+  static propTypes = {
+    ...CHART_PROP_TYPES,
+    density: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
+    percentiles: PropTypes.arrayOf(PropTypes.number),
+    isSelected: PropTypes.bool,
   };
 
-  state = {
-    hoveredId: null,
+  static defaultProps = {
+    ...CHART_DEFAULT_PROPS,
+    isSelected: true,
   };
 
   _renderDistribution = () => {
-    const {
-      id,
-      data: {density},
-      xScale,
-      yScale,
-      colorScale,
-      selectedModels,
-    } = this.props;
+    const {id, density, xScale, yScale, colorScale, isSelected} = this.props;
+    const [values, domain] = density;
 
     const areaFunc = area()
-      .x(i => xScale(density[0][i]))
-      .y0(i => yScale(density[1][i]))
-      .y1(i => -1 * yScale(density[1][i]));
-    const arrRange = Array.from(Array(density[0].length).keys());
+      .x(i => xScale(domain[i]))
+      .y0(i => yScale(values[i]))
+      .y1(i => -1 * yScale(values[i]));
+    const arrRange = dotRange(values.length);
 
     return (
       <g transform={`translate(0, 0) scale(1,-1)`}>
@@ -38,7 +39,7 @@ export default class MultiWayUnit extends PureComponent {
           d={areaFunc(arrRange)}
           stroke={colorScale(id)}
           strokeWidth={2}
-          strokeOpacity={selectedModels[id] ? 1 : 0.5}
+          strokeOpacity={isSelected ? 1 : 0}
           fillOpacity={0}
         />
       </g>
@@ -46,13 +47,7 @@ export default class MultiWayUnit extends PureComponent {
   };
 
   _renderSummary = () => {
-    const {
-      id,
-      xScale,
-      data: {percentiles},
-      colorScale,
-      selectedModels,
-    } = this.props;
+    const {id, xScale, percentiles, colorScale, isSelected} = this.props;
 
     return (
       <g id="summary" fill="none" pointerEvents="all">
@@ -63,7 +58,7 @@ export default class MultiWayUnit extends PureComponent {
           width={xScale(percentiles[4]) - xScale(percentiles[2])}
           height={2}
           fill={colorScale(id)}
-          fillOpacity={selectedModels[id] ? 1 : 0.5}
+          fillOpacity={isSelected ? 1 : 0}
         />
         <rect
           key={1}
@@ -72,27 +67,26 @@ export default class MultiWayUnit extends PureComponent {
           width={2}
           height={10}
           fill={colorScale(id)}
-          fillOpacity={selectedModels[id] ? 1 : 0.5}
+          fillOpacity={isSelected ? 1 : 0}
         />
       </g>
     );
   };
 
-  render = () => {
-    const {
-      width,
-      height,
-      data: {percentiles, density},
-    } = this.props;
-    if (width <= 0 || height <= 0 || !percentiles || !density) {
+  render() {
+    const {x, y, percentiles, density} = this.props;
+
+    if (!percentiles || !density) {
       return null;
     }
 
     return (
-      <g>
+      <g transform={`translate(${x}, ${y})`}>
         {this._renderDistribution()}
         {this._renderSummary()}
       </g>
     );
-  };
+  }
 }
+
+export default withDerivedData(MultiWayUnit);

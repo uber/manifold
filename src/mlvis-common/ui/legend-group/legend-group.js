@@ -11,20 +11,22 @@ const Container = styled.div`
 
 export default class LegendGroup extends PureComponent {
   static propTypes = {
-    width: PropTypes.number,
-    height: PropTypes.number,
+    /** Array of legend objects {id, name} */
     data: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.string,
+        id: PropTypes.number,
         name: PropTypes.string,
       })
     ),
+    /** Color scale function */
+    colorScale: PropTypes.func.isRequired,
+    /** Callback on model selected */
+    onModelSelect: PropTypes.func,
   };
 
   static defaultProps = {
-    width: 0,
-    height: 0,
     data: [],
+    onModelSelect: () => {},
   };
 
   constructor(props) {
@@ -37,15 +39,16 @@ export default class LegendGroup extends PureComponent {
   }
 
   render() {
-    const {colorScale, data, onModelSelect, selectedModels} = this.props;
+    const {colorScale, data, onModelSelect, className} = this.props;
+
     return (
-      <Container>
+      <Container className={className}>
         {data.map(({id, name}, i) => (
           <LegendItem
             key={id}
             text={name}
             color={colorScale(id)}
-            selected={selectedModels[id]}
+            selected={this.state.selectedModels[id]}
             onModelClick={() => onModelSelect(id)}
           />
         ))}

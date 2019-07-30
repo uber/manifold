@@ -1,5 +1,6 @@
-// @noflow
 import {handleActions} from 'redux-actions';
+import reduceReducers from 'reduce-reducers';
+import keplerGlReducer from 'kepler.gl/reducers';
 import {
   UPDATE_DIVERGENCE_THRESHOLD,
   FETCH_BACKEND_DATA_START,
@@ -12,6 +13,7 @@ import {
   LOAD_LOCAL_DATA_SUCCESS,
   LOAD_LOCAL_DATA_FAILURE,
   UPDATE_FEATURE_TYPES,
+  UPDATE_SELECTED_INSTANCES,
   UPDATE_SELECTED_MODELS,
   UPDATE_N_CLUSTERS,
   UPDATE_METRIC,
@@ -21,7 +23,7 @@ import {
   UPDATE_SEGMENT_GROUPS,
 } from './actions';
 import {DEFAULT_FEATURE_TYPES} from './constants';
-import {getDefaultSegmentGroups} from './utils';
+import {getDefaultSegmentGroups, registerExternalReducers} from './utils';
 
 export const DEFAULT_STATE = {
   // TODO: these are fields used with Python backend. Consider consolidate/remove
@@ -38,6 +40,7 @@ export const DEFAULT_STATE = {
   isDataLoadingError: null,
 
   featureTypes: DEFAULT_FEATURE_TYPES,
+  selectedInstances: [],
   divergenceThreshold: 0,
   selectedModelMap: {},
 
@@ -46,7 +49,12 @@ export const DEFAULT_STATE = {
   metric: 'performance',
   segmentFilters: undefined,
   baseModels: [],
-  segmentGroups: [[3], [0, 1, 2]],
+  segmentGroups: [[2, 3], [0, 1]],
+  // TODO change to segmentationMode: [K-Means, Manual-Performance, Manual-Feature]
+  isManualSegmentation: false,
+
+  // external states
+  keplerGl: {},
 };
 
 // -- remote data source -- //
@@ -97,7 +105,6 @@ const handleFetchFeaturesSuccess = (state, {payload}) => ({
   features: payload,
   isFeaturesDistributionLoading: false,
 });
-// -- remote data source -- //
 
 // -- local data source -- //
 const handleLoadLocalDataStart = (state, {payload}) => ({
@@ -132,7 +139,12 @@ export const handleUpdateFeatureTypes = (state, {payload}) => {
     },
   };
 };
-// -- local data source -- //
+
+// -- UI actions -- //
+const handleUpdateSelectedInstances = (state, {payload}) => ({
+  ...state,
+  selectedInstances: payload.map(d => d.object),
+});
 
 const handleUpdateSelectModels = (state, {payload}) => ({
   ...state,
@@ -184,7 +196,7 @@ const handleUpdateSegmentGroups = (state, {payload}) => {
   };
 };
 
-export default handleActions(
+const manifoldReducer = handleActions(
   {
     [FETCH_MODELS_START]: handleFetchModelsStart,
     [FETCH_MODELS_SUCCESS]: handleFetchModelsSuccess,
@@ -196,6 +208,7 @@ export default handleActions(
     [LOAD_LOCAL_DATA_SUCCESS]: handleLoadLocalDataSuccess,
     [LOAD_LOCAL_DATA_FAILURE]: handleLoadLocalDataFailure,
     [UPDATE_FEATURE_TYPES]: handleUpdateFeatureTypes,
+    [UPDATE_SELECTED_INSTANCES]: handleUpdateSelectedInstances,
     [UPDATE_DIVERGENCE_THRESHOLD]: handleUpdateDivergenceThreshold,
     [UPDATE_SELECTED_MODELS]: handleUpdateSelectModels,
     [UPDATE_N_CLUSTERS]: handleUpdateNClusters,
@@ -207,3 +220,27 @@ export default handleActions(
   },
   DEFAULT_STATE
 );
+
+/*
+Mount keplerGl state as a sub state within manifold state
+final redux state:
+{
+  app: ...
+  manifold: {
+    ... // other manifold states
+    keplerGl: ...
+  }
+}
+Reference: https://github.com/keplergl/kepler.gl/blob/master/docs/api-reference/reducers/reducers.md
+*/
+
+const externalreducers = registerExternalReducers({
+  keplerGl: keplerGlReducer.initialState({
+    uiState: {
+      readOnly: true,
+      currentModal: null,
+    },
+  }),
+});
+
+export default reduceReducers(DEFAULT_STATE, manifoldReducer, externalreducers);

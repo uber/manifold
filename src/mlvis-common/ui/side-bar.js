@@ -1,7 +1,8 @@
 // @noflow
 import React, {PureComponent} from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {Cancel} from './icons';
+import {Cancel} from '../icons';
 
 const Container = styled.div`
   transition: 0.5s;
@@ -13,6 +14,11 @@ const Container = styled.div`
   flex-direction: column;
   align-items: stretch;
   position: relative;
+  div {
+    opacity: ${props => (props.isOpen ? 1 : 0)};
+    transition: 0.5s;
+    transition-delay: 0.5s;
+  }
 `;
 
 const StyledIcon = styled.div``;
@@ -29,6 +35,21 @@ const IconButton = styled.div`
 `;
 
 export default class SideBar extends PureComponent {
+  static propTypes = {
+    /** True if the side bar is open. */
+    isOpen: PropTypes.bool,
+    /** Width of the side bar. */
+    width: PropTypes.number,
+    /** Callback on toggle open the side bar. */
+    onToggleOpen: PropTypes.func,
+  };
+
+  static defaultProps = {
+    isOpen: false,
+    width: 300,
+    onToggleOpen: () => {},
+  };
+
   _onClose = () => {
     this.props.onToggleOpen(false);
   };
@@ -45,9 +66,3 @@ export default class SideBar extends PureComponent {
     );
   }
 }
-
-SideBar.defaultProps = {
-  isOpen: false,
-  width: 300,
-  onToggleOpen: () => {},
-};

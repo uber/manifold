@@ -6,15 +6,9 @@ import styled from 'styled-components';
 import FileUploader from './file-uploader';
 import Manifold from 'packages/manifold';
 // todo: temp
-// import {updateFeatureTypes} from 'packages/manifold/actions';
+import {loadUserData} from 'packages/manifold/actions';
 // import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
-import {loadUserData} from './actions';
-
-// NOTE: this only works locally with the alias
-// packages/manifold/style.scss => /packages/manifold/src/style.scss
-// in production, we probably should change to packages/manifold/dist/style.css
-import 'packages/manifold/style.scss';
-// import 'mapbox-gl/dist/mapbox-gl.css';
+// import {loadMAData} from './actions';
 
 const Container = styled.div`
   position: absolute;

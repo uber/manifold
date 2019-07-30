@@ -81,7 +81,7 @@ export default class SegmentFilterDistribution extends PureComponent {
     return <g transform={`translate(0, ${height}) scale(1,-1)`}>{rects}</g>;
   };
 
-  render = () => {
+  render() {
     const {width, height} = this.props;
     if (width <= 0 || height <= 0) {
       return null;
@@ -92,5 +92,5 @@ export default class SegmentFilterDistribution extends PureComponent {
         {this._renderDistribution()}
       </svg>
     );
-  };
+  }
 }

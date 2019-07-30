@@ -1,9 +1,10 @@
 // @noflow
 import React, {PureComponent} from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {hexToRGB} from './utils';
 import {Tab, TabGroup} from './tabs';
-import {Question, Idea, Split} from './icons';
+import {Question, Split} from '../icons';
 
 const Container = styled.div`
   width: 100%
@@ -36,13 +37,25 @@ const ButtonGroup = styled.div`
 `;
 
 export default class Headline extends PureComponent {
+  static propTypes = {
+    /** A set of tab title */
+    headers: PropTypes.arrayOf(PropTypes.string),
+    /** Theme color of the tab */
+    themeColor: PropTypes.string,
+    /** Enable to show help icon */
+    showHelp: PropTypes.bool,
+    /** Callback on tab changes */
+    onTabChange: PropTypes.func,
+    /** Callback on toggling help icon */
+    onClickHelp: PropTypes.func,
+  };
+
   static defaultProps = {
     headers: [],
+    themeColor: '#000',
     showHelp: false,
-    showInsight: false,
     onTabChange: () => {},
-    onToggleHelp: () => {},
-    onToggleInsight: () => {},
+    onClickHelp: () => {},
   };
 
   render() {
@@ -52,10 +65,8 @@ export default class Headline extends PureComponent {
       themeColor,
       isCoordinated,
       showHelp,
-      showInsight,
       onClickSplit,
       onClickHelp,
-      onClickInsight,
     } = this.props;
 
     const content =
@@ -94,18 +105,6 @@ export default class Headline extends PureComponent {
               height={32}
               width={32}
               color={showHelp ? themeColor : '#999'}
-            />
-          </IconButton>
-          <IconButton
-            onClick={onClickInsight}
-            isActive={showInsight}
-            themeColor={themeColor}
-          >
-            <StyledIcon
-              as={Idea}
-              height="18"
-              width="18"
-              color={showInsight ? themeColor : '#999'}
             />
           </IconButton>
         </ButtonGroup>

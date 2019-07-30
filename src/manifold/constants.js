@@ -1,7 +1,12 @@
 // @noflow
 import {FEATURE_TYPE, FILTER_TYPE} from 'packages/mlvis-common/constants';
-
 export {FEATURE_TYPE, FILTER_TYPE};
+
+export const COLORS = {
+  PINK: '#D64A62',
+  BLUE: '#528AD0',
+  // TODO add more if we need more than two segment groups
+};
 
 // urls for sample data
 export const SAMPLE_DATA_S3 = {
@@ -48,15 +53,9 @@ export const VIEW_NAME = {
   FEATURE: 'Feature attribution',
 };
 
-export const HINTS = {
-  PERF: {
-    HELP: 'PERF_HELP',
-    INSIGHT: 'PERF_INSIGHT',
-  },
-  FEATURE: {
-    HELP: 'FEATURE_HELP',
-    INSIGHT: 'FEATURE_INSIGHT',
-  },
+export const HELP_TYPE = {
+  PERF: 'PERF',
+  FEATURE: 'FEATURE',
 };
 
 export const CONTROL_MARGIN = 20;
