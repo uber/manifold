@@ -1,4 +1,5 @@
 import Jupyter from "base/js/namespace";
+import { window } from "global";
 
 export default function() {
   window.addEventListener("error", event => {

@@ -11,7 +11,9 @@
     "build": "webpack",
     "watch": "webpack --watch"
   },
-  "dependencies": {},
+  "dependencies": {
+    "global": "^4.4.0"
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.23.1",
