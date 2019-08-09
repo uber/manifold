@@ -11,7 +11,7 @@ module.exports = {
   },
   devtool: "source-maps",
   output: {
-    path: resolve("../mlvis/static"),
+    path: resolve("dist"),
     filename: "index.js",
     libraryTarget: "umd"
   },
@@ -22,7 +22,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        loader: [`babel-loader?${JSON.stringify(settings)}`],
+        loader: "babel-loader",
         exclude: [/node_modules/]
       },
       {

@@ -1,8 +1,16 @@
 {
   "name": "jupyter-utils",
+  "description": "jupyter utils",
   "version": "0.0.1",
   "main": "index.js",
-  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/manifold/src/jupyter-utils"
+  },
+  "scripts": {
+    "build": "webpack",
+    "watch": "webpack --watch"
+  },
   "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -31,5 +39,10 @@
     "prettier-eslint": "^8.8.0",
     "style-loader": "^0.19.1",
     "webpack": "^3.10.0"
+  },
+  "engines": {
+    "node": ">=8.9.4 <9.0.0",
+    "npm": ">=5.6.0",
+    "yarn": ">=1.9.4"
   }
 }

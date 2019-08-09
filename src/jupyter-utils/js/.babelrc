@@ -1,6 +1,5 @@
 {
   "plugins": [
-    "transform-decorators-legacy",
     "transform-async-to-generator",
     "transform-es2015-parameters",
     "dynamic-import-webpack",
