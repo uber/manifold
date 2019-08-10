@@ -1,84 +1,7 @@
-// @noflow
 import {Array} from 'global';
-import {FILTER_TYPE} from './constants';
-import * as tf from '@tensorflow/tfjs-core';
-import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
-
-/**
- * @param {Object} userData - {x: <file>, yPred: [<file>], yTrue: file}
- */
-export function isDatasetIncomplete(userData) {
-  const {x, yPred, yTrue} = userData;
-  if (!x || !yPred || !yTrue || !yPred.length) {
-    return true;
-  }
-  return false;
-}
-
-export function validateInputData(data) {
-  const inputKeys = ['x', 'yTrue', 'yPred'];
-  if (
-    typeof data !== 'object' ||
-    inputKeys.some(key => Object.keys(data).indexOf(key) < 0)
-  ) {
-    throw new Error(
-      'Input data must contain these keys: `x`, `yTrue`, `yPred`.'
-    );
-  }
-  const {x, yTrue, yPred} = data;
-  if (!x || !yTrue || !yPred || !x.length || !yTrue.length || !yPred.length) {
-    throw new Error(
-      'One or more required fields (`x`, `yTrue`, `yPred`) in input data is empty.'
-    );
-  }
-  const nInstances = x.length;
-  if (yTrue.length !== nInstances || yPred.some(y => y.length !== nInstances)) {
-    throw new Error(
-      'Number of data instances in `x`, `yTrue` and `yPred` are not consistant. ' +
-        'Check the shape of your input data.'
-    );
-  }
-  const predInstance0 = yPred[0][0];
-  if (typeof predInstance0 !== 'object') {
-    throw new Error(
-      '`yPred` must be an array of array of objects. ' +
-        'Check the shape of your input data.'
-    );
-  }
-  const predObjKeys = Object.keys(predInstance0);
-
-  yPred.forEach((predArr, i) => {
-    predArr.forEach((predEle, j) => {
-      if (Object.keys(predEle).some(key => predObjKeys.indexOf(key) < 0)) {
-        throw new Error(
-          `yPred[${i}][${j}] has a different shape than other element in yPred.
-          Check your input data.`
-        );
-      }
-    });
-  });
-
-  yTrue.forEach((trueEle, i) => {
-    // regression
-    if (predObjKeys.length === 1) {
-      if (typeof yTrue[i] !== 'number') {
-        throw new Error(
-          `yTrue[${i}] has wrong data type. Check your input data.`
-        );
-      }
-    }
-    // classification
-    else {
-      if (predObjKeys.indexOf(trueEle) < 0) {
-        throw new Error(
-          `Class label at yTrue[${i}] is not found in corresbonding yPred.
-            Check your input data.`
-        );
-      }
-    }
-  });
-  return data;
-}
+import {FILTER_TYPE} from '../constants';
+import {FEATURE_TYPE, LAT_LNG_PAIRS} from 'packages/mlvis-common/constants';
+import assert from 'assert';
 
 export const computeWidthLadder = (widths, margin) => {
   const result = [];
@@ -88,82 +11,6 @@ export const computeWidthLadder = (widths, margin) => {
     result.push(lastWidth);
   });
   return result;
-};
-
-/**
- * @param {Array} targets - 1-D array of targets
- * @param {Array} predictions - 2-D array of predictions
- * @param {Array} labels - array of class labels
- * @param {Number} eps - small number to prevent Infinity
- * @return 1-D array of errors
- */
-export const logLoss = (
-  targets = [],
-  predictions = [],
-  labels = [],
-  eps = 1e-15
-) => {
-  if (!targets.length || !predictions.length || !labels.length) {
-    return;
-  }
-  return tf.tidy(() => {
-    const targetOneHot = tf.oneHot(
-      tf.tensor1d(
-        targets.map(target => labels.indexOf(String(target))),
-        'int32'
-      ),
-      labels.length
-    );
-    return tf
-      .sub(
-        tf.scalar(0),
-        tf.sum(
-          tf.mul(
-            tf.cast(targetOneHot, 'float32'),
-            tf.log(tf.clipByValue(tf.tensor2d(predictions), eps, 1 - eps))
-          ),
-          1
-        )
-      )
-      .dataSync();
-  });
-};
-
-/**
- * @param {Array} targets - 1-D array of targets
- * @param {Array} predictions - 2-D array of predictions (second dimension size is 1)
- * @return 1-D array of errors
- */
-export const absoluteError = (targets = [], predictions = []) => {
-  if (!targets.length || !predictions.length) {
-    return;
-  }
-  return tf.tidy(() =>
-    tf
-      .abs(tf.sub(tf.tensor1d(targets), tf.squeeze(tf.tensor2d(predictions))))
-      .dataSync()
-  );
-};
-
-/**
- * @param {Array} targets - 1-D array of targets
- * @param {Array} predictions - 2-D array of predictions (second dimension size is 1)
- * @return 1-D array of errors
- */
-export const squaredLogError = (targets = [], predictions = []) => {
-  if (!targets.length || !predictions.length) {
-    return;
-  }
-  return tf.tidy(() =>
-    tf
-      .square(
-        tf.sub(
-          tf.log1p(tf.tensor1d(targets)),
-          tf.log1p(tf.squeeze(tf.tensor2d(predictions)))
-        )
-      )
-      .dataSync()
-  );
 };
 
 export function getDefaultSegmentGroups(nClusters) {
@@ -198,9 +45,11 @@ export function isValidSegmentGroups(segmentGroups, nSegments) {
 
 /**
  * filter data items w/ a set of filters
- * @param  {[object]} data    [an array of data items]
- * @param  {[object]} filters [an array of filters w/ attributes: {type, key, value}]
- * @return {[Number]}         [an array of data ids suffice all the filters]
+ * @param  {Array<Array<Number|String|Boolean>>>} data an array of data rows
+ * @param  {Array<Object>} filters an array of filters w/ attributes: {name, type, key, value}
+ * @param  {String} filters.type filter type, one of FILTER_TYPE
+ * @param  {Number} filters.key feature.tableFieldIndex of the feature to be filtered on
+ * @return {Array<Number>} an array of data ids suffice all the filters
  */
 export const filterData = (data, filters) => {
   if (!data || data.length === 0) {
@@ -213,7 +62,11 @@ export const filterData = (data, filters) => {
   const idArray = Array.from(Array(data.length).keys());
 
   return idArray.filter(id => {
-    return filterArray.every(({type, key, value}) => {
+    return filterArray.every(({type, key, name, value}) => {
+      assert(
+        data[id][key] !== undefined,
+        `key ${key} ("${name}") doesn't exist in data point ${id}`
+      );
       switch (type) {
         case FILTER_TYPE.RANGE:
           return data[id][key] >= value[0] && data[id][key] <= value[1];
@@ -288,7 +141,7 @@ export const updateSegmentGroups = (groups, groupId, segmentId) => {
 /**
  * determin whether segment filters values are valid
  * @param  {array} filterVals `value` field of each segmentFilter
- * @param  {object} segmentationFeatureMeta feature to segment on, attributes: {name, type, domain}]
+ * @param  {object} segmentationFeatureMeta feature to segment on, attributes: {name, type, tableFieldIndex, domain}]
  * @return {boolean}
  */
 export const isValidFilterVals = (filterVals, segmentationFeatureMeta) => {
@@ -333,22 +186,22 @@ export const isValidFilterVals = (filterVals, segmentationFeatureMeta) => {
 /**
  * determin whether segment filters values are valid
  * @param  {array} filterVals - `value` field of each segmentFilter
- * @param  {[array]} featureMeta - feature to segment on, attributes: {name, type, domain}]
- * @return {[[object]]} - array of array of filters, attributes: {key, type, value}]
+ * @param  {[array]} featureMeta - feature to segment on, attributes: {name, type, tableFieldIndex, domain}]
+ * @return {[[object]]} - array of array of filters, attributes: {name, key, type, value}]
  */
 export const getSegmentFiltersFromValues = (filterVals, featureMeta) => {
-  const {name, type} = featureMeta;
+  const {name, tableFieldIndex, type} = featureMeta;
   const filterType =
     type === FEATURE_TYPE.CATEGORICAL ? FILTER_TYPE.INCLUDE : FILTER_TYPE.RANGE;
   return filterVals.map(filterVal => [
-    {key: name, type: filterType, value: filterVal},
+    {name, key: tableFieldIndex - 1, type: filterType, value: filterVal},
   ]);
 };
 
 /**
  * determin whether segment filters values are valid
- * @param  {[[object]]} segmentFilters - of array of filters, attributes: {key, type, value}]
- * @param  {[array]} featureMeta - feature to segment on, attributes: {name, type, domain}]
+ * @param  {[[object]]} segmentFilters - of array of filters, attributes: {name, key, type, value}]
+ * @param  {[array]} featureMeta - feature to segment on, attributes: {name, tableFieldIndex, type, domain}]
  * @return {array} - filterVals `value` field of each segmentFilter
  */
 export const getFilterValsFromProps = (segmentFilters, featureMeta) => {
@@ -403,3 +256,111 @@ export const registerExternalReducers = reducers => {
     return hasChanged ? {...state, ...nextState} : state;
   };
 };
+
+/**
+ * merge objects from with the same `joinField`, rename duplicated fields
+ * @param {Array<Array<Object>>} arrays
+ * @param {String} joinField field to hold consistant among joined objects
+ * @param {Array<Object>} rename array of mapping from original key to new key
+ * @returns {Array<Object>} joined array of objects
+ * @example
+ * const arrays = [
+ *   [{name: 'alice', score: 99}, {name: 'bob', score: 80}],
+ *   [{name: 'alice', score: 'A'}, {name: 'bob', score: 'B'}]
+ * ];
+ * const rename = [{}, {score: 'gradeScore'}];
+ * const zippped = zipObjects(arrays, 'name', rename);
+ * // zipped = [{name: 'alice', score: 99, gradeScore: 'A'}, {name: 'bob', score: 80, gradeScore: 'B'}]
+ */
+export function zipObjects(arrays, joinField, rename) {
+  if (!arrays.length) {
+    return [];
+  }
+  return arrays[0].map((sampleObj, i) => {
+    const renamedObjs = arrays
+      .map(arr => arr[i])
+      .map((obj, j) => {
+        // make sure joinField is matched for each object in each sub-array
+        assert(sampleObj[joinField] === obj[joinField]);
+        return Object.keys(obj).reduce((acc, key) => {
+          const renamedKey = rename[j][key] || key;
+          acc[renamedKey] = obj[key];
+          return acc;
+        }, {});
+      });
+    // todo: assert there are no duplicated keys
+    return Object.assign.apply(null, renamedObjs);
+  });
+}
+
+/*
+ * Only retain a field in `data` if it first appears in `fields`
+ * @example
+ * // returns [{'field1': 1, 'field2': 2}]
+ * selectFields(['field1', 'field2'], [{'field1': 1, 'field2': 2, 'field3': 3}]);
+ * @param: {String[]} fields
+ * @param: {Object[]} data
+ * @param: {Function} transformer of field name into target object field name
+ * @return: {Object[]} a list of data, fields or each item are filtered based on `fields`
+ */
+export function selectFields(fields, data) {
+  return data.map(dataPoint =>
+    fields.reduce((acc, field) => {
+      acc[field] = dataPoint[field];
+      return acc;
+    }, {})
+  );
+}
+
+export function removeSuffixAndDelimiters(layerName, suffix) {
+  return layerName
+    .replace(new RegExp(suffix, 'ig'), '')
+    .replace(/[_,.]+/g, ' ')
+    .trim();
+}
+
+/**
+ * Find point fields pairs from fields
+ *
+ * @param {Array} fields column fields, contain {name, tableIndex, type, dataType}
+ * @returns {Array} fields grouped by lat-lng
+ */
+export function groupLatLngPairs(fields) {
+  const allNames = fields.map(f => f.name.toLowerCase());
+
+  return allNames.reduce((acc, fieldName, idx) => {
+    // if not part of a pair, use the field as is
+    if (
+      LAT_LNG_PAIRS.reduce((acc, arr) => acc.concat(arr), []).every(
+        suffix => !fieldName.endsWith(suffix)
+      )
+    ) {
+      acc.push(fields[idx]);
+    } else {
+      for (const suffixPair of LAT_LNG_PAIRS) {
+        // match first suffix```
+        if (fieldName.endsWith(suffixPair[0])) {
+          // match second suffix
+          const otherPattern = new RegExp(`${suffixPair[0]}$`);
+          const partner = fieldName.replace(otherPattern, suffixPair[1]);
+
+          const partnerIdx = allNames.findIndex(d => d === partner);
+          if (partnerIdx > -1) {
+            const featureName = removeSuffixAndDelimiters(
+              fieldName,
+              suffixPair[0]
+            );
+
+            // if it is part of a lat-lng pair, group by common name
+            acc.push({
+              name: featureName,
+              pair: [fields[idx], fields[partnerIdx]],
+            });
+            return acc;
+          }
+        }
+      }
+    }
+    return acc;
+  }, []);
+}

@@ -14,7 +14,6 @@ import {StyledControlContainer} from './styled-components';
 import {Headline, HelpDialog} from 'packages/mlvis-common/ui';
 import PerfroamnceComparisonControlContainer from './performance-comparison-control-container';
 import FeatureAttributionControlContainer from './feature-attribution-control-container';
-import FiltersContainer from './filters-container';
 import PerformanceComparisonContainer from './performance-comparison-container';
 import FeatureAttributionContainer from './feature-attribution-container';
 import {HELP_PAGES} from './help-pages';
@@ -223,7 +222,6 @@ class Manifold extends PureComponent {
               flexDirection={showBoth ? 'row' : 'column'}
               selector={selector}
             />
-            <FiltersContainer selector={selector} />
           </Panel>
           <Panel key="control2" gridArea="control2" isShown={showBoth}>
             <StyledControlContainer

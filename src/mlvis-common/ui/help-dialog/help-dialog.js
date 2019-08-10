@@ -7,7 +7,7 @@ import {StepProgress} from './step-progress';
 const Modal = styled.div`
   display: ${props => (props.isOpen ? 'block' : 'none')};
   position: fixed;
-  z-index: 1;
+  z-index: 5000;
   left: 0;
   top: 0;
   width: 100%;

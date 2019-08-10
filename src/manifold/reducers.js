@@ -1,6 +1,6 @@
 import {handleActions} from 'redux-actions';
 import reduceReducers from 'reduce-reducers';
-import keplerGlReducer from 'kepler.gl/reducers';
+import keplerGlReducer, {combinedUpdaters} from 'kepler.gl/reducers';
 import {
   UPDATE_DIVERGENCE_THRESHOLD,
   FETCH_BACKEND_DATA_START,
@@ -34,6 +34,8 @@ export const DEFAULT_STATE = {
   x: undefined,
   yPred: [],
   yTrue: undefined,
+  modelsMeta: {},
+  featuresMeta: [],
   isBackendDataLoading: false,
   isModelsComparisonLoading: false,
   isFeaturesDistributionLoading: false,
@@ -54,7 +56,7 @@ export const DEFAULT_STATE = {
   isManualSegmentation: false,
 
   // external states
-  keplerGl: {},
+  keplerGl: {map: {}},
 };
 
 // -- remote data source -- //
@@ -114,13 +116,34 @@ const handleLoadLocalDataStart = (state, {payload}) => ({
 });
 
 const handleLoadLocalDataSuccess = (state, {payload}) => {
-  const {x, yPred, yTrue} = payload;
+  const {x, yPred, yTrue, modelsMeta, featuresMeta} = payload;
+  // field name in `featuresMeta` is 'dataType' instead of 'type'
+  const fields = featuresMeta.map(d => ({
+    ...d,
+    type: d.dataType,
+  }));
   return {
     ...state,
     x,
     yPred,
     yTrue,
+    modelsMeta,
+    featuresMeta,
     isLocalDataLoading: false,
+    keplerGl: {
+      ...state.keplerGl,
+      // pass in kepler.gl instance state to combinedUpdaters
+      map: combinedUpdaters.addDataToMapUpdater(state.keplerGl.map, {
+        payload: {
+          datasets: [
+            {
+              info: {id: 'my_feature_data'},
+              data: {fields, rows: x},
+            },
+          ],
+        },
+      }),
+    },
   };
 };
 

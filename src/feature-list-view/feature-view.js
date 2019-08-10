@@ -154,7 +154,7 @@ class FeatureView extends PureComponent {
     const featureVal =
       type === FEATURE_TYPE.NUMERICAL
         ? numeral(domain[featureValId]).format('0,0.[00]')
-        : domain[featureValId];
+        : String(domain[featureValId]);
     const count0 = numeral(distributions[0][featureValId]).format('0,0.[00]');
     const count1 = numeral(distributions[1][featureValId]).format('0,0.[00]');
 

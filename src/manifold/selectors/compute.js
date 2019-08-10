@@ -4,15 +4,15 @@ import {createSelector} from 'reselect';
 import {
   dotRange,
   computeClusters,
-  computeHistogram,
   computeDensity,
-  computeHistogramCat,
-  computeFeatureMeta,
   computeSegmentedFeatureDistributions,
   computeSegmentedFeatureDistributionsNormalized,
   computeDivergence,
   computePercentiles,
+  logLoss,
+  absoluteError,
 } from 'packages/mlvis-common/utils';
+import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
 
 import {
   rootSelector,
@@ -23,19 +23,21 @@ import {
   getBaseModels,
   getIsManualSegmentation,
 } from './base';
-import {logLoss, absoluteError, filterData, computeSortedOrder} from '../utils';
+import {filterData, computeSortedOrder, groupLatLngPairs} from '../utils';
 
-import {FEATURE_TYPE, METRIC, PERF_PREFIX, ACTUAL_PREFIX} from '../constants';
+import {METRIC, PERF_PREFIX, ACTUAL_PREFIX} from '../constants';
 
 const MODEL_PERF_HISTOGRAM_RESOLUTION = 50;
-const FEATURE_VALUE_HISTOGRAM_RESOLUTION = 50;
 const PERCENTILE_LIST = [0.01, 0.1, 0.25, 0.5, 0.75, 0.9, 0.99];
 
 // ---------------------------------------------------------------------------- //
 // ---- THE COMPUTE SELECTORS DO ALL THE DATA TRANSFORMATION IN THE FRONT-END ---- //
 // ---------------------------------------------------------------------------- //
 
-// -- raw csv data -- //
+// ------------------------------------------------------------------------- //
+// --------------------------- DATA FROM REDUX STATE ----------------------- //
+// ------------------------------------------------------------------------- //
+
 const getX = createSelector(
   rootSelector,
   state => state.x
@@ -51,86 +53,14 @@ const getYTrue = createSelector(
   state => state.yTrue
 );
 
-// ------------------------------------------------------------------------- //
-// -------------------------------- META DATA ------------------------------ //
-// ------------------------------------------------------------------------- //
-
-/**
- * compute basic information of models
- * @param {[Array]} yPred - An array of arrays, predicted values for each class from each models.
- * @return {Number} nModels
- * @return {Number} nClasses
- * @return {Array} classLabels - array of strings representing class names
- */
 export const getModelsMeta = createSelector(
-  getYPred,
-  yPred => {
-    if (!yPred || !yPred.length || !yPred[0].length) {
-      return;
-    }
-    const predInstance0 = yPred[0][0];
-    const classLabels = Object.keys(predInstance0);
-    const nClasses = classLabels.length > 1 ? classLabels.length : 1;
-    return {
-      nModels: yPred.length,
-      nClasses,
-      classLabels,
-    };
-  }
+  rootSelector,
+  state => state.modelsMeta
 );
 
-const getFeatureDistributionResolution = () =>
-  FEATURE_VALUE_HISTOGRAM_RESOLUTION;
-
-/**
- * compute basic information of features
- * @param {[Object]} featureData - An array of csv raw feature data.
- * @param {Number} resolution - number of bins for the feature distribution histogram.
- * @return {String} name
- * @return {[Number|String]} domian
- * @return {[Number]} histogram
- * @return {String} type - array of strings representing class names
- */
 export const getFeaturesMeta = createSelector(
-  getX,
-  getFeatureDistributionResolution,
-  (featureData, resolution) => {
-    if (!featureData || !featureData.length) {
-      return [];
-    }
-    return (
-      Object.keys(featureData[0])
-        .map(featureName => {
-          const values = featureData.map(d => d[featureName]);
-          // todo: optimize uniques computation
-          const {type, domain: categories} = computeFeatureMeta(values);
-          const bins =
-            type === FEATURE_TYPE.CATEGORICAL ? categories : resolution;
-
-          // exit early if feature type is invalid
-          if (type === null) {
-            return {type};
-          }
-          const histogramFunc =
-            type === FEATURE_TYPE.CATEGORICAL
-              ? computeHistogramCat
-              : computeHistogram;
-          // TODO we need to move the computation to the worker thread, freezes the UI completely
-          // Or use async/await, leveraging tensor.data() in TF.js
-          // Right now tensor.dataSync() is the bottleneck.
-          const [histogram, domain] = histogramFunc(values, bins);
-
-          return {
-            name: featureName,
-            domain,
-            histogram,
-            type,
-          };
-        })
-        // ignore features with too may categories, like uuid; ignore features with only one category
-        .filter(feature => feature.type !== null)
-    );
-  }
+  rootSelector,
+  state => state.featuresMeta
 );
 
 export const getMetaDataFromRaw = createSelector(
@@ -214,13 +144,13 @@ export const getClusteringInput = createSelector(
 
 export const getDataIdsInSegmentsUnsorted = createSelector(
   [getClusteringInput, getX, getNClusters, getSegmentFilters],
-  (clusteringInput = [], rawFeatures, nClusters = 4, segmentFilters) => {
+  (clusteringInput = [], features, nClusters = 4, segmentFilters) => {
     if (!clusteringInput.length || !clusteringInput[0].length) {
       return [];
     }
     if (segmentFilters && segmentFilters.length) {
       // todo: merge rawPred, rawFeatures, and clusteringInput for manual filters
-      return segmentFilters.map(filter => filterData(rawFeatures, filter));
+      return segmentFilters.map(filter => filterData(features, filter));
     }
     const clusterIds = computeClusters(clusteringInput, nClusters);
     const result = [];
@@ -317,11 +247,7 @@ export const getDataIdsInSegments = createSelector(
       return null;
     }
     if (!isManual) {
-      // don't mutate segments to prevent re-rendering when only "segmentation method" is changed
-      segments.sort(
-        (segmentA, segmentB) =>
-          order.indexOf(segmentA.id) - order.indexOf(segmentB.id)
-      );
+      return order.map(id => segments[id]);
     }
     return segments;
   }
@@ -367,10 +293,15 @@ export const getSegmentedFeatures = createSelector(
       return null;
     }
     return featuresMeta
+      .filter(feature =>
+        [FEATURE_TYPE.CATEGORICAL, FEATURE_TYPE.NUMERICAL].includes(
+          feature.type
+        )
+      )
       .map(feature => {
         const {domain, type} = feature;
         const segmentValues = segments.map(segment => {
-          return segment.map(d => d[feature.name]);
+          return segment.map(d => d[feature.tableFieldIndex - 1]);
         });
 
         const distributions = computeSegmentedFeatureDistributions(
@@ -392,5 +323,15 @@ export const getSegmentedFeatures = createSelector(
         };
       })
       .sort((fa, fb) => fb.divergence - fa.divergence);
+  }
+);
+
+export const getGroupedGeoFeatures = createSelector(
+  getFeaturesMeta,
+  features => {
+    const geoFields = features.filter(
+      feature => feature.type === FEATURE_TYPE.GEO
+    );
+    return groupLatLngPairs(geoFields);
   }
 );
