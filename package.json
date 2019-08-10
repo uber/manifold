@@ -100,9 +100,9 @@
     "sync": "scripts/sync.sh",
     "traverse": "scripts/traverse.sh",
     "clean": "rm -rf node_modules examples/**/node_modules website/node_modules",
-    "install:all": "yarn clean && yarn && yarn install:web",
-    "install:web": "yarn install:example && cd website && yarn",
-    "install:example": "cd examples/manifold && yarn",
+    "install:all": "yarn clean && yarn inatall && yarn install:web",
+    "install:web": "yarn install:example && cd website && yarn install",
+    "install:example": "cd examples/manifold && yarn install",
     "deploy": "cd website && yarn build && git checkout gh-pages && cp -r dist/* .. && git add .. && git commit -m 'Update website' && git push origin gh-pages && git checkout master"
   },
   "engines": {

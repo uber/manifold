@@ -45,6 +45,7 @@ const COMMON_CONFIG = {
             loader: 'css-loader',
             options: {
               sourceMap: true,
+              module: true,
             },
           },
           {

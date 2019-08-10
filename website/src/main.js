@@ -1,4 +1,3 @@
-// @noflow
 import React from 'react';
 import {render} from 'react-dom';
 import document from 'global/document';
@@ -7,6 +6,9 @@ import {Route} from 'react-router';
 import {BrowserRouter} from 'react-router-dom';
 import store from './reducers';
 import Demo from '../../examples/manifold/src/app';
+// TODO: removing antd in index.css will mess up the styles. Adjust styles before getting rid of antd dependency.
+import './index.css';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 const Root = () => (
   <Provider store={store}>
