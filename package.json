@@ -2,7 +2,7 @@
   "name": "manifold",
   "version": "0.0.1",
   "description": "Model-Agnostic Visual Debugging Tool for Machine Learning",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "author": "Firenze11 <lezhi.li@uber.com>",
   "main": "dist/index.js",
   "repository": {
@@ -99,7 +99,7 @@
     "sync": "scripts/sync.sh",
     "traverse": "scripts/traverse.sh",
     "clean": "rm -rf node_modules examples/**/node_modules website/node_modules",
-    "install:all": "yarn clean && yarn inatall && yarn install:web",
+    "install:all": "yarn clean && yarn install && yarn install:web",
     "install:web": "yarn install:example && cd website && yarn install",
     "install:example": "cd examples/manifold && yarn install",
     "deploy": "cd website && yarn build && git checkout gh-pages && cp -r dist/* .. && git add .. && git commit -m 'Update website' && git push origin gh-pages && git checkout master"
