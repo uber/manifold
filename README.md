@@ -262,13 +262,13 @@ export default createStore(reducer, initialState);
 
 ### Mount Component
 If you mount manifold reducer in another address instead of `manifold` in the step above, you will need to specify the path to it when you mount the component
-with the `getState` prop.
+with the `statePath` prop.
 
 ```js
 import Manifold from '@uber/manifold';
 
 const Main = props => (
-  <Manifold getState={state => state.pathTo.manifold}/>
+  <Manifold statePath={'pathTo.manifold'}/>
 );
 ```
 
