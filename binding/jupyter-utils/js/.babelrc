@@ -4,7 +4,7 @@
     "transform-es2015-parameters",
     "dynamic-import-webpack",
     "add-module-exports",
-    ["module-resolver", { "root": ["src"] }]
+    ["module-resolver", {"root": ["src"]}]
   ],
   "presets": ["env", "react", "stage-0", "flow"]
 }

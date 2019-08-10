@@ -1,1 +1,1 @@
-export { default as redirectErrors } from "./redirectErrors";
+export {default as redirectErrors} from './redirectErrors';
