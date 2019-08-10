@@ -1,9 +1,9 @@
-// @noflow
 // NOTE: To use this example standalone (e.g. outside of deck.gl repo)
 // delete the local development overrides at the bottom of this file
 
 // avoid destructuring for older Node version support
 const resolve = require('path').resolve;
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -45,7 +45,6 @@ const COMMON_CONFIG = {
             loader: 'css-loader',
             options: {
               sourceMap: true,
-              modules: true,
             },
           },
           {
@@ -87,6 +86,7 @@ const COMMON_CONFIG = {
 
   plugins: [
     new MiniCssExtractPlugin(),
+    new webpack.EnvironmentPlugin(['MAPBOX_ACCESS_TOKEN']),
     new HtmlWebpackPlugin({title: 'manifold demo'}),
   ],
 };
