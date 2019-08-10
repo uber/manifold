@@ -6,8 +6,8 @@ import {connect} from '../custom-connect';
 
 import {COLORS} from '../constants';
 import {updateSelectedInstances} from '../actions';
-import {getSegmentedRawFeatures} from '../selectors/compute';
-import {getGeoPositions, getSelectedInstances} from '../selectors/base';
+import {getSelectedInstances} from '../selectors/base';
+import {getGroupedGeoFeatures} from '../selectors/compute';
 import {getFeatures} from '../selectors/adaptors';
 import FeatureListView from 'packages/feature-list-view';
 import {LegendGroup} from 'packages/mlvis-common/ui';
@@ -35,8 +35,7 @@ const mapDispatchToProps = {updateSelectedInstances};
 const mapStateToProps = (state, props) => {
   return {
     data: getFeatures(state),
-    rawFeatures: getSegmentedRawFeatures(state),
-    geoPositions: getGeoPositions(state),
+    geoFeatures: getGroupedGeoFeatures(state),
     selectedInstances: getSelectedInstances(state),
   };
 };
@@ -48,7 +47,6 @@ export class FeatureAttributionContainer extends PureComponent {
     // todo: update with detailed propTypes
     data: PropTypes.arrayOf(PropTypes.object),
     colors: PropTypes.arrayOf(PropTypes.string),
-    rawFeatures: PropTypes.arrayOf(PropTypes.array),
     geoPositions: PropTypes.array,
     selectedInstances: PropTypes.array,
   };
@@ -59,13 +57,7 @@ export class FeatureAttributionContainer extends PureComponent {
   };
 
   render() {
-    const {
-      selector,
-      data,
-      colors,
-      geoPositions,
-      selectedInstances,
-    } = this.props;
+    const {selector, data, colors, geoFeatures, selectedInstances} = this.props;
     if (!data || data.length === 0) {
       return null;
     }
@@ -75,12 +67,13 @@ export class FeatureAttributionContainer extends PureComponent {
         <ContainerDimensions>
           {({width, height}) => (
             <div>
-              {geoPositions && (
+              {geoFeatures && geoFeatures.length && (
                 <KeplerGl
                   mapboxApiAccessToken={
                     process.env.MAPBOX_ACCESS_TOKEN || MAPBOX_ACCESS_TOKEN
                   }
                   getState={state => selector(state).keplerGl}
+                  mint={false}
                   id="map"
                   width={width}
                   height={450}

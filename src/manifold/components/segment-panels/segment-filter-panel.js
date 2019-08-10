@@ -64,6 +64,7 @@ export default class SegmentFilterPanel extends PureComponent {
     segmentationFeatureMeta: PropTypes.shape({
       name: PropTypes.string.isRequired,
       type: PropTypes.oneOf(Object.values(FEATURE_TYPE)),
+      tableFieldIndex: PropTypes.number,
       domain: PropTypes.arrayOf(
         PropTypes.oneOfType([
           PropTypes.string,
@@ -76,7 +77,7 @@ export default class SegmentFilterPanel extends PureComponent {
     segmentFilters: PropTypes.arrayOf(
       PropTypes.arrayOf(
         PropTypes.shape({
-          key: PropTypes.string,
+          key: PropTypes.number,
           value: PropTypes.oneOfType([
             PropTypes.number,
             PropTypes.string,

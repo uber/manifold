@@ -1,14 +1,12 @@
-// @noflow
 import {
-  getModelsMeta,
-  getFeaturesMeta,
   getDataPerformance,
   getClusteringInput,
   getDataIdsInSegmentsUnsorted,
   getModelPerfHistogramsUnsorted,
   getModelPerfHistograms,
+  getDataIdsInSegments,
 } from '../selectors/compute';
-import {METRIC, FEATURE_TYPE} from '../constants';
+import {METRIC} from '../constants';
 import {dotRange} from 'packages/mlvis-common/utils';
 
 const yPred1 = [[{predict: 10}], [{predict: 30}]];
@@ -27,36 +25,6 @@ const meta2 = {
   nClasses: 3,
   classLabels: ['cat1', 'cat2', 'cat3'],
 };
-
-test('selector: compute/getModelsMeta', () => {
-  expect(getModelsMeta.resultFunc(yPred1)).toEqual(meta1);
-  expect(getModelsMeta.resultFunc(yPred2)).toEqual(meta2);
-});
-
-test('selector: compute/getFeaturesMeta', () => {
-  const featureVals1 = [0, 1, 2, 3, 4, 5];
-  const featureVals2 = ['A', 'B', 'B', 'C', 'D', 'D'];
-  const featureData = dotRange(6).map(i => ({
-    feature1: featureVals1[i],
-    feature2: featureVals2[i],
-  }));
-  const resultArr = getFeaturesMeta.resultFunc(featureData, 5);
-  const [result0, result1] = resultArr;
-
-  expect(resultArr.length).toBe(2);
-  expect(result0).toMatchObject({
-    name: 'feature1',
-    type: FEATURE_TYPE.NUMERICAL,
-  });
-  expect(result1).toMatchObject({
-    name: 'feature2',
-    type: FEATURE_TYPE.CATEGORICAL,
-  });
-  expect(Array.from(result0.histogram)).toEqual([1, 1, 1, 1, 2]);
-  expect(Array.from(result0.domain)).toEqual([0, 1, 2, 3, 4, 5]);
-  expect(Array.from(result1.histogram)).toEqual([1, 2, 1, 2]);
-  expect(Array.from(result1.domain)).toEqual(['A', 'B', 'C', 'D']);
-});
 
 test('selector: compute/getDataPerformance', () => {
   const perf1 = getDataPerformance.resultFunc(yPred1, yTrue1, meta1);
@@ -205,4 +173,24 @@ test('selector: compute/getModelPerfHistogramsUnsorted, getModelPerfHistograms',
       expect(model.density[0].length + 1).toEqual(model.density[1].length);
     });
   });
+});
+
+test('selector: compute/getDataIdsInSegments', () => {
+  const idsInSegmentsUnsorted = [[1, 2, 3, 4], [5, 6, 7], [8, 9]];
+  const sortedOrder = [2, 0, 1];
+  const resultAuto = getDataIdsInSegments.resultFunc(
+    idsInSegmentsUnsorted,
+    false,
+    sortedOrder
+  );
+  const resultManual = getDataIdsInSegments.resultFunc(
+    idsInSegmentsUnsorted,
+    true,
+    sortedOrder
+  );
+  expect(resultAuto).toEqual([[8, 9], [1, 2, 3, 4], [5, 6, 7]]);
+  // regression test: T3563191
+  expect(resultAuto).not.toBe(idsInSegmentsUnsorted);
+  expect(resultManual).toEqual([[1, 2, 3, 4], [5, 6, 7], [8, 9]]);
+  expect(resultManual).toBe(idsInSegmentsUnsorted);
 });

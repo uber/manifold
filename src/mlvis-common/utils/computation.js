@@ -1,7 +1,6 @@
-// @noflow
 import * as tf from '@tensorflow/tfjs-core';
 import {kldivergence, quantileSeq} from 'mathjs';
-import {FEATURE_TYPE} from '../constants';
+import {FEATURE_TYPE, LAT_LNG_PAIRS, HEX_INDICATORS} from '../constants';
 
 // dotRange(3) ==> [0, 1, 2];
 export const dotRange = n => Array.from(Array(n).keys());
@@ -14,23 +13,126 @@ const UNIQ_COUNT_THRESHOLD = 8;
 const UNIQ_PERCENTAGE_THRESHOLD = 0.1;
 const INVALID_COUNT_THRESHOLD = 100;
 const INVALID_PERCENTAGE_THRESHOLD = 0.5;
+const FEATURE_HISTOGRAM_RESOLUTION = 100;
 
-// identify whether a feature is categorical from its unique values
-export const computeFeatureMeta = (
+/**
+ * compute basic information of models
+ * @param {[Array]} yPred - An array of arrays, predicted values for each class from each models.
+ * @return {Number} nModels
+ * @return {Number} nClasses
+ * @return {Array} classLabels - array of strings representing class names
+ */
+export const computeModelsMeta = yPred => {
+  const predInstance0 = yPred[0][0];
+  const classLabels = Object.keys(predInstance0);
+  const nClasses = classLabels.length > 1 ? classLabels.length : 1;
+  return {
+    nModels: yPred.length,
+    nClasses,
+    classLabels,
+  };
+};
+
+/**
+ * compute basic information of features
+ * @param {[Object]} featureData - An array of objects, csv raw feature data.
+ * @return {String} name
+ * @return {[Number|String]} domain
+ * @return {String} type - one of FEATURE_TYPE.CATEGORICAL, FEATURE_TYPE.NUMERICAL, FEATURE_TYPE.GEO
+ */
+export const computeFeaturesMeta = (
+  x,
+  resolution = FEATURE_HISTOGRAM_RESOLUTION
+) => {
+  return Object.keys(x[0])
+    .map(featureName => {
+      const values = x.map(d => d[featureName]);
+      const {type, domain} = computeFeatureMeta(
+        featureName,
+        values,
+        resolution
+      );
+
+      return {
+        name: featureName,
+        domain,
+        type,
+      };
+    })
+    .filter(
+      // ignore features with too may categories, like uuid; ignore features with only one category
+      feature => feature.type !== null
+    );
+};
+
+/**
+ * @param {Array} data feature values
+ * @param {Array} uniqueDataVals unique values in feature values
+ * @return {Boolean}
+ * */
+export const isFeatureInvalid = (
   data,
-  resolution,
-  uniqCountThreshold = UNIQ_COUNT_THRESHOLD,
-  uniqPercentageThreshold = UNIQ_PERCENTAGE_THRESHOLD,
+  uniqueDataVals = null,
   invalidCountThreshold = INVALID_COUNT_THRESHOLD,
   invalidPercentageThreshold = INVALID_PERCENTAGE_THRESHOLD
 ) => {
-  const uniques = Array.from(new Set(data));
+  const uniques = uniqueDataVals || Array.from(new Set(data));
   const hasNaN = uniques.some(d => isNaN(d) || d === null);
-  const isInvalid =
+  return (
     uniques.length < 2 ||
     (hasNaN &&
       uniques.length > data.length * invalidPercentageThreshold &&
-      uniques.length > invalidCountThreshold);
+      uniques.length > invalidCountThreshold)
+  );
+};
+
+/**
+ * @param {String} name feature name
+ * @param {Array} data feature values
+ * @param {Array} uniqueDataVals unique values in feature values
+ * @return {String} one of FEATURE_TYPEs
+ * */
+export const computeFeatureType = (
+  name,
+  data,
+  uniqueDataVals = null,
+  uniqCountThreshold = UNIQ_COUNT_THRESHOLD,
+  uniqPercentageThreshold = UNIQ_PERCENTAGE_THRESHOLD
+) => {
+  // analyze type from data
+  const uniques = uniqueDataVals || Array.from(new Set(data));
+  const hasNaN = uniques.some(d => isNaN(d) || d === null);
+
+  const isCategorical =
+    (uniques.length < uniqCountThreshold &&
+      uniques.length < data.length * uniqPercentageThreshold) ||
+    hasNaN;
+
+  // analyze type from name
+  const isLatLngByName = LAT_LNG_PAIRS.reduce(
+    (acc, arr) => acc.concat(arr),
+    []
+  ).some(suffix => name.endsWith(suffix));
+  const isHexByName = HEX_INDICATORS.some(hexIndicator =>
+    name.includes(hexIndicator)
+  );
+  return isLatLngByName || isHexByName
+    ? FEATURE_TYPE.GEO
+    : isCategorical
+    ? FEATURE_TYPE.CATEGORICAL
+    : FEATURE_TYPE.NUMERICAL;
+};
+
+/**
+ * identify whether a feature is categorical from its unique values
+ * @param {String} name feature name
+ * @param {Array} data feature values
+ * @param {Number} resolution granularity of bins for numerical feature domain
+ * @return {Object} type and domain of the feature
+ * */
+export const computeFeatureMeta = (name, data, resolution) => {
+  const uniques = Array.from(new Set(data));
+  const isInvalid = isFeatureInvalid(data, uniques);
 
   if (isInvalid) {
     return {
@@ -38,23 +140,23 @@ export const computeFeatureMeta = (
       domain: null,
     };
   }
-
-  const isCategorical =
-    (uniques.length < uniqCountThreshold &&
-      uniques.length < data.length * uniqPercentageThreshold) ||
-    hasNaN;
-
-  const domain = isCategorical
-    ? uniques
-    : computeNumericFeatureDomain(uniques, resolution);
-
+  const type = computeFeatureType(name, data, uniques);
+  let domain;
+  switch (type) {
+    case FEATURE_TYPE.NUMERICAL:
+      domain = computeNumericFeatureDomain(uniques, resolution);
+      break;
+    case FEATURE_TYPE.CATEGORICAL:
+      domain = uniques;
+      break;
+    default:
+      domain = [];
+  }
   return {
-    type: isCategorical ? FEATURE_TYPE.CATEGORICAL : FEATURE_TYPE.NUMERICAL,
+    type,
     domain,
   };
 };
-
-const FEATURE_HISTOGRAM_RESOLUTION = 100;
 
 export const computeNumericFeatureDomain = (
   values,
@@ -233,3 +335,79 @@ export function computeDivergence(distributions) {
   }
   return Number.MAX_SAFE_INTEGER;
 }
+
+/**
+ * @param {Array} targets - 1-D array of targets
+ * @param {Array} predictions - 2-D array of predictions
+ * @param {Array} labels - array of class labels
+ * @param {Number} eps - small number to prevent Infinity
+ * @return 1-D array of errors
+ */
+export const logLoss = (
+  targets = [],
+  predictions = [],
+  labels = [],
+  eps = 1e-15
+) => {
+  if (!targets.length || !predictions.length || !labels.length) {
+    return;
+  }
+  return tf.tidy(() => {
+    const targetOneHot = tf.oneHot(
+      tf.tensor1d(
+        targets.map(target => labels.indexOf(String(target))),
+        'int32'
+      ),
+      labels.length
+    );
+    return tf
+      .sub(
+        tf.scalar(0),
+        tf.sum(
+          tf.mul(
+            tf.cast(targetOneHot, 'float32'),
+            tf.log(tf.clipByValue(tf.tensor2d(predictions), eps, 1 - eps))
+          ),
+          1
+        )
+      )
+      .dataSync();
+  });
+};
+
+/**
+ * @param {Array} targets - 1-D array of targets
+ * @param {Array} predictions - 2-D array of predictions (second dimension size is 1)
+ * @return 1-D array of errors
+ */
+export const absoluteError = (targets = [], predictions = []) => {
+  if (!targets.length || !predictions.length) {
+    return;
+  }
+  return tf.tidy(() =>
+    tf
+      .abs(tf.sub(tf.tensor1d(targets), tf.squeeze(tf.tensor2d(predictions))))
+      .dataSync()
+  );
+};
+
+/**
+ * @param {Array} targets - 1-D array of targets
+ * @param {Array} predictions - 2-D array of predictions (second dimension size is 1)
+ * @return 1-D array of errors
+ */
+export const squaredLogError = (targets = [], predictions = []) => {
+  if (!targets.length || !predictions.length) {
+    return;
+  }
+  return tf.tidy(() =>
+    tf
+      .square(
+        tf.sub(
+          tf.log1p(tf.tensor1d(targets)),
+          tf.log1p(tf.squeeze(tf.tensor2d(predictions)))
+        )
+      )
+      .dataSync()
+  );
+};

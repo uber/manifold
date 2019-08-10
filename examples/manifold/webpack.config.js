@@ -4,6 +4,7 @@
 
 // avoid destructuring for older Node version support
 const resolve = require('path').resolve;
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -45,7 +46,6 @@ module.exports = {
             loader: 'css-loader',
             options: {
               sourceMap: true,
-              modules: true,
             },
           },
           {
@@ -70,6 +70,7 @@ module.exports = {
 
   plugins: [
     new MiniCssExtractPlugin(),
+    new webpack.EnvironmentPlugin(['MAPBOX_ACCESS_TOKEN']),
     new HtmlWebpackPlugin({title: 'manifold example'}),
   ],
 };

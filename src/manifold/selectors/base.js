@@ -1,5 +1,3 @@
-// @noflow
-import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
 import {createSelector} from 'reselect';
 import {Array} from 'global';
 import get from 'lodash.get';
@@ -116,16 +114,4 @@ export const getIsManualSegmentation = createSelector(
 export const getPresetFeatureTypes = createSelector(
   rootSelector,
   state => state.featureTypes
-);
-
-export const getGeoPositions = createSelector(
-  getPresetFeatureTypes,
-  types => {
-    const geoFeatures = types[FEATURE_TYPE.GEO];
-    if (!geoFeatures || !geoFeatures.length || !geoFeatures[0].length) {
-      return null;
-    }
-    return d =>
-      geoFeatures.map(lngLatPair => lngLatPair.map(lngLatCol => d[lngLatCol]));
-  }
 );

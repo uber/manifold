@@ -1,4 +1,3 @@
-// @noflow
 import PropTypes from 'prop-types';
 
 export const FEATURE_TYPE = {
@@ -14,6 +13,16 @@ export const FILTER_TYPE = {
   EXCLUDE: 'exclude',
   FUNC: 'func',
 };
+
+export const LAT_LNG_PAIRS = [
+  ['lat', 'lng'],
+  ['lat', 'lon'],
+  ['latitude', 'longitude'],
+];
+
+export const START_END_PAIRS = [['start', 'end'], ['origin', 'destination']];
+
+export const HEX_INDICATORS = ['hexagon', 'hexter'];
 
 export const COLOR = {
   BLUE: '#1F6DF0',

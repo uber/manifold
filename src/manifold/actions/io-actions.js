@@ -1,8 +1,12 @@
-// @noflow
 import {createAction} from 'redux-actions';
 import {parsePromise} from 'packages/mlvis-common/utils';
 import {loadData, modelsPerformance, featuresDistribution} from '../io';
-import {isDatasetIncomplete, validateInputData} from '../utils';
+import {
+  defaultInputDataTransformer,
+  isDatasetIncomplete,
+  validateInputData,
+  computeMetaData,
+} from '../utils';
 
 // -- remote data source -- //
 export const FETCH_BACKEND_DATA_START = 'FETCH_BACKEND_DATA_START';
@@ -45,11 +49,18 @@ export const loadLocalData = ({
   dataTransformer = defaultInputDataTransformer,
 }) => dispatch => {
   dispatch(loadLocalDataStart());
-  const allPromises = fileList.map(parsePromise);
+  const allParseDataPromises = fileList.map(parsePromise);
 
-  Promise.all(allPromises)
+  // 1. read data by parsing csv format
+  Promise.all(allParseDataPromises)
+    // 2. map data files to `x`, `yPred`, `yTrue` fields
     .then(dataTransformer)
+    // 3. validate data
     .then(validateInputData)
+    // 4. get metadata from input data, also convert csv data to array of arrays instead of array of objects
+    // TODO: this change should happen in `parsePromse`. But that will break API of `dataTransformer` so push it later
+    .then(computeMetaData)
+    // 5. add data to redux state
     .then(result => {
       dispatch(loadLocalDataSuccess(result));
     });
@@ -57,11 +68,11 @@ export const loadLocalData = ({
   // .catch(error => dispatch(loadLocalDataFailure(error)));
 };
 
+// TODO: combine with the loadLocalData util above, make parsing logic optional.
 /**
  * Use this loader when the data has already been loaded via a 3rd party loader
  * @param {array} data, an array of objects loaded from e.g. .csv or .arrow files
  * @param {function} dataTransformer, see `defaultInputDataTransformer` for its signature
- * TODO: combine with the loadLocalData util above, make parsing logic optional.
  */
 export const loadPrefetchedData = ({
   data,
@@ -71,43 +82,6 @@ export const loadPrefetchedData = ({
   const processedData = dataTransformer(data);
   const validatedData = validateInputData(processedData);
   dispatch(loadLocalDataSuccess(validatedData));
-};
-
-/*
- * default data transformer, transforming a list of parsed files to feature data and performance data,
- * to be inputted into Manifold
- * @param: {Object[][]} values, a list of parsed results of `fileList`
- * @return: {Object} containing 3 fields: `x`, `yPred` and `yTrue`
- *
- * `x`: {Object[]} a list of instances with features,
- * example (2 data instances):
- * [
- *   {feature_0: 21, feature_1: 'B'},
- *   {feature_0: 36, feature_1: 'A'}
- * ]
- *
- * `yPred`: {Object[][]} a list of list, each child list is a prediction array from one model for each data instance
- * example (3 models, 2 data instances, 2 classes ['false', 'true']):
- * [
- *   [{false: 0.1, true: 0.9}, {false: 0.8, true: 0.2}],
- *   [{false: 0.3, true: 0.7}, {false: 0.9, true: 0.1}],
- *   [{false: 0.6, true: 0.4}, {false: 0.4, true: 0.6}]
- * ]
- *
- * `yTrue`: {Object[]} a list, ground truth for each data instance.
- * Values must be numbers for regression model, must be strings that match object keys in `yPred` for classification models
- * example (2 data instances, 2 classes ['false', 'true']):
- * [
- *   'true',
- *   'false'
- * ]
- */
-const defaultInputDataTransformer = values => {
-  return {
-    x: values[0],
-    yTrue: values.slice(1, -1),
-    yPred: values[values.length - 1],
-  };
 };
 
 /**

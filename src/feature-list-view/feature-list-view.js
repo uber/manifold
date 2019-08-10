@@ -1,7 +1,5 @@
-// @noflow
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
-import ContainerDimensions from 'react-container-dimensions';
 import FeatureView from './feature-view';
 import {COLOR} from 'packages/mlvis-common/constants';
 
@@ -57,10 +55,7 @@ export default class FeatureListView extends PureComponent {
   };
 
   render() {
-    return (
-      <ContainerDimensions>
-        {({width, height}) => this._renderFeatureList(width, height)}
-      </ContainerDimensions>
-    );
+    const {width} = this.props;
+    return <React.Fragment>{this._renderFeatureList(width)}</React.Fragment>;
   }
 }
