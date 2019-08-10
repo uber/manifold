@@ -1,7 +1,4 @@
 from setuptools import setup, find_packages
-from setuptools.command.develop import develop as _develop
-from setuptools.command.install import install as _install
-
 
 INSTALL_REQUIRES = [
     'traitlets',
