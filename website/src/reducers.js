@@ -1,4 +1,3 @@
-// @noflow
 import {combineReducers, createStore, applyMiddleware, compose} from 'redux';
 import {routerReducer} from 'react-router-redux';
 import thunk from 'redux-thunk';
