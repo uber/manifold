@@ -8,6 +8,5 @@ script:
   - export CODECOV_TOKEN="e54def3d-0ecd-4124-923c-d8a1085b0970"
   - npm run lint
   - npm run test
-  - fossa
   - codecov
 cache: yarn
