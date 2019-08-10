@@ -1,4 +1,3 @@
-require('dotenv').config();
 const {resolve} = require('path');
 const webpack = require('webpack');
 const jupyterExternals = require('./jupyter-externals');
