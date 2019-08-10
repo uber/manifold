@@ -1,6 +1,9 @@
 import Processors from 'kepler.gl/processors';
 import {selectFields, zipObjects} from '../utils';
-import {computeModelsMeta, computeFeaturesMeta} from 'packages/mlvis-common/utils';
+import {
+  computeModelsMeta,
+  computeFeaturesMeta,
+} from 'packages/mlvis-common/utils';
 
 export const defaultInputDataTransformer = values => {
   return {
