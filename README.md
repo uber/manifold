@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/uber/manifold.svg?token=SZsMuk4iZZDLKwRXzyxu&branch=master)](https://travis-ci.com/uber/manifold)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/manifold/badge)](https://bestpractices.coreinfrastructure.org/projects/manifold)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/manifold/badge)](https://bestpractices.coreinfrastructure.org/manifold)
 
 # Manifold
 
