@@ -36,7 +36,7 @@ If you want to contribute or add new features, please use [Issue][git-iss] on gi
 * If the changes affect public APIs, change or add relevant documentation.
 * Run tests and ensure that all tests pass.
 * Commit your changes using a descriptive commit message. Adherence to the conventions is required, because release notes are automatically generated from these messages.
-* All pull requests will be reviewed by @uber/mlvis team
+* All pull requests will be reviewed by [@uber/mlvis](https://github.com/orgs/uber/teams/mlvis) team
 
 [cla]: https://cla-assistant.io/uber/manifold
 [github]: https://github.com/uber/manifold
