@@ -2,6 +2,8 @@
 
 # Manifold
 
+*This project is stable and being incubated for long-term support*
+
 [<img alt="Manifold" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/Manifold_Header.jpg" width="600">](https://uber.github.io/manifold/)
 
 Manifold is a model-agnostic visual debugging tool for machine learning.
