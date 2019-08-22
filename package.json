@@ -1,6 +1,6 @@
 {
   "name": "manifold.ml",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Model-Agnostic Visual Debugging Tool for Machine Learning",
   "license": "Apache-2.0",
   "author": "Firenze11 <lezhi.li@uber.com>",
