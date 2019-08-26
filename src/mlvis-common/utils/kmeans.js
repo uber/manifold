@@ -1,9 +1,17 @@
-// @noflow
 import * as tf from '@tensorflow/tfjs-core';
 
+/**
+ * kmeans
+ * @param {Array<Array>} data 2D data to run kmeans on. shape = [nInstances, nFeatures]
+ * @param {Number} nClusters
+ * @param {Boolean} transposeInput if the input data array shape is [nFeatures, nInstances], use transposeInput = true
+ * @param {Number} maxIterations number of iterations before force stop
+ * @param {Number} tolerance
+ */
 export const computeClusters = (
   data,
   nClusters,
+  transposeInput = false,
   maxIterations = 300,
   tolerance = 10e-4
 ) => {
@@ -11,9 +19,12 @@ export const computeClusters = (
     return [];
   }
   return tf.tidy(() => {
-    let centroids = initCentroids(data, nClusters);
+    let samples = tf.tensor2d(data).toFloat();
+    if (transposeInput) {
+      samples = tf.transpose(samples);
+    }
+    let centroids = initCentroids(samples, nClusters);
     let nearest;
-    const samples = tf.tensor2d(data).toFloat();
     for (let i = 0; i < maxIterations; i++) {
       nearest = assignClusterId(samples, centroids);
       centroids = updateCentroids(samples, nearest, nClusters);
@@ -24,23 +35,19 @@ export const computeClusters = (
 };
 
 /**
- * @param {Array} X - 2-D array of data points being clustered
+ * @param {Tensor2D} X - 2-D array of data points being clustered, shape = [nInstances, nFeatures]
  * @param {Number} nClusters - number of clusters
- * @return 2-D array centroids
+ * @return 2-D array centroids. shape = [nClusters, nFeatures]
  */
-function initCentroids(X, nClusters) {
-  const centroids = [];
-  for (let i = 0; i < nClusters; i++) {
-    centroids.push([]);
-  }
+export function initCentroids(X, nClusters) {
   const indices = [];
   while (indices.length < nClusters) {
-    const ind = Math.floor(Math.random() * X.length);
+    const ind = Math.floor(Math.random() * X.shape[0]);
     if (!indices.includes(ind)) {
       indices.push(ind);
     }
   }
-  return tf.tensor2d(indices.map(i => X[i]));
+  return tf.gather(X, indices);
 }
 
 /**

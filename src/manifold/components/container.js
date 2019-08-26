@@ -1,37 +1,45 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {console} from 'global';
-import {connect} from 'react-redux';
 import Manifold from './manifold';
-
-const mapStateToProps = (state, props) => ({state, ...props});
 
 class Container extends PureComponent {
   static propTypes = {
-    getState: PropTypes.func,
+    statePath: PropTypes.string,
   };
 
   static defaultProps = {
-    getState: state => state.manifold,
+    statePath: 'manifold',
   };
 
-  getSelector = getState => state => {
-    if (!getState(state)) {
-      /* eslint-disable no-console */
-      console.error(
-        'Manifold root component is not mounted to the correct address in app reducer.'
+  recomputations = 0;
+
+  getSelector = getManifoldState => {
+    this.recomputations++;
+    if (this.recomputations > 1) {
+      console.warn(
+        'Manifold is caused to rerender. For better performance, avoid instantiate a new function as props'
       );
-      /* eslint-enable no-console */
-      return null;
     }
-    return getState(state);
+    return allState => {
+      const manifoldState = getManifoldState(allState);
+      if (!manifoldState) {
+        /* eslint-disable no-console */
+        console.error(
+          'Manifold root component is not mounted to the correct address in app reducer.'
+        );
+        /* eslint-enable no-console */
+        return null;
+      }
+      return manifoldState;
+    };
   };
 
   render() {
-    const {getState, state, ...otherProps} = this.props;
+    const {getState, ...otherProps} = this.props;
     const selector = this.getSelector(getState);
 
-    if (!selector || !selector(state)) {
+    if (!selector) {
       // instance state hasn't been mounted yet
       return <div />;
     }
@@ -40,4 +48,4 @@ class Container extends PureComponent {
   }
 }
 
-export default connect(mapStateToProps)(Container);
+export default Container;

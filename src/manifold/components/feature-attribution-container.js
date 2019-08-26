@@ -7,19 +7,14 @@ import {connect} from '../custom-connect';
 import {COLORS} from '../constants';
 import {updateSelectedInstances} from '../actions';
 import {getSelectedInstances} from '../selectors/base';
-import {getGroupedGeoFeatures} from '../selectors/compute';
 import {getFeatures} from '../selectors/adaptors';
 import FeatureListView from 'packages/feature-list-view';
 import {LegendGroup} from 'packages/mlvis-common/ui';
-import KeplerGl from 'kepler.gl';
 
 const LEGEND_DATA = [
   {id: 0, name: 'data group 0'},
   {id: 1, name: 'data group 1'},
 ];
-
-const MAPBOX_ACCESS_TOKEN =
-  'pk.eyJ1IjoibGV6aGlsaSIsImEiOiIwZTc1YTlkOTE1ZWIzYzNiNDdiOTYwMDkxM2U1ZmY0NyJ9.SDXoQBpQys6AdTEQ9OhnpQ';
 
 const Container = styled.div`
   overflow: scroll;
@@ -35,7 +30,6 @@ const mapDispatchToProps = {updateSelectedInstances};
 const mapStateToProps = (state, props) => {
   return {
     data: getFeatures(state),
-    geoFeatures: getGroupedGeoFeatures(state),
     selectedInstances: getSelectedInstances(state),
   };
 };
@@ -53,11 +47,11 @@ export class FeatureAttributionContainer extends PureComponent {
 
   static defaultProps = {
     features: [],
-    colors: [COLORS.BLUE, COLORS.PINK],
+    colors: [COLORS.PINK, COLORS.BLUE],
   };
 
   render() {
-    const {selector, data, colors, geoFeatures, selectedInstances} = this.props;
+    const {data, colors, selectedInstances} = this.props;
     if (!data || data.length === 0) {
       return null;
     }
@@ -66,26 +60,12 @@ export class FeatureAttributionContainer extends PureComponent {
         <StyledLegend data={LEGEND_DATA} colorScale={id => colors[id]} />
         <ContainerDimensions>
           {({width, height}) => (
-            <div>
-              {geoFeatures && geoFeatures.length && (
-                <KeplerGl
-                  mapboxApiAccessToken={
-                    process.env.MAPBOX_ACCESS_TOKEN || MAPBOX_ACCESS_TOKEN
-                  }
-                  getState={state => selector(state).keplerGl}
-                  mint={false}
-                  id="map"
-                  width={width}
-                  height={450}
-                />
-              )}
-              <FeatureListView
-                data={data}
-                width={width}
-                colors={colors}
-                selectedInstances={selectedInstances}
-              />
-            </div>
+            <FeatureListView
+              data={data}
+              width={width}
+              colors={colors}
+              selectedInstances={selectedInstances}
+            />
           )}
         </ContainerDimensions>
       </Container>

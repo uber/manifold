@@ -1,4 +1,3 @@
-// @noflow
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
@@ -7,8 +6,6 @@ import {
   CHART_DEFAULT_PROPS,
   CHART_PROP_TYPES,
 } from 'packages/mlvis-common/constants';
-
-const COLORS = ['#D64A62', '#528AD0'];
 const TEXTS = ['Group 0', 'Group 1'];
 const LEFT_PADDING = 5;
 
@@ -66,6 +63,8 @@ class SegmentGrouping extends PureComponent {
     bracketWidth: PropTypes.number,
     /** grouped segment IDs, e.g. [[1], [0, 2, 3]] **/
     segmentGroups: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
+    /** colors of brackets */
+    groupColors: PropTypes.arrayOf(PropTypes.string),
   };
 
   static defaultProps = {
@@ -73,10 +72,18 @@ class SegmentGrouping extends PureComponent {
     width: 16,
     bracketWidth: 6,
     segmentGroups: [[], []],
+    groupColors: ['#f00', '#000'],
   };
 
   render() {
-    const {segmentGroups, yScale, width, bracketWidth, padding} = this.props;
+    const {
+      segmentGroups,
+      groupColors,
+      yScale,
+      width,
+      bracketWidth,
+      padding,
+    } = this.props;
     return (
       <Container
         paddingTop={padding.top}
@@ -94,7 +101,7 @@ class SegmentGrouping extends PureComponent {
             marginTop={yScale.paddingOuter() * yScale.step()}
             width={width - LEFT_PADDING}
             bracketWidth={bracketWidth}
-            color={COLORS[i]}
+            color={groupColors[i]}
             text={TEXTS[i]}
           />
         ))}

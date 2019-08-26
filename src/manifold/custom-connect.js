@@ -1,4 +1,3 @@
-// @noflow
 import {connect as reduxConnect} from 'react-redux';
 
 const defaultMapStateToProps = state => state;

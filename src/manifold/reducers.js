@@ -1,6 +1,6 @@
 import {handleActions} from 'redux-actions';
 import reduceReducers from 'reduce-reducers';
-import keplerGlReducer, {combinedUpdaters} from 'kepler.gl/reducers';
+import keplerGlReducer from 'kepler.gl/reducers';
 import {
   UPDATE_DIVERGENCE_THRESHOLD,
   FETCH_BACKEND_DATA_START,
@@ -21,6 +21,8 @@ import {
   UPDATE_SEGMENT_FILTERS,
   UPDATE_BASE_MODELS,
   UPDATE_SEGMENT_GROUPS,
+  UPDATE_DISPLAY_GEO_FEATURES,
+  UPDATE_COLOR_BY_FEATURE,
 } from './actions';
 import {DEFAULT_FEATURE_TYPES} from './constants';
 import {getDefaultSegmentGroups, registerExternalReducers} from './utils';
@@ -31,22 +33,32 @@ export const DEFAULT_STATE = {
   models: undefined,
   features: undefined,
 
-  x: undefined,
-  yPred: [],
-  yTrue: undefined,
+  // data and metadata
+  // columns: array of array of columns; fields: array of field metadata
+  data: {columns: [], fields: []},
+  // collumnTypeRanges: map from "column type" (x, yPred, etc) to array of 2 elements indicating the start and end index of that column type in dataset
+  columnRangeType: {
+    x: [],
+    yPred: [],
+    yTrue: [],
+    score: [],
+  },
   modelsMeta: {},
-  featuresMeta: [],
   isBackendDataLoading: false,
   isModelsComparisonLoading: false,
   isFeaturesDistributionLoading: false,
   isDataLoadingError: null,
 
+  // display states
   featureTypes: DEFAULT_FEATURE_TYPES,
   selectedInstances: [],
   divergenceThreshold: 0,
   selectedModelMap: {},
+  // todo: consider changing feature from id to feature def
+  displayGeoFeatures: [0],
+  colorByFeature: 0,
 
-  // API params
+  // data manipulation states
   nClusters: 4,
   metric: 'performance',
   segmentFilters: undefined,
@@ -116,34 +128,13 @@ const handleLoadLocalDataStart = (state, {payload}) => ({
 });
 
 const handleLoadLocalDataSuccess = (state, {payload}) => {
-  const {x, yPred, yTrue, modelsMeta, featuresMeta} = payload;
-  // field name in `featuresMeta` is 'dataType' instead of 'type'
-  const fields = featuresMeta.map(d => ({
-    ...d,
-    type: d.dataType,
-  }));
+  const {data, modelsMeta, columnTypeRanges} = payload;
   return {
     ...state,
-    x,
-    yPred,
-    yTrue,
+    data,
     modelsMeta,
-    featuresMeta,
+    columnTypeRanges,
     isLocalDataLoading: false,
-    keplerGl: {
-      ...state.keplerGl,
-      // pass in kepler.gl instance state to combinedUpdaters
-      map: combinedUpdaters.addDataToMapUpdater(state.keplerGl.map, {
-        payload: {
-          datasets: [
-            {
-              info: {id: 'my_feature_data'},
-              data: {fields, rows: x},
-            },
-          ],
-        },
-      }),
-    },
   };
 };
 
@@ -219,6 +210,20 @@ const handleUpdateSegmentGroups = (state, {payload}) => {
   };
 };
 
+const handleUpdateDisplayGeoFeatures = (state, {payload}) => {
+  return {
+    ...state,
+    displayGeoFeatures: [payload],
+  };
+};
+
+const handleUpdateColorByFeature = (state, {payload}) => {
+  return {
+    ...state,
+    colorByFeature: payload,
+  };
+};
+
 const manifoldReducer = handleActions(
   {
     [FETCH_MODELS_START]: handleFetchModelsStart,
@@ -240,6 +245,8 @@ const manifoldReducer = handleActions(
     [UPDATE_SEGMENT_FILTERS]: handleUpdateSegmentFilters,
     [UPDATE_BASE_MODELS]: handleUpdateBaseModels,
     [UPDATE_SEGMENT_GROUPS]: handleUpdateSegmentGroups,
+    [UPDATE_DISPLAY_GEO_FEATURES]: handleUpdateDisplayGeoFeatures,
+    [UPDATE_COLOR_BY_FEATURE]: handleUpdateColorByFeature,
   },
   DEFAULT_STATE
 );
@@ -262,6 +269,9 @@ const externalreducers = registerExternalReducers({
     uiState: {
       readOnly: true,
       currentModal: null,
+    },
+    mapStyle: {
+      styleType: 'light',
     },
   }),
 });

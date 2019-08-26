@@ -111,6 +111,16 @@ export const getIsManualSegmentation = createSelector(
   (state = {}) => state.isManualSegmentation
 );
 
+export const getDisplayGeoFeatures = createSelector(
+  rootSelector,
+  (state = {}) => state.displayGeoFeatures
+);
+
+export const getColorByFeature = createSelector(
+  rootSelector,
+  state => state.colorByFeature
+);
+
 export const getPresetFeatureTypes = createSelector(
   rootSelector,
   state => state.featureTypes

@@ -25,7 +25,7 @@ import {
   getIsManualSegmentation,
   getSegmentFilters,
 } from '../selectors/base';
-import {getMetaData} from '../selectors/data';
+import {getFeaturesMeta} from '../selectors/compute';
 import {computeWidthLadder, isValidSegmentGroups} from '../utils';
 
 import {SegmentFilterPanel, SegmentGroupPanel} from './segment-panels';
@@ -37,9 +37,8 @@ const mapDispatchToProps = {
   updateSegmentGroups,
 };
 const mapStateToProps = (state, props) => {
-  const {featuresMeta = []} = getMetaData(state);
   return {
-    featuresMeta,
+    featuresMeta: getFeaturesMeta(state),
     divergenceThreshold: getDivergenceThreshold(state),
     modelComparisonParams: getModelsComparisonParams(state),
     featureDistributionParams: getFeatureDistributionParams(state),

@@ -26,7 +26,7 @@ import {
   getModelsComparisonParams,
   getIsManualSegmentation,
 } from '../selectors/base';
-import {getMetaData} from '../selectors/data';
+import {getModelsMeta} from '../selectors/compute';
 
 const CONTROL_WIDTH = [130, 120, 100];
 // remove some elements based on parent width
@@ -41,10 +41,9 @@ const mapDispatchToProps = {
   updateSegmentGroups,
 };
 const mapStateToProps = (state, props) => {
-  const {modelMetaData = {}} = getMetaData(state);
   return {
     hasBackend: getHasBackend(state),
-    modelMetaData,
+    modelsMeta: getModelsMeta(state),
     modelComparisonParams: getModelsComparisonParams(state),
     isModelsComparisonLoading: getIsModelsComparisonLoading(state),
     isManualSegmentation: getIsManualSegmentation(state),
@@ -61,7 +60,7 @@ class PerfroamnceComparisonControlContainer extends PureComponent {
     isModelsComparisonLoading: PropTypes.bool,
     isManualSegmentation: PropTypes.bool,
     hasBackend: PropTypes.bool,
-    modelMetaData: PropTypes.shape({
+    modelsMeta: PropTypes.shape({
       nClasses: PropTypes.number,
     }),
   };
@@ -73,7 +72,7 @@ class PerfroamnceComparisonControlContainer extends PureComponent {
     isModelsComparisonLoading: false,
     isManualSegmentation: false,
     hasBackend: false,
-    modelMetaData: {},
+    modelsMeta: {},
   };
 
   _onUpdateNClusters = ({isInc}) => {
@@ -112,7 +111,7 @@ class PerfroamnceComparisonControlContainer extends PureComponent {
       modelComparisonParams,
       isModelsComparisonLoading,
       isManualSegmentation,
-      modelMetaData: {nClasses = 1} = {},
+      modelsMeta: {nClasses = 1} = {},
     } = this.props;
     const {nClusters} = modelComparisonParams;
     const isHorizontal = flexDirection === 'row';

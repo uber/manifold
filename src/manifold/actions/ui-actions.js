@@ -10,6 +10,8 @@ export const UPDATE_SEGMENTATION_METHOD = 'UPDATE_SEGMENTATION_METHOD';
 export const UPDATE_SEGMENT_FILTERS = 'UPDATE_SEGMENT_FILTERS';
 export const UPDATE_BASE_MODELS = 'UPDATE_BASE_MODELS';
 export const UPDATE_SEGMENT_GROUPS = 'UPDATE_SEGMENT_GROUPS';
+export const UPDATE_DISPLAY_GEO_FEATURES = 'UPDATE_DISPLAY_GEO_FEATURES';
+export const UPDATE_COLOR_BY_FEATURE = 'UPDATE_COLOR_BY_FEATURE';
 
 export const updateDivergenceThreshold = createAction(
   UPDATE_DIVERGENCE_THRESHOLD
@@ -24,3 +26,7 @@ export const updateSegmentationMethod = createAction(
 );
 export const updateSegmentFilters = createAction(UPDATE_SEGMENT_FILTERS);
 export const updateSegmentGroups = createAction(UPDATE_SEGMENT_GROUPS);
+export const updateDisplayGeoFeatures = createAction(
+  UPDATE_DISPLAY_GEO_FEATURES
+);
+export const updateColorByFeature = createAction(UPDATE_COLOR_BY_FEATURE);

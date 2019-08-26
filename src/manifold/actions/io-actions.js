@@ -101,6 +101,24 @@ export const loadUserData = ({x, yPred, yTrue}) => {
   });
 };
 
+/**
+ * Load the processed data fully compatible with manifold
+ * Format of the data is specified here:
+ * https://github.com/uber/manifold#prepare-your-data
+ * @param {Object} data -
+ *      {
+ *        x:     [...],         // feature data
+ *        yPred: [[...], ...]   // prediction data
+ *        yTrue: [...],         // ground truth data
+ *      }
+ */
+export const loadProcessedData = data => dispatch => {
+  dispatch(loadLocalDataStart());
+  const validatedData = validateInputData(data);
+  const result = computeMetaData(validatedData);
+  dispatch(loadLocalDataSuccess(result));
+};
+
 const userDataTransformer = fileList => {
   const dataList = fileList.map(v => v.data);
   // todo: yTrue should accept object as values as well

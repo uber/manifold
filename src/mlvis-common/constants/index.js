@@ -1,10 +1,21 @@
 import PropTypes from 'prop-types';
 
+export const UUID_NAME = 'uuid';
+
 export const FEATURE_TYPE = {
+  UUID: 'uuid',
   BOOLEAN: 'boolean',
   CATEGORICAL: 'categorical',
   NUMERICAL: 'numerical',
   GEO: 'geo',
+};
+
+// todo: resolve feature - field naming convension issue
+export const FIELD_TYPE = {
+  ...FEATURE_TYPE,
+  PREDICTION: 'preidiction',
+  SCORE: 'score',
+  GROUND_TRUTH: 'groundTruth',
 };
 
 export const FILTER_TYPE = {

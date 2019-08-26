@@ -43,13 +43,13 @@ test('selector: adapter/getFeatures', () => {
 });
 
 test('selector: adapter/getDisplayMetric', () => {
-  expect(
-    getDisplayMetric.resultFunc('actual', {modelsMeta: {nClasses: 2}})
-  ).toEqual('actual');
-  expect(
-    getDisplayMetric.resultFunc('performance', {modelsMeta: {nClasses: 1}})
-  ).toEqual('squared_error');
-  expect(
-    getDisplayMetric.resultFunc('performance', {modelsMeta: {nClasses: 2}})
-  ).toEqual('log_loss');
+  expect(getDisplayMetric.resultFunc('actual', {nClasses: 2})).toEqual(
+    'actual'
+  );
+  expect(getDisplayMetric.resultFunc('performance', {nClasses: 1})).toEqual(
+    'squared_error'
+  );
+  expect(getDisplayMetric.resultFunc('performance', {nClasses: 2})).toEqual(
+    'log_loss'
+  );
 });

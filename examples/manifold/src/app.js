@@ -1,4 +1,3 @@
-// @noflow
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
@@ -9,6 +8,8 @@ import Manifold from 'packages/manifold';
 import {loadUserData} from 'packages/manifold/actions';
 // import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
 // import {loadMAData} from './actions';
+
+const getManifoldState = state => state.demo.manifold;
 
 const Container = styled.div`
   position: absolute;
@@ -60,7 +61,7 @@ class App extends Component {
       <Container>
         <Manifold
           // Specify path to Manifold state, because it is not mount at the root
-          getState={state => state.demo.manifold}
+          getState={getManifoldState}
         />
         <FileUploader
           showUploadModal={showUploadModal}
@@ -71,6 +72,11 @@ class App extends Component {
     );
   }
 }
+
+// if (process.env.NODE_ENV !== 'production') {
+//   const {whyDidYouUpdate} = require('why-did-you-update');
+//   whyDidYouUpdate(React, {include: [/Manifold/, /Container/]});
+// }
 
 const mapStateToProps = state => state;
 const dispatchToProps = dispatch => ({dispatch});

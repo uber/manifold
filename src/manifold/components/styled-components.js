@@ -22,7 +22,7 @@ export const StyledControl = styled(Control)`
 export const StyledSelect = styled.div`
   height: 36px;
   min-width: 120px;
-  background-color: #f5f5f5;
+  background-color: rgba(240, 240, 240, 0.7);
   overflow: hidden;
   position: relative;
   display: flex;
@@ -47,7 +47,7 @@ export const SelectArrow = styled(ArrowDown)`
 export const StyledInput = styled.div`
   height: 36px;
   min-width: 120px;
-  background-color: #f5f5f5;
+  background-color: rgba(240, 240, 240, 0.7);
   overflow: hidden;
   position: relative;
   display: flex;
@@ -109,7 +109,7 @@ export const StyledSlider = styled.div`
     margin-top: -4px;
   }
   label {
-    background-color: #f5f5f5;
+    background-color: rgba(240, 240, 240, 0.7);
     color: #5c5c5c;
     font-weight: 600;
     width: 48px;

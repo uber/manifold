@@ -1,12 +1,63 @@
+import assert from 'assert';
 import * as tf from '@tensorflow/tfjs-core';
 import {kldivergence, quantileSeq} from 'mathjs';
-import {FEATURE_TYPE, LAT_LNG_PAIRS, HEX_INDICATORS} from '../constants';
+import {
+  FEATURE_TYPE,
+  LAT_LNG_PAIRS,
+  HEX_INDICATORS,
+  UUID_NAME,
+} from '../constants';
 
 // dotRange(3) ==> [0, 1, 2];
-export const dotRange = n => Array.from(Array(n).keys());
+// dotRange(1, 3) ==> [1, 2];
+// todo: use lodash
+export const dotRange = (...args) => {
+  if (args.length < 1) {
+    return null;
+  } else if (args.length === 1) {
+    args.unshift(0);
+  }
+  const result = [];
+  for (let i = args[0]; i < args[1]; i++) {
+    result.push(i);
+  }
+  return result;
+};
+
+/**
+ * compute mean of an array
+ * @param {Array<Number>} data
+ */
+export const mean = data => {
+  assert(
+    Array.isArray(data) && data.length > 0,
+    '`data` must be a non-empty array'
+  );
+  return data.reduce((acc, d) => acc + d, 0) / data.length;
+};
 
 export const computePercentiles = (data, percentiles) => {
   return quantileSeq(data, percentiles);
+};
+
+/**
+ * transpose an array of arrays of data
+ * @param {Array<Array>} dataArray array of arrays of data
+ * @returns array of arrays of data, elements at dataArray[i][j] will be at result[j][i]
+ */
+export const transposeData = dataArray => {
+  assert(
+    dataArray.length && dataArray[0].length,
+    'cannot transpose an array with dimension 0'
+  );
+  // instantiate an array of dataArray[0].length number of subarrays
+  const result = dotRange(dataArray[0].length).map(_ => []);
+  dataArray.forEach(arr => {
+    arr.forEach((ele, j) => {
+      result[j].push(ele);
+    });
+  });
+  return result;
 };
 
 const UNIQ_COUNT_THRESHOLD = 8;
@@ -47,17 +98,7 @@ export const computeFeaturesMeta = (
   return Object.keys(x[0])
     .map(featureName => {
       const values = x.map(d => d[featureName]);
-      const {type, domain} = computeFeatureMeta(
-        featureName,
-        values,
-        resolution
-      );
-
-      return {
-        name: featureName,
-        domain,
-        type,
-      };
+      return computeFeatureMeta(featureName, values, resolution);
     })
     .filter(
       // ignore features with too may categories, like uuid; ignore features with only one category
@@ -132,10 +173,17 @@ export const computeFeatureType = (
  * */
 export const computeFeatureMeta = (name, data, resolution) => {
   const uniques = Array.from(new Set(data));
+  if (uniques.length == data.length && name === UUID_NAME) {
+    return {
+      name,
+      type: FEATURE_TYPE.UUID,
+      domain: null,
+    };
+  }
   const isInvalid = isFeatureInvalid(data, uniques);
-
   if (isInvalid) {
     return {
+      name,
       type: null,
       domain: null,
     };
@@ -153,6 +201,7 @@ export const computeFeatureMeta = (name, data, resolution) => {
       domain = [];
   }
   return {
+    name,
     type,
     domain,
   };
@@ -338,7 +387,7 @@ export function computeDivergence(distributions) {
 
 /**
  * @param {Array} targets - 1-D array of targets
- * @param {Array} predictions - 2-D array of predictions
+ * @param {Array} predictions - 2-D array of predictions. shape = [numClasses, numInstances]
  * @param {Array} labels - array of class labels
  * @param {Number} eps - small number to prevent Infinity
  * @return 1-D array of errors
@@ -366,7 +415,13 @@ export const logLoss = (
         tf.sum(
           tf.mul(
             tf.cast(targetOneHot, 'float32'),
-            tf.log(tf.clipByValue(tf.tensor2d(predictions), eps, 1 - eps))
+            tf.log(
+              tf.clipByValue(
+                tf.transpose(tf.tensor2d(predictions)),
+                eps,
+                1 - eps
+              )
+            )
           ),
           1
         )

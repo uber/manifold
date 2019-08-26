@@ -1,6 +1,10 @@
 import {
   isValidSegmentGroups,
-  filterData,
+  sliceDataset,
+  concatDataset,
+  gatherDataset,
+  filterDataset,
+  aggregateDataset,
   computeSortedOrder,
   updateSegmentGroups,
   isValidFilterVals,
@@ -12,6 +16,7 @@ import {
   removeSuffixAndDelimiters,
   groupLatLngPairs,
 } from '../utils';
+import {mean} from 'packages/mlvis-common/utils';
 import {FEATURE_TYPE, FILTER_TYPE} from 'packages/mlvis-common/constants';
 
 test('utils: isValidSegmentGroups', () => {
@@ -100,10 +105,78 @@ test('utils: getSegmentFiltersFromValues', () => {
   );
 });
 
-test('utils: filterData', () => {
-  const arr = [[0, 1], [1, 2], [0, 3], [1, 4], [0, 5]];
-  expect(filterData(arr, filterNum1)).toEqual([0, 1]);
-  expect(filterData(arr, [filterNum1, filterCat1])).toEqual([1]);
+test('utils: sliceDataset', () => {
+  const data = {
+    columns: [[1, 1], [2, 2], [3, 3], [4, 4]],
+    fields: [1, 2, 3, 4],
+  };
+  expect(sliceDataset(data, [1, 3])).toEqual({
+    columns: [[2, 2], [3, 3]],
+    fields: [2, 3],
+  });
+});
+
+test('utils: concatDataset', () => {
+  const data1 = {
+    columns: [[1, 1], [2, 2]],
+    fields: [1, 2],
+  };
+  const data2 = {
+    columns: [[3, 3], [4, 4]],
+    fields: [3, 4],
+  };
+  expect(concatDataset([data1, data2])).toEqual({
+    columns: [[1, 1], [2, 2], [3, 3], [4, 4]],
+    fields: [1, 2, 3, 4],
+  });
+});
+
+test('utils: gatherDataset', () => {
+  const data = {
+    columns: [[1, 1], [2, 2], [3, 3], [4, 4]],
+    fields: [1, 2, 3, 4],
+  };
+  expect(gatherDataset(data, [1, 3])).toEqual({
+    columns: [[2, 2], [4, 4]],
+    fields: [2, 4],
+  });
+});
+
+test('utils: filterDataset', () => {
+  const data = {columns: [[0, 1, 0, 1, 0], [1, 2, 3, 4, 5]]};
+  expect(filterDataset(data, filterNum1)).toEqual([0, 1]);
+  expect(filterDataset(data, [filterNum1, filterCat1])).toEqual([1]);
+});
+
+test('utils: aggregateDataset', () => {
+  const data = {
+    fields: [
+      {name: 'field1', type: FEATURE_TYPE.CATEGORICAL, tableFieldIndex: 1},
+      {name: 'field2', type: FEATURE_TYPE.NUMERICAL, tableFieldIndex: 2},
+      {name: 'field3', type: FEATURE_TYPE.NUMERICAL, tableFieldIndex: 3},
+      {name: 'field4', type: FEATURE_TYPE.NUMERICAL, tableFieldIndex: 4},
+    ],
+    columns: [[0, 1, 0, 1, 0], [1, 2, 3, 4, 5], [1, 1, 1, 1], [6, 7, 8, 9, 7]],
+  };
+  const groupByFeature = data.fields[0];
+  const columnsToInclude = [1, 3];
+  const aggregateFuncs = [
+    {name: 'mean', func: mean},
+    {name: 'max', func: arr => Math.max(...arr)},
+  ];
+  const result = {
+    fields: [
+      {name: 'field1', type: FEATURE_TYPE.CATEGORICAL, tableFieldIndex: 1},
+      {name: 'field2_mean', tableFieldIndex: 2, dataType: 'float'},
+      {name: 'field2_max', tableFieldIndex: 3, dataType: 'float'},
+      {name: 'field4_mean', tableFieldIndex: 4, dataType: 'float'},
+      {name: 'field4_max', tableFieldIndex: 5, dataType: 'float'},
+    ],
+    columns: [[0, 1], [3, 3], [5, 4], [7, 8], [8, 9]],
+  };
+  expect(
+    aggregateDataset(data, groupByFeature, aggregateFuncs, columnsToInclude)
+  ).toEqual(result);
 });
 
 test('utils: getFilterValsFromProps', () => {

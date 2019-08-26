@@ -10,6 +10,7 @@ import MultiWayPlot from 'packages/multi-way-plot/';
 import {LegendGroup} from 'packages/mlvis-common/ui';
 import SegmentGrouping from 'packages/multi-way-plot/segment-grouping';
 
+import {COLORS} from '../constants';
 import {updateSelectedModels} from '../actions';
 import {
   getModels,
@@ -64,8 +65,8 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state, props) => {
-  const modelIds = getModelIds(state);
-  const {segmentGroups} = getFeatureDistributionParams(state);
+  const modelIds = getModelIds(state) || [];
+  const {segmentGroups} = getFeatureDistributionParams(state) || [];
 
   return {
     data: getModels(state),
@@ -84,6 +85,9 @@ const mapStateToProps = (state, props) => {
 
 export class PerformanceComparisonContainer extends PureComponent {
   static propTypes = {};
+  static defaultProps = {
+    groupColors: [COLORS.PINK, COLORS.BLUE],
+  };
 
   render() {
     const {
@@ -97,6 +101,7 @@ export class PerformanceComparisonContainer extends PureComponent {
       colorScale,
       selectedModels,
       segmentGroups,
+      groupColors,
       isThumbnail,
     } = this.props;
     if (!data) {
@@ -138,6 +143,7 @@ export class PerformanceComparisonContainer extends PureComponent {
                 getYScale={GET_YSCALE}
                 yDomain={segmentIds}
                 segmentGroups={segmentGroups}
+                groupColors={groupColors}
                 padding={padding}
                 isThumbnail={isThumbnail}
               />

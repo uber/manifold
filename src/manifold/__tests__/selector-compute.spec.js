@@ -1,112 +1,18 @@
 import {
-  getDataPerformance,
-  getClusteringInput,
   getDataIdsInSegmentsUnsorted,
   getModelPerfHistogramsUnsorted,
   getModelPerfHistograms,
   getDataIdsInSegments,
+  getSegmentedCatNumFeatures,
 } from '../selectors/compute';
-import {METRIC} from '../constants';
 import {dotRange} from 'packages/mlvis-common/utils';
-
-const yPred1 = [[{predict: 10}], [{predict: 30}]];
-const yPred2 = [
-  [{cat1: 0.1, cat2: 0.5, cat3: 0.4}, {cat1: 0.6, cat2: 0.3, cat3: 0.1}],
-];
-const yTrue1 = [20];
-const yTrue2 = ['cat2', 'cat1'];
-const meta1 = {
-  nModels: 2,
-  nClasses: 1,
-  classLabels: ['predict'],
-};
-const meta2 = {
-  nModels: 1,
-  nClasses: 3,
-  classLabels: ['cat1', 'cat2', 'cat3'],
-};
-
-test('selector: compute/getDataPerformance', () => {
-  const perf1 = getDataPerformance.resultFunc(yPred1, yTrue1, meta1);
-  const perf2 = getDataPerformance.resultFunc(yPred2, yTrue2, meta2);
-
-  const expOut1 = {
-    modelClass_0_0: expect.any(Number),
-    model_0: expect.any(Number),
-    modelClass_1_0: expect.any(Number),
-    model_1: expect.any(Number),
-  };
-  const expOut2 = {
-    modelClass_0_0: expect.any(Number),
-    modelClass_0_1: expect.any(Number),
-    modelClass_0_2: expect.any(Number),
-    model_0: expect.any(Number),
-  };
-
-  expect(perf1[0]).toMatchObject(expOut1);
-  for (let i = 0; i < 2; i++) {
-    expect(perf2[i]).toMatchObject(expOut2);
-  }
-
-  expect(perf1.length).toBe(1);
-  expect(isNaN(perf1[0].model_0)).toBeFalsy();
-  expect(isNaN(perf1[0].model_1)).toBeFalsy();
-  expect(perf1[0].model_0).toEqual(perf1[0].model_1);
-
-  expect(perf2.length).toBe(2);
-  expect(isNaN(perf2[0].model_0)).toBeFalsy();
-  expect(perf2[0].model_0).toBeGreaterThan(perf2[1].model_0);
-});
-
-test('selector: compute/getClusteringInput', () => {
-  const perfArr1 = [
-    {
-      modelClass_0_0: 1,
-      model_0: 2,
-      modelClass_1_0: 3,
-      model_1: 4,
-    },
-  ];
-  const perfArr2 = [
-    {
-      modelClass_0_0: 5,
-      modelClass_0_1: 6,
-      modelClass_0_2: 7,
-      model_0: 8,
-    },
-  ];
-  const input1 = getClusteringInput.resultFunc(
-    perfArr1,
-    {nClasses: 1},
-    [],
-    METRIC.PERFORMANCE
-  );
-  const input2 = getClusteringInput.resultFunc(
-    perfArr2,
-    {nClasses: 3},
-    [],
-    METRIC.PERFORMANCE
-  );
-  const input3 = getClusteringInput.resultFunc(
-    perfArr1,
-    {nClasses: 1},
-    [],
-    METRIC.ACTUAL
-  );
-
-  expect(input1).toMatchObject([[expect.any(Number), expect.any(Number)]]);
-  expect(input1).toEqual([[2, 4]]);
-  expect(input2).toMatchObject([[expect.any(Number)]]);
-  expect(input2).toEqual([[8]]);
-  expect(input3).toMatchObject([[expect.any(Number), expect.any(Number)]]);
-  expect(input3).toEqual([[1, 3]]);
-});
+import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
 
 test('selector: compute/getDataIdsInSegmentsUnsorted', () => {
   const nClusters = 3;
   const result = getDataIdsInSegmentsUnsorted.resultFunc(
-    [[1, 2], [3, 4], [5, 6], [7, 8]],
-    null,
+    {columns: [[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]]},
+    {columns: []},
     nClusters,
     []
   );
@@ -121,12 +27,9 @@ test('selector: compute/getModelPerfHistogramsUnsorted, getModelPerfHistograms',
   const numData = 20;
   const nModels = 2;
   // todo: use similar logic to generate data and test end-to-end
-  const perfArr = dotRange(numData).map(() => ({
-    modelClass_0_0: Math.random(),
-    model_0: Math.random(),
-    modelClass_1_0: Math.random(),
-    model_1: Math.random(),
-  }));
+  const perfArr = dotRange(nModels).map(() =>
+    dotRange(numData).map(() => Math.random())
+  );
   const idsInSegments = [
     [3, 8, 16, 13],
     [19],
@@ -148,10 +51,8 @@ test('selector: compute/getModelPerfHistogramsUnsorted, getModelPerfHistograms',
     segmentId: expect.any(Number),
   };
   const resultUnsorted = getModelPerfHistogramsUnsorted.resultFunc(
-    perfArr,
-    idsInSegments,
-    {nModels: nModels},
-    METRIC.PERFORMANCE
+    {columns: perfArr},
+    idsInSegments
   );
 
   resultUnsorted.forEach(segment => {
@@ -193,4 +94,37 @@ test('selector: compute/getDataIdsInSegments', () => {
   expect(resultAuto).not.toBe(idsInSegmentsUnsorted);
   expect(resultManual).toEqual([[1, 2, 3, 4], [5, 6, 7], [8, 9]]);
   expect(resultManual).toBe(idsInSegmentsUnsorted);
+});
+
+test('selector: compute/getSegmentedCatNumFeatures', () => {
+  const x = {
+    fields: [
+      {
+        name: 'feature1',
+        type: FEATURE_TYPE.NUMERICAL,
+        tableFieldIndex: 2,
+        domain: [1, 3, 5, 7],
+      },
+      {name: 'feature2', type: FEATURE_TYPE.GEO, tableFieldIndex: 3},
+      {
+        name: 'feature3',
+        type: FEATURE_TYPE.CATEGORICAL,
+        tableFieldIndex: 4,
+        domain: [1, 2],
+      },
+    ],
+    columns: [
+      [1, 2, 3, 4, 5, 6, 7, 8],
+      [11, 12, 13, 14, 15, 16, 17, 18],
+      [1, 1, 2, 2, 1, 1, 2, 2],
+    ],
+  };
+  const columnTypeRanges = {x: [1, 4]};
+  const idsInGroups = [[1, 2, 3, 4], [5, 6, 7]];
+  const result = getSegmentedCatNumFeatures.resultFunc(
+    x,
+    columnTypeRanges,
+    idsInGroups
+  );
+  expect(result).toMatchObject([{name: 'feature1'}, {name: 'feature3'}]);
 });

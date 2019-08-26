@@ -1,6 +1,7 @@
 import {Array} from 'global';
 import {FILTER_TYPE} from '../constants';
 import {FEATURE_TYPE, LAT_LNG_PAIRS} from 'packages/mlvis-common/constants';
+import {dotRange} from 'packages/mlvis-common/utils';
 import assert from 'assert';
 
 export const computeWidthLadder = (widths, margin) => {
@@ -11,6 +12,220 @@ export const computeWidthLadder = (widths, margin) => {
     result.push(lastWidth);
   });
   return result;
+};
+
+/**
+ * get sub dataset by start- and end- column ids
+ * @param {Object} data contains {columns, fields}
+ * @param {Array<Number>} range array of 2 elements with start (inclusive), end (non-inclusive) index of columns
+ */
+export const sliceDataset = (data, range) => {
+  const {fields, columns} = data;
+  const colIds = dotRange(...range);
+  return {
+    columns: colIds.map(colId => columns[colId]),
+    fields: colIds.map(colId => fields[colId]),
+  };
+};
+
+/**
+ * concat an array of datasets
+ * @param {Array<Object>} datasets array of datasets, each contains {columns, fields}
+ * @returns {Obeject} dataset, contains {columns, fields}
+ */
+export const concatDataset = datasets => {
+  const fieldsArr = datasets.map(d => d.fields);
+  let dataLength;
+  const columnsArr = datasets.map((d, i) => {
+    assert(d.columns[0].length > 0, `dataset[${i}] must by non-empty`);
+
+    dataLength = dataLength || d.columns[0].length;
+    assert(
+      dataLength === d.columns[0].length,
+      `datasets must have the same row count`
+    );
+    return d.columns;
+  });
+  return {
+    fields: [].concat.apply([], fieldsArr),
+    columns: [].concat.apply([], columnsArr),
+  };
+};
+
+/**
+ * get sub dataset by column ids
+ * @param {Object} data contains {columns, fields}
+ * @param {Array<Number>} indices array of ids indicating which columns to choose from
+ */
+export const gatherDataset = (data, indices) => {
+  const {fields, columns} = data;
+  return {
+    columns: indices.map(colId => columns[colId]),
+    fields: indices.map(colId => fields[colId]),
+  };
+};
+
+/**
+ * aggregate dataset by one categorical feature
+ * @param {Object} data contains {columns, fields}
+ * @param {Object} groupByFeature one field definition, contains {tableFieldIndex, name, type, dataType}
+ * @param {Array<Number>} columnsToInclude ids of columns to include in the output dataset (do not include the `groupByFeature` id)
+ * @param {Array<Object>|Object} aggregateFuncs an array of functions indicating the types of metrics to compute out of the aggregation
+ * can also be a map of array of functions, mapping from field name to metrics to compute out of that field
+ * e.g. [{name: 'mean', func: mean}, {name: 'max', func: Math.max}], or
+ * {
+ *   feature1: [{name: 'mean', func: mean},
+ *   feature2: [{name: 'max', func: Math.max}]
+ * }
+ * @returns dataset with {columns, fields}
+ * @example
+ * const data = {
+ *   fields: [{name: 'feature1', ...}, {name: 'feature2', ...}, {name: 'feature3', ...}]
+ *   columns: [
+ *     // values of feature1
+ *     [0, 0, 0, 0, 1, 1, 1, 0],
+ *     // values of feature2
+ *     [0, 1, 2, 3, 4, 5, 6, 7],
+ *     // values of feature3
+ *     [8, 9, 10, 11, 12, 13, 14, 15],
+ *   ]
+ * };
+ * aggregateDataset(
+ *   data,
+ *   {name: 'feature1', ...},
+ *   [1, 2],
+ *   [{name: 'max', func: arr => Math.max(...arr)}]
+ * )
+ * // returns:
+ * {
+ *   fields: [{name: 'feature1', ...}, {name: 'feature2_max', ...}, {name: 'feature3_max', ...}]
+ *   columns: [
+ *     // unique values of feature1
+ *     [0, 1],
+ *     // max values of feature2 aggregated by values of feature1, i.e. [Math.max(0, 1, 2, 3, 7), Math.max(4, 5, 6)]
+ *     [7, 6],
+ *     // max values of feature3 aggregated by values of feature1, i.e. [Math.max(8, 9, 10, 11, 15), Math.max(12, 13, 14)]
+ *     [15, 14],
+ *   ]
+ * }
+ *
+ * aggregateDataset(
+ *   data,
+ *   {name: 'feature1', ...},
+ *   [1, 2],
+ *   {
+ *     feature2: [{name: 'max', func: arr => Math.max(...arr)}],
+ *     feature3: [{name: 'mean', func: mean}],
+ *   }
+ * )
+ * // returns:
+ * {
+ *   fields: [{name: 'feature1', ...}, {name: 'feature2_max', ...}]
+ *   columns: [
+ *     // unique values of feature1
+ *     [0, 1],
+ *     // max values of feature2 aggregated by values of feature1, i.e. [Math.max(0, 1, 2, 3, 7), Math.max(4, 5, 6)]
+ *     [7, 6],
+ *     // means of feature3 aggregated by values of feature1, i.e. [mena(8, 9, 10, 11, 15), min(12, 13, 14)]
+ *     [10.6, 13],
+ *   ]
+ * }
+ */
+export const aggregateDataset = (
+  data,
+  groupByFeature,
+  aggregateFuncs,
+  columnsToInclude = null
+) => {
+  const {columns} = data;
+  const groupByColumn = columns[groupByFeature.tableFieldIndex - 1];
+  // map from category values (e.g. 'SF') to their orders in `catValueArr`
+  const catValueMap = {};
+  // an array of category values (e.g. ['SF', 'LA', ...])
+  const catValueArr = [];
+  // an array of array of data ids, ids in the same subarray share the same category value
+  const dataIdsByCategory = [];
+  assert(
+    groupByFeature.type === FEATURE_TYPE.CATEGORICAL ||
+      groupByFeature.dataType == 'string',
+    'groupByFeature for aggregation must be a non-continuous feature'
+  );
+
+  // get an array of array of dataIds grouped by hexId in this column
+  // e,g [[0, 4, 5], [2, 8], [3, 6], [1, 7, 9]]
+  groupByColumn.forEach((catVal, dataId) => {
+    if (catValueMap[catVal] !== undefined) {
+      dataIdsByCategory[catValueMap[catVal]].push(dataId);
+    } else {
+      dataIdsByCategory.push([dataId]);
+      catValueMap[catVal] = dataIdsByCategory.length - 1;
+      catValueArr.push(catVal);
+    }
+  });
+
+  // aggregate other columns based on the grouping
+  const datasetToAggregate = columnsToInclude
+    ? gatherDataset(data, columnsToInclude)
+    : data;
+  const {columns: columnsToAgg, fields: fieldsToAgg} = datasetToAggregate;
+
+  const getAggregateFuncs = colId => {
+    const _aggregateFuncs = Array.isArray(aggregateFuncs)
+      ? aggregateFuncs
+      : aggregateFuncs[fieldsToAgg[colId].name];
+    assert(
+      Array.isArray(_aggregateFuncs),
+      'aggregateFuncs must be an array of a map of arrays'
+    );
+    return _aggregateFuncs;
+  };
+  const resultColumns = columnsToAgg.reduce((acc, col, colId) => {
+    const _aggregateFuncs = getAggregateFuncs(colId);
+    const metricColsFromOneCol = _aggregateFuncs.map(metric => {
+      const {func, name} = metric;
+      assert(
+        typeof func === 'function' &&
+          (typeof name === 'function' || typeof name === 'string'),
+        'aggregateFuncs must have `func` and `name` fields'
+      );
+      return dataIdsByCategory.map(dataIds => {
+        const subCol = dataIds.map(dataId => col[dataId]);
+        return func(subCol);
+      });
+    });
+    return acc.concat(metricColsFromOneCol);
+  }, []);
+
+  // tableFieldIndex starts from 2; 1 is saved for `groupByFeature` column
+  let fieldsLength = 1;
+  const resultFields = fieldsToAgg.reduce((acc, field, i) => {
+    const _aggregateFuncs = getAggregateFuncs(i);
+    const metricFieldsFromOneField = _aggregateFuncs.map((metric, j) => {
+      fieldsLength++;
+      return {
+        name:
+          typeof metric.name === 'function'
+            ? metric.name(field.name)
+            : `${field.name}_${metric.name}`,
+        tableFieldIndex: fieldsLength,
+        // todo: in some cases data can be other types
+        dataType: 'float',
+      };
+    });
+    return acc.concat(metricFieldsFromOneField);
+  }, []);
+
+  // add groupby feature as a column
+  resultColumns.unshift(catValueArr);
+  resultFields.unshift({
+    ...groupByFeature,
+    tableFieldIndex: 1,
+  });
+
+  return {
+    columns: resultColumns,
+    fields: resultFields,
+  };
 };
 
 export function getDefaultSegmentGroups(nClusters) {
@@ -45,37 +260,39 @@ export function isValidSegmentGroups(segmentGroups, nSegments) {
 
 /**
  * filter data items w/ a set of filters
- * @param  {Array<Array<Number|String|Boolean>>>} data an array of data rows
+ * @param  {Object} data {columns, fields}
+ * @param  {Array<Array<Number|String|Boolean>>>} data.columns an array of data rows
+ * @param  {Array<Object>} data.fields an array of field definitions w/ attributes: {name, type, tableFieldIndex}
  * @param  {Array<Object>} filters an array of filters w/ attributes: {name, type, key, value}
  * @param  {String} filters.type filter type, one of FILTER_TYPE
  * @param  {Number} filters.key feature.tableFieldIndex of the feature to be filtered on
  * @return {Array<Number>} an array of data ids suffice all the filters
  */
-export const filterData = (data, filters) => {
-  if (!data || data.length === 0) {
+export const filterDataset = (data, filters) => {
+  const {columns} = data;
+  if (!columns || columns.length === 0) {
     return null;
   }
+  const idArray = dotRange(columns[0].length);
   if (!filters || filters.length === 0) {
-    return data;
+    return idArray;
   }
   const filterArray = Array.isArray(filters) ? filters : [filters];
-  const idArray = Array.from(Array(data.length).keys());
 
   return idArray.filter(id => {
-    return filterArray.every(({type, key, name, value}) => {
-      assert(
-        data[id][key] !== undefined,
-        `key ${key} ("${name}") doesn't exist in data point ${id}`
-      );
+    return filterArray.every(({type, key, value}) => {
+      const columnToFilter = columns[key];
       switch (type) {
         case FILTER_TYPE.RANGE:
-          return data[id][key] >= value[0] && data[id][key] <= value[1];
+          return (
+            columnToFilter[id] >= value[0] && columnToFilter[id] <= value[1]
+          );
         case FILTER_TYPE.INCLUDE:
-          return value.includes(data[id][key]);
+          return value.includes(columnToFilter[id]);
         case FILTER_TYPE.EXCLUDE:
-          return !value.includes(data[id][key]);
+          return !value.includes(columnToFilter[id]);
         case FILTER_TYPE.FUNC:
-          return Boolean(value(data[id][key]));
+          return Boolean(value(columnToFilter[id]));
         default:
           return false;
       }

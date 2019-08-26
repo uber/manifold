@@ -1,5 +1,3 @@
-// @noflow
-
 /**
  * check if the given array of values is discrete or not
  *

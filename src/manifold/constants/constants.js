@@ -1,10 +1,9 @@
-// @noflow
 import {FEATURE_TYPE, FILTER_TYPE} from 'packages/mlvis-common/constants';
 export {FEATURE_TYPE, FILTER_TYPE};
 
 export const COLORS = {
-  PINK: '#D64A62',
-  BLUE: '#528AD0',
+  PINK: '#ff0099',
+  BLUE: '#818c81',
   // TODO add more if we need more than two segment groups
 };
 
@@ -34,8 +33,13 @@ export const DEFAULT_FEATURE_TYPES = {
   [FEATURE_TYPE.GEO]: [],
 };
 
-export const PERF_PREFIX = 'model_';
-export const ACTUAL_PREFIX = `modelClass_`;
+export const SCORE_PREFIX = '@score:';
+export const scoreColName = modelId => `${SCORE_PREFIX}model_${modelId}`;
+export const PRED_PREFIX = `@pred:`;
+export const predColName = (modelId, classId) =>
+  `${PRED_PREFIX}model_${modelId}_class_${classId}`;
+export const GROUND_TRUTH_NAME = `@groundTruth`;
+export const makeUuid = dataId => `uuid${dataId}`;
 
 // view constants
 export const THEME_COLOR = '#276ef1';

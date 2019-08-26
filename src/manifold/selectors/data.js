@@ -2,7 +2,7 @@
 import {rootSelector, getHasBackend} from './base';
 import {
   getMetaDataFromRaw,
-  getSegmentedFeatures,
+  getSegmentedCatNumFeatures,
   getModelPerfHistograms,
 } from './compute';
 import {createSelector} from 'reselect';
@@ -47,7 +47,7 @@ export const getModelsPerformance = createSelector(
 export const getFeaturesDistribution = createSelector(
   getHasBackend,
   getApiFeatures,
-  getSegmentedFeatures,
+  getSegmentedCatNumFeatures,
   (hasBackend, apiFeatures, feFeatures) => {
     return hasBackend ? apiFeatures : feFeatures;
   }

@@ -14,8 +14,10 @@ import {StyledControlContainer} from './styled-components';
 import {Headline, HelpDialog} from 'packages/mlvis-common/ui';
 import PerfroamnceComparisonControlContainer from './performance-comparison-control-container';
 import FeatureAttributionControlContainer from './feature-attribution-control-container';
+import FiltersContainer from './filters-container';
 import PerformanceComparisonContainer from './performance-comparison-container';
 import FeatureAttributionContainer from './feature-attribution-container';
+import GeoFeatureContainer from './geo-feature-container';
 import {HELP_PAGES} from './help-pages';
 
 const mapStateToProps = (state, props) => {
@@ -145,7 +147,7 @@ class Manifold extends PureComponent {
   };
 
   render() {
-    const {selector, dataLoadingError} = this.props;
+    const {selector, dataLoadingError, mapboxToken} = this.props;
     const {isHelpMessageModalOpen, viewMode, viewTab, helpType} = this.state;
     const showBoth = viewMode === VIEW_MODE.COORDINATED;
     const showView1 = showBoth || viewTab === VIEW_TAB.PERF;
@@ -222,6 +224,7 @@ class Manifold extends PureComponent {
               flexDirection={showBoth ? 'row' : 'column'}
               selector={selector}
             />
+            <FiltersContainer selector={selector} />
           </Panel>
           <Panel key="control2" gridArea="control2" isShown={showBoth}>
             <StyledControlContainer
@@ -274,6 +277,10 @@ class Manifold extends PureComponent {
             gridArea={showBoth ? 'chart2' : 'chart'}
             isShown={showView2}
           >
+            <GeoFeatureContainer
+              selector={selector}
+              mapboxToken={mapboxToken}
+            />
             <FeatureAttributionContainer selector={selector} />
           </Panel>
         </Content>

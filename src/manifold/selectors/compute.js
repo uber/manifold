@@ -1,4 +1,3 @@
-// @noflow
 import {createSelector} from 'reselect';
 
 import {
@@ -9,8 +8,6 @@ import {
   computeSegmentedFeatureDistributionsNormalized,
   computeDivergence,
   computePercentiles,
-  logLoss,
-  absoluteError,
 } from 'packages/mlvis-common/utils';
 import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
 
@@ -23,9 +20,12 @@ import {
   getBaseModels,
   getIsManualSegmentation,
 } from './base';
-import {filterData, computeSortedOrder, groupLatLngPairs} from '../utils';
-
-import {METRIC, PERF_PREFIX, ACTUAL_PREFIX} from '../constants';
+import {
+  sliceDataset,
+  gatherDataset,
+  filterDataset,
+  computeSortedOrder,
+} from '../utils';
 
 const MODEL_PERF_HISTOGRAM_RESOLUTION = 50;
 const PERCENTILE_LIST = [0.01, 0.1, 0.25, 0.5, 0.75, 0.9, 0.99];
@@ -38,19 +38,58 @@ const PERCENTILE_LIST = [0.01, 0.1, 0.25, 0.5, 0.75, 0.9, 0.99];
 // --------------------------- DATA FROM REDUX STATE ----------------------- //
 // ------------------------------------------------------------------------- //
 
-const getX = createSelector(
+export const getData = createSelector(
   rootSelector,
-  state => state.x
+  state => state.data
 );
 
-const getYPred = createSelector(
+export const getColumnTypeRanges = createSelector(
   rootSelector,
-  state => state.yPred
+  state => state.columnTypeRanges
 );
 
-const getYTrue = createSelector(
-  rootSelector,
-  state => state.yTrue
+export const getX = createSelector(
+  getData,
+  getColumnTypeRanges,
+  (data, columnTypeRanges) => {
+    if (!data || !columnTypeRanges) {
+      return null;
+    }
+    return sliceDataset(data, columnTypeRanges.x);
+  }
+);
+
+export const getYPred = createSelector(
+  getData,
+  getColumnTypeRanges,
+  (data, columnTypeRanges) => {
+    if (!data || !columnTypeRanges) {
+      return null;
+    }
+    return sliceDataset(data, columnTypeRanges.yPred);
+  }
+);
+
+export const getYTrue = createSelector(
+  getData,
+  getColumnTypeRanges,
+  (data, columnTypeRanges) => {
+    if (!data || !columnTypeRanges) {
+      return null;
+    }
+    return sliceDataset(data, columnTypeRanges.yTrue);
+  }
+);
+
+export const getScore = createSelector(
+  getData,
+  getColumnTypeRanges,
+  (data, columnTypeRanges) => {
+    if (!data || !columnTypeRanges) {
+      return null;
+    }
+    return sliceDataset(data, columnTypeRanges.score);
+  }
 );
 
 export const getModelsMeta = createSelector(
@@ -59,13 +98,21 @@ export const getModelsMeta = createSelector(
 );
 
 export const getFeaturesMeta = createSelector(
-  rootSelector,
-  state => state.featuresMeta
+  getX,
+  x => {
+    if (!x) {
+      return null;
+    }
+    return x.fields;
+  }
 );
 
 export const getMetaDataFromRaw = createSelector(
   [getModelsMeta, getFeaturesMeta],
   (modelsMeta, featuresMeta) => {
+    if (!modelsMeta || !featuresMeta) {
+      return null;
+    }
     return {
       modelsMeta,
       featuresMeta,
@@ -77,82 +124,43 @@ export const getMetaDataFromRaw = createSelector(
 // ---------------------- PERFORMANCE COMPARISON VIEW ------------------------ //
 // ------------------------------------------------------------------------- //
 
-// merge predictions and performances of different models into one list.
-// in each element, "model_" are performances, "modelClass_" are raw predictions
-export const getDataPerformance = createSelector(
-  [getYPred, getYTrue, getModelsMeta],
-  (yPred, yTrue, modelsMeta) => {
-    if (!yPred.length || !yPred[0].length || !yTrue.length || !modelsMeta) {
-      return [];
+// return a list of column ids to include in the clustering
+// to do: make it flexible / adjustible
+export const getClusteringInputColumnIds = createSelector(
+  [getColumnTypeRanges, getModelsMeta, getBaseModels, getMetric],
+  columnTypeRanges => {
+    if (!columnTypeRanges) {
+      return null;
     }
-    const {nClasses = 2, classLabels = []} = modelsMeta;
-    // regression vs classification
-    const perfFunc = nClasses === 1 ? absoluteError : logLoss;
-    // performance arrays by model
-    // TODO: transform the data to array of arrays during data loading action
-    const perfCols = yPred.map(singleModelPredArr => {
-      const predictArr = singleModelPredArr.map(instance =>
-        classLabels.map(classCol => instance[classCol])
-      );
-      return perfFunc(yTrue, predictArr, classLabels);
-    });
-
-    return yTrue.map((_, dataId) => {
-      return yPred.reduce((acc, singleModelPredArr, modelId) => {
-        classLabels.forEach((classCol, classId) => {
-          acc[ACTUAL_PREFIX + modelId + '_' + classId] =
-            singleModelPredArr[dataId][classCol];
-        });
-        acc[PERF_PREFIX + modelId] = perfCols[modelId][dataId];
-
-        return acc;
-      }, {});
-      // 17924.6ms --> 112.77ms
-    });
+    return dotRange(...columnTypeRanges.score);
   }
 );
 
-export const getClusteringInput = createSelector(
-  [getDataPerformance, getModelsMeta, getBaseModels, getMetric],
-  (perfArr = [], modelsMeta = {}, baseModels = [], metric) => {
-    if (!perfArr.length) {
-      return [];
+// return a sub dataset to include in the clustering
+export const getClusteringInputDataset = createSelector(
+  [getData, getClusteringInputColumnIds],
+  (data, colIds) => {
+    if (!data || !colIds) {
+      return null;
     }
-    const {nClasses} = modelsMeta;
-    const baseModelMetricCols = Object.keys(perfArr[0])
-      // choose relevant models
-      .filter(name =>
-        baseModels.length ? baseModels.includes(name.split('_')[1]) : true
-      )
-      // choose performance cols or actual prediction cols
-      .filter(name =>
-        metric === METRIC.PERFORMANCE
-          ? name.startsWith(PERF_PREFIX)
-          : name.startsWith(ACTUAL_PREFIX)
-      )
-      // remove predictions of class 0 if using actual
-      .filter(name =>
-        nClasses > 1 && metric === METRIC.ACTUAL
-          ? name.split('_')[2] !== '0'
-          : true
-      );
-    return perfArr.map(perfItem =>
-      baseModelMetricCols.map(model => perfItem[model])
-    );
+    return gatherDataset(data, colIds);
   }
 );
 
+// return an array of array of ids representing data rows in each cluster
+// e.g. [[0, 5, 6], [3, 4], [1, 2, 7]]
 export const getDataIdsInSegmentsUnsorted = createSelector(
-  [getClusteringInput, getX, getNClusters, getSegmentFilters],
-  (clusteringInput = [], features, nClusters = 4, segmentFilters) => {
-    if (!clusteringInput.length || !clusteringInput[0].length) {
-      return [];
+  [getClusteringInputDataset, getData, getNClusters, getSegmentFilters],
+  (clusteringInput, allData, nClusters = 4, segmentFilters) => {
+    if (!clusteringInput || !allData) {
+      return null;
     }
     if (segmentFilters && segmentFilters.length) {
-      // todo: merge rawPred, rawFeatures, and clusteringInput for manual filters
-      return segmentFilters.map(filter => filterData(features, filter));
+      return segmentFilters.map(filter => filterDataset(allData, filter));
     }
-    const clusterIds = computeClusters(clusteringInput, nClusters);
+    const {columns} = clusteringInput;
+    const clusterIds = computeClusters(columns, nClusters, true);
+    // todo: simplify the following ligic. `clusterIds` representation is sufficient
     const result = [];
     for (let i = 0; i < nClusters; i++) {
       result.push([]);
@@ -165,41 +173,29 @@ export const getDataIdsInSegmentsUnsorted = createSelector(
 );
 
 export const getModelPerfHistogramsUnsorted = createSelector(
-  [getDataPerformance, getDataIdsInSegmentsUnsorted, getModelsMeta, getMetric],
-  (
-    perfArr = [],
-    segmentedIds = [],
-    modelsMeta = {},
-    metric = METRIC.PERFORMANCE
-  ) => {
-    if (!perfArr.length || !segmentedIds.length) {
+  [getClusteringInputDataset, getDataIdsInSegmentsUnsorted],
+  (data, segmentedIds) => {
+    if (!data || !segmentedIds) {
       return null;
     }
-    const {nModels} = modelsMeta;
-    // todo: consider cases with more than one class
-    const modelKeyArr =
-      metric === METRIC.PERFORMANCE
-        ? dotRange(nModels).map(m => PERF_PREFIX + m)
-        : dotRange(nModels).map(m => ACTUAL_PREFIX + m + '_0');
+    const {columns: modelScoreCols} = data;
 
-    return segmentedIds.map(segment => {
+    return segmentedIds.map(idArr => {
       // histograms of performance grouped by model, grouped by segment
-      const perfHistogram = modelKeyArr.map(modelId => {
-        const segmentedPerfArr = segment.map(
-          dataId => perfArr[dataId][modelId]
-        );
+      const perfHistogram = modelScoreCols.map(col => {
+        const segmentedScoreArr = idArr.map(dataId => col[dataId]);
         return {
           density: computeDensity(
-            segmentedPerfArr,
+            segmentedScoreArr,
             MODEL_PERF_HISTOGRAM_RESOLUTION
           ),
           // "percentiles" includes [.01, .1, .25, .5, .75, .9, .99] percentiles of model performance
-          percentiles: computePercentiles(segmentedPerfArr, PERCENTILE_LIST),
+          percentiles: computePercentiles(segmentedScoreArr, PERCENTILE_LIST),
         };
       });
       return {
-        numDataPoints: segment.length,
-        dataIds: segment,
+        numDataPoints: idArr.length,
+        dataIds: idArr,
         data: perfHistogram,
       };
     });
@@ -209,7 +205,7 @@ export const getModelPerfHistogramsUnsorted = createSelector(
 export const getSegmentsSortedOrder = createSelector(
   getModelPerfHistogramsUnsorted,
   segments => {
-    if (!segments || !segments.length) {
+    if (!segments) {
       return null;
     }
     // sort by the median performance of the first model.
@@ -221,7 +217,7 @@ export const getSegmentsSortedOrder = createSelector(
 export const getModelPerfHistograms = createSelector(
   [getModelPerfHistogramsUnsorted, getSegmentsSortedOrder],
   (segments, order) => {
-    if (!segments || !segments.length) {
+    if (!segments || !order) {
       return null;
     }
     const result = order.map(id => segments[id]);
@@ -243,7 +239,7 @@ export const getDataIdsInSegments = createSelector(
     getSegmentsSortedOrder,
   ],
   (segments, isManual, order) => {
-    if (!segments || !segments.length) {
+    if (!segments || !order) {
       return null;
     }
     if (!isManual) {
@@ -257,8 +253,8 @@ export const getDataIdsInSegments = createSelector(
 export const getDataIdsInSegmentGroups = createSelector(
   [getDataIdsInSegments, getSegmentGroups],
   (dataIdsInSegments, segmentGroups) => {
-    if (!dataIdsInSegments || !dataIdsInSegments.length) {
-      return;
+    if (!dataIdsInSegments || !segmentGroups) {
+      return null;
     }
     return segmentGroups.map(segmentGroup =>
       segmentGroup.reduce(
@@ -269,39 +265,28 @@ export const getDataIdsInSegmentGroups = createSelector(
   }
 );
 
-export const getSegmentedRawFeatures = createSelector(
-  [getX, getDataIdsInSegmentGroups],
-  (data, segments) => {
-    if (!segments || segments.length === 0) {
+export const getSegmentedCatNumFeatures = createSelector(
+  [getX, getColumnTypeRanges, getDataIdsInSegmentGroups],
+  (x, columnTypeRanges, idsInGroups) => {
+    if (!x || !columnTypeRanges || !idsInGroups) {
       return null;
     }
-    return segments.map(segment => {
-      return segment.map(dataId => data[dataId]);
-    });
-  }
-);
-
-export const getSegmentedFeatures = createSelector(
-  [getSegmentedRawFeatures, getFeaturesMeta],
-  (segments, featuresMeta) => {
-    if (
-      !segments ||
-      segments.length === 0 ||
-      !featuresMeta ||
-      featuresMeta.length === 0
-    ) {
-      return null;
-    }
-    return featuresMeta
+    const {columns, fields} = x;
+    const {
+      x: [xColIdStart = 1],
+    } = columnTypeRanges;
+    return fields
       .filter(feature =>
         [FEATURE_TYPE.CATEGORICAL, FEATURE_TYPE.NUMERICAL].includes(
           feature.type
         )
       )
       .map(feature => {
-        const {domain, type} = feature;
-        const segmentValues = segments.map(segment => {
-          return segment.map(d => d[feature.tableFieldIndex - 1]);
+        const {domain, type, tableFieldIndex} = feature;
+        const segmentValues = idsInGroups.map(dataIds => {
+          return dataIds.map(
+            id => columns[tableFieldIndex - xColIdStart - 1][id]
+          );
         });
 
         const distributions = computeSegmentedFeatureDistributions(
@@ -323,15 +308,5 @@ export const getSegmentedFeatures = createSelector(
         };
       })
       .sort((fa, fb) => fb.divergence - fa.divergence);
-  }
-);
-
-export const getGroupedGeoFeatures = createSelector(
-  getFeaturesMeta,
-  features => {
-    const geoFields = features.filter(
-      feature => feature.type === FEATURE_TYPE.GEO
-    );
-    return groupLatLngPairs(geoFields);
   }
 );

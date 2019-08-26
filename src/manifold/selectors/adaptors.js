@@ -1,22 +1,19 @@
-// @noflow
 import {createSelector} from 'reselect';
 import {dotRange} from 'packages/mlvis-common/utils';
 import {getDivergenceThreshold, getMetric} from './base';
-import {
-  getMetaData,
-  getModelsPerformance,
-  getFeaturesDistribution,
-} from './data';
-
+import {getModelsMeta, getFeaturesMeta} from './compute';
+import {getModelsPerformance, getFeaturesDistribution} from './data';
 // ------------------------------------------------------------------------------------------- //
 // -- THE ADAPTOR SELECTORS DO NECESSARY TRANSFORMATION TO THE OUTPUTS OF THE DATA SELECTOR -- //
 // ------------------------------------------------------------------------------------------- //
 
 // segment filters
 export const getSegmentFilterAttributes = createSelector(
-  getMetaData,
-  (meta = {}) => {
-    const {featuresMeta = []} = meta;
+  getFeaturesMeta,
+  featuresMeta => {
+    if (!featuresMeta) {
+      return null;
+    }
     return featuresMeta.map(feature => {
       const {name, type, domain, histogram} = feature;
       return {
@@ -36,7 +33,7 @@ export const getRawDataRange = createSelector(
   getModelsPerformance,
   perfBySegment => {
     if (!perfBySegment) {
-      return [];
+      return null;
     }
     let min = Infinity;
     let max = -Infinity;
@@ -81,8 +78,8 @@ export const getDensityRange = createSelector(
 export const getModelIds = createSelector(
   getModelsPerformance,
   perfBySegment => {
-    if (!perfBySegment || perfBySegment.length === 0) {
-      return [];
+    if (!perfBySegment) {
+      return null;
     }
     const {data = []} = perfBySegment[0];
     return dotRange(data.length);
@@ -93,8 +90,8 @@ export const getModelIds = createSelector(
 export const getModelMeta = createSelector(
   getModelsPerformance,
   perfBySegment => {
-    if (!perfBySegment || perfBySegment.length === 0) {
-      return [];
+    if (!perfBySegment) {
+      return null;
     }
     const {data = []} = perfBySegment[0];
     return data.map((d, i) => ({
@@ -108,7 +105,7 @@ export const getModelMeta = createSelector(
 export const getFeatures = createSelector(
   [getFeaturesDistribution, getDivergenceThreshold],
   (rawFeatures, threshold) => {
-    if (!rawFeatures || rawFeatures.length === 0) {
+    if (!rawFeatures) {
       return null;
     }
 
@@ -117,10 +114,12 @@ export const getFeatures = createSelector(
 );
 
 export const getDisplayMetric = createSelector(
-  getMetric,
-  getMetaData,
-  (metric, meta = {}) => {
-    const {modelsMeta: {nClasses} = {}} = meta;
+  [getMetric, getModelsMeta],
+  (metric, meta) => {
+    if (!meta) {
+      return null;
+    }
+    const {nClasses} = meta;
     switch (metric) {
       case 'actual':
         return 'actual';
