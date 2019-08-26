@@ -22,7 +22,6 @@ module.exports = {
   testPathIgnorePatterns: [
     '/node_modules/',
     '/dist/',
-    'src/(?:.+?)/__tests__/',
     '__fixtures__',
     'stories',
     '.cache',

@@ -96,6 +96,7 @@
   },
   "scripts": {
     "lint": "eslint src",
+    "cover": "jest --coverage --config=jest.config.js",
     "test": "jest",
     "sync": "scripts/sync.sh",
     "traverse": "scripts/traverse.sh",
