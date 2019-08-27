@@ -176,14 +176,14 @@ If there are geospatial features in your dataset, they will be displayed on a ma
 
 <img alt="geo feature view lat-lng" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/geo_feature_1.png" width="600">
 
-1. **Feature name:** when there are multiple geo features in the dataset, you can choose which one to display.
-2. **Color-by:** if a lat-lng coordinates feature is chosen, manifold defaults to color the datapoints by segment group ids.
-3. **Map:** if a lat-lng coordinates feature is chosen, manifold defaults to display the location and density of the datapoints using heatmap.
+1. **Feature name:** when multiple geo features exist, you can choose which one to display on map.
+2. **Color-by:** if lat-lng feature is chosen, datapoints are colored by group ids.
+3. **Map:** manifold defaults to display the location and density of these datapoints using heatmap.
 
 <img alt="geo feature view hex id" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/geo_feature_2.png" width="600">
 
-1. **Feature name:** you can also choose a hex-id feature to display, when doing so, datapoints with the same hex-id are displayed in aggregate.
-2. **Color-by:** when a hex-id feature is chosen, you can color the hexagons by: average model performance, percentage of segment group 0, or total count per hexagon.
+1. **Feature name:** when choosing a hex-id feature to display, datapoints with the same hex-id are displayed in aggregate.
+2. **Color-by:** you can color the hexagons by: average model performance, percentage of segment group 0, or total count per hexagon.
 3. **Map:** all metrics that are used for coloring are also shown in tooltips, on the hexagon level.
 
 #### Usage
@@ -192,7 +192,7 @@ If there are geospatial features in your dataset, they will be displayed on a ma
 
 **Example**
 
-In the first map above, Groups 0 have a more obvious tendency to be concentrated in downtown san francisco area.
+In the first map above, Group 0 has a more obvious tendency to be concentrated in downtown San Francisco area.
 
 <!-- images in this doc are created from https://docs.google.com/presentation/d/1EqvjMyBLNX7wfEQPFKAoaE39bW0pXbBa8WIznQN49vE/edit?usp=sharing -->
 
