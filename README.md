@@ -166,6 +166,34 @@ Data in Groups 0 and 1 have obvious difference in Features 0, 1, 2 and 3; but th
 
 Suppose Data Groups 0 and 1 correspond to data instances with low and high prediction error respectively, this means that data with higher errors tend to have *lower* feature values in Features 0 and 1, since peak of pink curve is to the left side of the blue curve.
 
+<br/>
+
+### Geo Feature View
+
+If there are geospatial features in your dataset, they will be displayed on a map. Lat-lng coordinates and [h3](https://github.com/uber/h3-js) hexagon ids are currently supoorted geo feature types.
+
+#### Reading the chart
+
+<img alt="geo feature view lat-lng" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/geo_feature_1.png" width="600">
+
+1. **Feature name:** when there are multiple geo features in the dataset, you can choose which one to display.
+2. **Color-by:** if a lat-lng coordinates feature is chosen, manifold defaults to color the datapoints by segment group ids.
+3. **Map:** if a lat-lng coordinates feature is chosen, manifold defaults to display the location and density of the datapoints using heatmap.
+
+<img alt="geo feature view hex id" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/geo_feature_2.png" width="600">
+
+1. **Feature name:** you can also choose a hex-id feature to display, when doing so, datapoints with the same hex-id are displayed in aggregate.
+2. **Color-by:** when a hex-id feature is chosen, you can color the hexagons by: average model performance, percentage of segment group 0, or total count per hexagon.
+3. **Map:** all metrics that are used for coloring are also shown in tooltips, on the hexagon level.
+
+#### Usage
+
+  - Look for the differences in geo location between the two segment groups (pink and grey). They represent the spation distribution difference between the two subsets you previously selected.
+
+**Example**
+
+In the first map above, Groups 0 have a more obvious tendency to be concentrated in downtown san francisco area.
+
 <!-- images in this doc are created from https://docs.google.com/presentation/d/1EqvjMyBLNX7wfEQPFKAoaE39bW0pXbBa8WIznQN49vE/edit?usp=sharing -->
 
 
