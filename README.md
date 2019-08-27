@@ -177,7 +177,7 @@ If there are geospatial features in your dataset, they will be displayed on a ma
 <img alt="geo feature view lat-lng" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/geo_feature_1.png" width="600">
 
 1. **Feature name:** when multiple geo features exist, you can choose which one to display on map.
-2. **Color-by:** if lat-lng feature is chosen, datapoints are colored by group ids.
+2. **Color-by:** if a lat-lng feature is chosen, datapoints are colored by group ids.
 3. **Map:** manifold defaults to display the location and density of these datapoints using heatmap.
 
 <img alt="geo feature view hex id" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/geo_feature_2.png" width="600">
