@@ -125,5 +125,66 @@ export const HELP_PAGES = {
       image:
         'https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/feature_attribution_3.png',
     },
+    {
+      title: 'Reading geo feature view',
+      content: (
+        <ol type="1">
+          <li>
+            <strong>Feature name:</strong> when multiple geo features exist, you
+            can choose which one to display on map.
+          </li>
+          <li>
+            <strong>Color-by:</strong> if a lat-lng feature is chosen,
+            datapoints are colored by group ids.
+          </li>
+          <li>
+            <strong>Map:</strong> manifold defaults to display the location and
+            density of these datapoints using heatmap.
+          </li>
+        </ol>
+      ),
+      image:
+        'https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/geo_feature_1.png',
+    },
+    {
+      title: 'Reading geo feature view (contd)',
+      content: (
+        <ol type="1">
+          <li>
+            <strong>Feature name:</strong> when choosing a hex-id feature to
+            display, datapoints with the same hex-id are displayed in aggregate.
+          </li>
+          <li>
+            <strong>Color-by:</strong> you can color the hexagons by: average
+            model performance, percentage of segment group 0, or total count per
+            hexagon.
+          </li>
+          <li>
+            <strong>Map:</strong> metrics used for coloring are also shown in
+            tooltips at hexagon level.
+          </li>
+        </ol>
+      ),
+      image:
+        'https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/geo_feature_2.png',
+    },
+    {
+      title: 'Example',
+      content: (
+        <p>
+          <p>
+            Look for the differences in geo location between the two colors.
+            They represent the spation distribution difference between the two
+            groups you previously selected.
+          </p>
+          <p>
+            In this view, Group 0 has a more obvious tendency to be concentrated
+            in downtown San Francisco area.
+          </p>
+        </p>
+      ),
+      image:
+        'https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/geo_feature_3.png',
+    },
   ],
 };

@@ -23,6 +23,7 @@
     "prop-types": "^15.6.2",
     "react": "^16.7.0",
     "react-dom": "^16.5.2",
+    "react-palm": "^3.1.2",
     "react-redux": "^5.0.7",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",

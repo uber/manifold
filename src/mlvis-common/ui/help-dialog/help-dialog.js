@@ -67,7 +67,7 @@ const PageTitle = styled.div`
 `;
 const TextArea = styled.div`
   /** important to control the height of each item so that the modal doesn't change size unexpectedly */
-  height: 100px;
+  height: 110px;
   overflow-y: scroll;
   margin-bottom: 12px;
 `;

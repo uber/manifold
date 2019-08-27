@@ -47,6 +47,7 @@ const Container = styled.div`
 export class GeoFeatureContainer extends PureComponent {
   static propTypes = {
     // todo: add detailed schema
+    mapboxToken: PropTypes.string,
     keplerDatasets: PropTypes.arrayOf(PropTypes.object),
     keplerConfig: PropTypes.object,
     height: PropTypes.number,
@@ -54,6 +55,7 @@ export class GeoFeatureContainer extends PureComponent {
     selector: PropTypes.func.isRequired,
   };
   static defaultProps = {
+    mapboxToken: '',
     keplerConfig: null,
     keplerDatasets: null,
     height: 450,

@@ -97,10 +97,12 @@ const Thumbnail = styled.div`
 class Manifold extends PureComponent {
   static propTypes = {
     selector: PropTypes.func,
+    mapboxToken: PropTypes.string,
   };
 
   static defaultProps = {
     selector: () => {},
+    mapboxToken: '',
   };
 
   state = {
