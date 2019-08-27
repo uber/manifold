@@ -39,7 +39,7 @@ export const getHasGeoFeatures = createSelector(
 export const getLayerVisibility = createSelector(
   [getHasGeoFeatures, getGroupedGeoFeatures, getDisplayGeoFeatures],
   (hasGeoFeatures, geoFeatures, displayGeoFeatures) => {
-    if (!hasGeoFeatures || !geoFeatures) {
+    if (!hasGeoFeatures) {
       return null;
     }
     return geoFeatures.map((f, i) =>
@@ -80,7 +80,7 @@ export const getAggregatedDataset = createSelector(
     getGroupedGeoFeatures,
   ],
   (hasGeoFeatures, data, columnTypeRanges, geoFeatures) => {
-    if (!hasGeoFeatures || !data || !geoFeatures) {
+    if (!hasGeoFeatures || !data) {
       return null;
     }
     const {fields} = data;
@@ -127,13 +127,7 @@ export const getAvailableVisualChannelFeatures = createSelector(
     getAggregatedDataset,
   ],
   (hasGeoFeatures, geoFeatures, displayGeoFeatures, scoreData, aggData) => {
-    if (
-      !hasGeoFeatures ||
-      !geoFeatures ||
-      !displayGeoFeatures ||
-      !scoreData ||
-      !aggData
-    ) {
+    if (!hasGeoFeatures || !displayGeoFeatures || !scoreData || !aggData) {
       return null;
     }
     const displayFeature = geoFeatures[displayGeoFeatures[0]];
@@ -150,7 +144,7 @@ export const getKeplerDatasets = createSelector(
   [getHasGeoFeatures, getData, getGroupedGeoFeatures, getAggregatedDataset],
   (hasGeoFeatures, data, geoFeatures, aggregatedData) => {
     const {fields} = data;
-    if (!hasGeoFeatures || !fields || !geoFeatures || !aggregatedData) {
+    if (!hasGeoFeatures || !fields || !aggregatedData) {
       return null;
     }
     // duplicate datasets since no per-layer filtering is supported T3638323 https://github.com/keplergl/kepler.gl/issues/403
@@ -204,7 +198,6 @@ export const getKeplerConfig = createSelector(
     if (
       !hasGeoFeatures ||
       !idsInSegmentgroups ||
-      !geoFeatures ||
       !isVisible ||
       !colorByFeature
     ) {

@@ -58,8 +58,10 @@ export default class FileUploader extends PureComponent {
   };
 
   _handleFileChange = (fileInfo, key) => {
+    // yPred could accept mulpiple files, other fields cannot
+    const file = key === 'yPred' ? fileInfo.fileList : fileInfo.fileList[0];
     this.setState({
-      [key]: fileInfo.fileList,
+      [key]: file,
     });
   };
 
