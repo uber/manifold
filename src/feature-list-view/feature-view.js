@@ -251,7 +251,7 @@ class FeatureView extends PureComponent {
           {numeral(distributionsMaxValues[1]).format('0,0.[00]')}
         </text>
         <text
-          fill="#666"
+          fill="#000"
           dx={4}
           y={dy}
           fontSize={'0.7em'}
