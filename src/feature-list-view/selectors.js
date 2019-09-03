@@ -60,13 +60,13 @@ export const getFeatureDistributions = createSelector(
   }
 );
 
-export const getDistributionsValueRange = createSelector(
+export const getDistributionsMaxValues = createSelector(
   [featureSelector, getFeatureDistributions],
   (feature, distributions) => {
-    if (feature.distributionValueRange) {
-      return feature.distributionValueRange;
+    if (feature.distributionMaxValues) {
+      return feature.distributionMaxValues;
     }
-    return [0, Math.max(...distributions[0], ...distributions[1])];
+    return [Math.max(...distributions[0]), Math.max(...distributions[1])];
   }
 );
 

@@ -2,6 +2,7 @@ node_modules
 yarn.lock
 package-lock.json
 examples/**/*-lock.json
+examples/**/data
 scripts/sync.sh
 scripts/traverse.sh
 *.log

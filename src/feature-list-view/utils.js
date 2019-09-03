@@ -6,7 +6,7 @@ import {
   getFeatureType,
   getFeatureDomain,
   getFeatureDistributions,
-  getDistributionsValueRange,
+  getDistributionsMaxValues,
   getFeatureDistributionsNormalized,
   getFeatureDivergence,
   getCategoriesSortedOrder,
@@ -31,7 +31,7 @@ export const withDerivedData = FeatureView => props => {
     domain: getFeatureDomain(props),
     distributions: getFeatureDistributions(props),
     distributionsNormalized: getFeatureDistributionsNormalized(props),
-    distributionsValueRange: getDistributionsValueRange(props),
+    distributionsMaxValues: getDistributionsMaxValues(props),
     divergence: getFeatureDivergence(props),
     // for categorical features only
     categoriesSortedOrder: getCategoriesSortedOrder(props),
