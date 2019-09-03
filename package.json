@@ -37,7 +37,6 @@
     "prop-types": "^15.7.2",
     "random": "^2.1.1",
     "react": "^16.7.0",
-    "react-container-dimensions": "^1.4.1",
     "react-d3-axis": "^0.1.1",
     "react-redux": "^5.0.7",
     "reduce-reducers": "^1.0.4",

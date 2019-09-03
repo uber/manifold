@@ -1,7 +1,6 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import ContainerDimensions from 'react-container-dimensions';
 import KeplerGl from 'kepler.gl';
 import {addDataToMap} from 'kepler.gl/actions';
 
@@ -47,7 +46,6 @@ const Container = styled.div`
 export class GeoFeatureContainer extends PureComponent {
   static propTypes = {
     // todo: add detailed schema
-    mapboxToken: PropTypes.string,
     keplerDatasets: PropTypes.arrayOf(PropTypes.object),
     keplerConfig: PropTypes.object,
     height: PropTypes.number,
@@ -55,10 +53,10 @@ export class GeoFeatureContainer extends PureComponent {
     selector: PropTypes.func.isRequired,
   };
   static defaultProps = {
-    mapboxToken: '',
     keplerConfig: null,
     keplerDatasets: null,
-    height: 450,
+    width: 400,
+    height: 400,
     hasGeoFeatures: false,
   };
 
@@ -98,6 +96,7 @@ export class GeoFeatureContainer extends PureComponent {
       displayGeoFeatures,
       visualChannelFeatures,
       colorByFeature,
+      width,
       height,
     } = this.props;
     if (!hasGeoFeatures) {
@@ -105,20 +104,14 @@ export class GeoFeatureContainer extends PureComponent {
     }
     return (
       <Container>
-        <ContainerDimensions>
-          {({width}) => (
-            <KeplerGl
-              mapboxApiAccessToken={
-                process.env.MAPBOX_ACCESS_TOKEN || mapboxToken
-              }
-              getState={state => selector(state).keplerGl}
-              mint={false}
-              id="map"
-              width={width}
-              height={height}
-            />
-          )}
-        </ContainerDimensions>
+        <KeplerGl
+          mapboxApiAccessToken={process.env.MAPBOX_ACCESS_TOKEN || mapboxToken}
+          getState={state => selector(state).keplerGl}
+          mint={false}
+          id="map"
+          width={width}
+          height={height}
+        />
         <GeoFeatureControl
           geoFeatures={geoFeatures}
           displayGeoFeatures={displayGeoFeatures}

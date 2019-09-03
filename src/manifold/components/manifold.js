@@ -35,13 +35,16 @@ const CONTROL_HEIGHT = 100;
 const CONTROL_WIDTH = 280;
 const MIN_CHART_WIDTH = 400;
 const MIN_CHART_HEIGHT = 300;
+const PANEL_PADDING = 20;
+const THUMBNAIL_HEIGHT = 180;
 
 const Container = styled.div`
   font-family: 'Helvetica Neue', Helvetica, sans-serif;
   font-size: 14px;
   display: flex;
   background: #fff;
-  height: 100vh;
+  width: ${props => `${props.width}px`};
+  height: ${props => `${props.height}px`};
 `;
 
 const ErrorContainer = styled(Container)`
@@ -70,7 +73,7 @@ const Content = styled.div`
 `;
 
 const Panel = styled.div`
-  padding: 0 20px;
+  padding: 0 ${PANEL_PADDING}px;
   display: ${props => (props.isShown ? 'flex' : 'none')};
   flex-direction: ${props => props.flexDirection || 'column'};
   grid-area: ${props => props.gridArea};
@@ -89,7 +92,6 @@ const SidePanel = styled.div`
 
 const Thumbnail = styled.div`
   display: flex;
-  height: 180px;
   border: 1px solid #dfdfdf;
   padding: 10px;
 `;
@@ -97,12 +99,10 @@ const Thumbnail = styled.div`
 class Manifold extends PureComponent {
   static propTypes = {
     selector: PropTypes.func,
-    mapboxToken: PropTypes.string,
   };
 
   static defaultProps = {
     selector: () => {},
-    mapboxToken: '',
   };
 
   state = {
@@ -149,16 +149,24 @@ class Manifold extends PureComponent {
   };
 
   render() {
-    const {selector, dataLoadingError, mapboxToken} = this.props;
+    const {selector, dataLoadingError, mapboxToken, width, height} = this.props;
     const {isHelpMessageModalOpen, viewMode, viewTab, helpType} = this.state;
     const showBoth = viewMode === VIEW_MODE.COORDINATED;
     const showView1 = showBoth || viewTab === VIEW_TAB.PERF;
     const showView2 = showBoth || viewTab === VIEW_TAB.FEATURE;
+    const mainPanelWidth = showBoth
+      ? width / 2 - 2 * PANEL_PADDING
+      : width - CONTROL_WIDTH - 2 * PANEL_PADDING;
+    const mainPanelHeight = showBoth
+      ? height - HEADLINE_HEIGHT - CONTROL_HEIGHT
+      : height - HEADLINE_HEIGHT;
+    const sidePanelWidth = CONTROL_WIDTH - 2 * PANEL_PADDING;
+
     if (dataLoadingError) {
       return <ErrorContainer> {dataLoadingError.message} </ErrorContainer>;
     }
     return (
-      <Container>
+      <Container width={width} height={height}>
         <Content viewMode={viewMode}>
           <Panel
             key="headline"
@@ -247,11 +255,13 @@ class Manifold extends PureComponent {
                 <StyledControlContainer
                   as={PerfroamnceComparisonControlContainer}
                   flexDirection="column"
+                  width={sidePanelWidth}
                   selector={selector}
                 />
                 <StyledControlContainer
                   as={FeatureAttributionControlContainer}
                   flexDirection="column"
+                  width={sidePanelWidth}
                   selector={selector}
                 />
               </div>
@@ -260,6 +270,8 @@ class Manifold extends PureComponent {
                   <PerformanceComparisonContainer
                     selector={selector}
                     isThumbnail
+                    width={sidePanelWidth}
+                    height={THUMBNAIL_HEIGHT}
                   />
                 </Thumbnail>
               )}
@@ -272,7 +284,11 @@ class Manifold extends PureComponent {
             isShown={showView1}
             borderRight={showBoth}
           >
-            <PerformanceComparisonContainer selector={selector} />
+            <PerformanceComparisonContainer
+              selector={selector}
+              width={mainPanelWidth}
+              height={mainPanelHeight}
+            />
           </Panel>
           <Panel
             key="chart2"
@@ -281,9 +297,13 @@ class Manifold extends PureComponent {
           >
             <GeoFeatureContainer
               selector={selector}
+              width={mainPanelWidth}
               mapboxToken={mapboxToken}
             />
-            <FeatureAttributionContainer selector={selector} />
+            <FeatureAttributionContainer
+              selector={selector}
+              width={mainPanelWidth}
+            />
           </Panel>
         </Content>
         <HelpDialog

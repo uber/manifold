@@ -1,6 +1,5 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
-import ContainerDimensions from 'react-container-dimensions';
 import {connect} from '../custom-connect';
 import {
   StyledControl,
@@ -54,6 +53,7 @@ const WIDTH_LADDER = computeWidthLadder(CONTROL_WIDTH, CONTROL_MARGIN);
 class FeatureAttributionControlContainer extends PureComponent {
   static propTypes = {
     className: PropTypes.string,
+    width: PropTypes.number,
     flexDirection: PropTypes.string,
     modelComparisonParams: PropTypes.shape({
       nClusters: PropTypes.number,
@@ -103,6 +103,7 @@ class FeatureAttributionControlContainer extends PureComponent {
   static defaultProps = {
     className: '',
     flexDirection: 'row',
+    width: 240,
     modelComparisonParams: {nClusters: 4},
     featureDistributionParams: {segmentGroups: [[], []]},
     // add missing default props before refactoring
@@ -155,6 +156,7 @@ class FeatureAttributionControlContainer extends PureComponent {
   render() {
     const {
       className,
+      width,
       flexDirection,
       modelComparisonParams: {nClusters},
       featuresMeta,
@@ -170,73 +172,67 @@ class FeatureAttributionControlContainer extends PureComponent {
     const candidateSegments = dotRange(nClusters);
     const isHorizontal = flexDirection === 'row';
     return (
-      <ContainerDimensions>
-        {({width}) => (
-          <div className={className}>
-            {isManualSegmentation && (
-              <StyledControl
-                name="Segmentation Metric"
-                stackDirection={flexDirection}
-                isHidden={isHorizontal && width < WIDTH_LADDER[1]}
+      <div className={className}>
+        {isManualSegmentation && (
+          <StyledControl
+            name="Segmentation Metric"
+            stackDirection={flexDirection}
+            isHidden={isHorizontal && width < WIDTH_LADDER[1]}
+          >
+            <StyledSelect>
+              <select
+                value={segmentationFeatureId || 0}
+                onChange={this._updateSegmentFeature}
               >
-                <StyledSelect>
-                  <select
-                    value={segmentationFeatureId || 0}
-                    onChange={this._updateSegmentFeature}
-                  >
-                    {featuresMeta.map((feature, i) => (
-                      <option value={i} key={i}>
-                        {feature.name}
-                      </option>
-                    ))}
-                  </select>
-                  <SelectArrow height="16" />
-                </StyledSelect>
-              </StyledControl>
-            )}
-
-            <StyledControl
-              name="Comparison"
-              stackDirection={flexDirection}
-              isHidden={isHorizontal && width < WIDTH_LADDER[0]}
-            >
-              {isManualSegmentation ? (
-                <SegmentFilterPanel
-                  segmentationFeatureMeta={featuresMeta[segmentationFeatureId]}
-                  segmentFilters={segmentFilters}
-                  onUpdateSegmentFilters={this.props.updateSegmentFilters}
-                />
-              ) : (
-                <SegmentGroupPanel
-                  candidates={candidateSegments}
-                  selected={segmentGroups}
-                  onUpdateSegmentGroups={this._updateSegmentGroups}
-                />
-              )}
-            </StyledControl>
-            <StyledControl
-              name="Difference filter"
-              stackDirection={flexDirection}
-              isHidden={isHorizontal && width < WIDTH_LADDER[1]}
-            >
-              <StyledSlider>
-                <input
-                  type="range"
-                  id="difference-filter"
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  value={divergenceThreshold}
-                  onChange={e =>
-                    updateDivergenceThreshold(Number(e.target.value))
-                  }
-                />
-                <label>{divergenceThreshold}</label>
-              </StyledSlider>
-            </StyledControl>
-          </div>
+                {featuresMeta.map((feature, i) => (
+                  <option value={i} key={i}>
+                    {feature.name}
+                  </option>
+                ))}
+              </select>
+              <SelectArrow height="16" />
+            </StyledSelect>
+          </StyledControl>
         )}
-      </ContainerDimensions>
+
+        <StyledControl
+          name="Comparison"
+          stackDirection={flexDirection}
+          isHidden={isHorizontal && width < WIDTH_LADDER[0]}
+        >
+          {isManualSegmentation ? (
+            <SegmentFilterPanel
+              segmentationFeatureMeta={featuresMeta[segmentationFeatureId]}
+              segmentFilters={segmentFilters}
+              onUpdateSegmentFilters={this.props.updateSegmentFilters}
+            />
+          ) : (
+            <SegmentGroupPanel
+              candidates={candidateSegments}
+              selected={segmentGroups}
+              onUpdateSegmentGroups={this._updateSegmentGroups}
+            />
+          )}
+        </StyledControl>
+        <StyledControl
+          name="Difference filter"
+          stackDirection={flexDirection}
+          isHidden={isHorizontal && width < WIDTH_LADDER[1]}
+        >
+          <StyledSlider>
+            <input
+              type="range"
+              id="difference-filter"
+              min={0}
+              max={1}
+              step={0.01}
+              value={divergenceThreshold}
+              onChange={e => updateDivergenceThreshold(Number(e.target.value))}
+            />
+            <label>{divergenceThreshold}</label>
+          </StyledSlider>
+        </StyledControl>
+      </div>
     );
   }
 }

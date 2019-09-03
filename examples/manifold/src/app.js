@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
+import ContainerDimensions from 'react-container-dimensions';
 
 import FileUploader from './file-uploader';
 import Manifold from 'packages/manifold';
@@ -59,10 +60,16 @@ class App extends Component {
     const {showUploadModal} = this.state;
     return (
       <Container>
-        <Manifold
-          // Specify path to Manifold state, because it is not mount at the root
-          getState={getManifoldState}
-        />
+        <ContainerDimensions>
+          {({width, height}) => (
+            <Manifold
+              // Specify path to Manifold state, because it is not mount at the root
+              getState={getManifoldState}
+              width={width}
+              height={height}
+            />
+          )}
+        </ContainerDimensions>
         <FileUploader
           showUploadModal={showUploadModal}
           toggleUploadModal={this._toggleDataUploadModal}

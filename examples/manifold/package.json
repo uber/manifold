@@ -12,6 +12,7 @@
     "react-dom": "^16.8.6",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
-    "react-router-redux": "^4.0.8"
+    "react-router-redux": "^4.0.8",
+    "react-container-dimensions": "^1.4.1"
   }
 }

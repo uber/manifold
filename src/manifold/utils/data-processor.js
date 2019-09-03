@@ -39,37 +39,51 @@ export function isDatasetIncomplete(userData) {
 /**
  * check whether user input data is valid
  * @param {Object} data - {x: Array, yPred: Array<Array>, yTrue: Array}
- * @return {Boolean}
+ * @param {Boolean} relayError - decide whether to throw errors immediately
+ * @return {Object | Array} -  returns the data when relayError option is off, otherwise, return a array of [Boolean, data]
  */
-export function validateInputData(data) {
+export function validateInputData(data, relayError) {
+  const processError = e => {
+    if (relayError) {
+      return [false, e];
+    } else {
+      throw e;
+    }
+  };
   // todo: add tests
   const inputKeys = ['x', 'yTrue', 'yPred'];
   if (
     typeof data !== 'object' ||
     inputKeys.some(key => Object.keys(data).indexOf(key) < 0)
   ) {
-    throw new Error(
-      'Input data must contain these keys: `x`, `yTrue`, `yPred`.'
+    return processError(
+      new Error('Input data must contain these keys: `x`, `yTrue`, `yPred`.')
     );
   }
   const {x, yTrue, yPred} = data;
   if (!x || !yTrue || !yPred || !x.length || !yTrue.length || !yPred.length) {
-    throw new Error(
-      'One or more required fields (`x`, `yTrue`, `yPred`) in input data is empty.'
+    return processError(
+      new Error(
+        'One or more required fields (`x`, `yTrue`, `yPred`) in input data is empty.'
+      )
     );
   }
   const nInstances = x.length;
   if (yTrue.length !== nInstances || yPred.some(y => y.length !== nInstances)) {
-    throw new Error(
-      'Number of data instances in `x`, `yTrue` and `yPred` are not consistent. ' +
-        'Check the shape of your input data.'
+    return processError(
+      new Error(
+        'Number of data instances in `x`, `yTrue` and `yPred` are not consistent. ' +
+          'Check the shape of your input data.'
+      )
     );
   }
   const predInstance0 = yPred[0][0];
   if (typeof predInstance0 !== 'object') {
-    throw new Error(
-      '`yPred` must be an array of array of objects. ' +
-        'Check the shape of your input data.'
+    return processError(
+      new Error(
+        '`yPred` must be an array of array of objects. ' +
+          'Check the shape of your input data.'
+      )
     );
   }
   const predObjKeys = Object.keys(predInstance0);
@@ -77,9 +91,11 @@ export function validateInputData(data) {
   yPred.forEach((predArr, i) => {
     predArr.forEach((predEle, j) => {
       if (Object.keys(predEle).some(key => predObjKeys.indexOf(key) < 0)) {
-        throw new Error(
-          `yPred[${i}][${j}] has a different shape than other element in yPred.
+        return processError(
+          new Error(
+            `yPred[${i}][${j}] has a different shape than other element in yPred.
           Check your input data.`
+          )
         );
       }
     });
@@ -89,23 +105,27 @@ export function validateInputData(data) {
     // regression
     if (predObjKeys.length === 1) {
       if (typeof yTrue[i] !== 'number') {
-        throw new Error(
-          `yTrue[${i}] has wrong data type. Check your input data.
+        return processError(
+          new Error(
+            `yTrue[${i}] has wrong data type. Check your input data.
           Expect: number, got: ${typeof yTrue[i]}`
+          )
         );
       }
     }
     // classification
     else {
       if (predObjKeys.indexOf(trueEle) < 0) {
-        throw new Error(
-          `Class label at yTrue[${i}] is not found in corresbonding yPred.
+        return processError(
+          new Error(
+            `Class label at yTrue[${i}] is not found in corresbonding yPred.
             Check your input data.`
+          )
         );
       }
     }
   });
-  return data;
+  return relayError ? [true, data] : data;
 }
 
 /**

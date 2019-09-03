@@ -33,7 +33,15 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        use: ['babel-loader', 'source-map-loader'],
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              rootMode: 'upward',
+            },
+          },
+          'source-map-loader',
+        ],
         enforce: 'pre',
         exclude: [/node_modules/],
       },

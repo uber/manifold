@@ -1,6 +1,5 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
-import ContainerDimensions from 'react-container-dimensions';
 import {connect} from '../custom-connect';
 import {CONTROL_MARGIN} from '../constants';
 import {
@@ -53,6 +52,7 @@ const mapStateToProps = (state, props) => {
 class PerfroamnceComparisonControlContainer extends PureComponent {
   static propTypes = {
     className: PropTypes.string,
+    width: PropTypes.number,
     flexDirection: PropTypes.string,
     modelComparisonParams: PropTypes.shape({
       nClusters: PropTypes.number,
@@ -67,6 +67,7 @@ class PerfroamnceComparisonControlContainer extends PureComponent {
 
   static defaultProps = {
     className: '',
+    width: 240,
     flexDirection: 'row',
     modelComparisonParams: {nClusters: 4},
     isModelsComparisonLoading: false,
@@ -107,6 +108,7 @@ class PerfroamnceComparisonControlContainer extends PureComponent {
     // todo: support comparison view for multi-class cases
     const {
       className,
+      width,
       flexDirection,
       modelComparisonParams,
       isModelsComparisonLoading,
@@ -116,78 +118,70 @@ class PerfroamnceComparisonControlContainer extends PureComponent {
     const {nClusters} = modelComparisonParams;
     const isHorizontal = flexDirection === 'row';
     return (
-      <ContainerDimensions>
-        {({width, height}) => (
-          <div className={className}>
-            <StyledControl
-              name="Segmentation Method"
-              isHidden={isHorizontal && width < WIDTH_LADDER[0]}
+      <div className={className}>
+        <StyledControl
+          name="Segmentation Method"
+          isHidden={isHorizontal && width < WIDTH_LADDER[0]}
+        >
+          <StyledSelect>
+            <select
+              defaultValue="auto"
+              disabled={isModelsComparisonLoading}
+              onChange={this._onUpdateSegmentationMethod}
             >
-              <StyledSelect>
-                <select
-                  defaultValue="auto"
-                  disabled={isModelsComparisonLoading}
-                  onChange={this._onUpdateSegmentationMethod}
-                >
-                  <option value="auto">Auto</option>
-                  <option value="manual">Manual</option>
-                </select>
-                <SelectArrow height="16" />
-              </StyledSelect>
-            </StyledControl>
-            {!isManualSegmentation && (
-              <StyledControl
-                name="Comparison Metric"
-                stackDirection={flexDirection}
-                isHidden={isHorizontal && width < WIDTH_LADDER[1]}
+              <option value="auto">Auto</option>
+              <option value="manual">Manual</option>
+            </select>
+            <SelectArrow height="16" />
+          </StyledSelect>
+        </StyledControl>
+        {!isManualSegmentation && (
+          <StyledControl
+            name="Comparison Metric"
+            stackDirection={flexDirection}
+            isHidden={isHorizontal && width < WIDTH_LADDER[1]}
+          >
+            <StyledSelect>
+              <select
+                defaultValue="performance"
+                disabled={isModelsComparisonLoading}
+                onChange={this._onUpdateMetric}
               >
-                <StyledSelect>
-                  <select
-                    defaultValue="performance"
-                    disabled={isModelsComparisonLoading}
-                    onChange={this._onUpdateMetric}
-                  >
-                    <option value="actual" disabled={nClasses > 2}>
-                      Ground Truth
-                    </option>
-                    <option value="performance">Performance</option>
-                  </select>
-                  <SelectArrow height="16" />
-                </StyledSelect>
-              </StyledControl>
-            )}
-            {!isManualSegmentation && (
-              <StyledControl
-                name="N_Segments"
-                stackDirection={flexDirection}
-                isHidden={isHorizontal && width < WIDTH_LADDER[2]}
-              >
-                <StyledInput>
-                  <input value={nClusters} size="small" readOnly />
-                  <InputButtons>
-                    <button
-                      disabled={
-                        isModelsComparisonLoading || isManualSegmentation
-                      }
-                      onClick={() => this._onUpdateNClusters({isInc: false})}
-                    >
-                      -
-                    </button>
-                    <button
-                      disabled={
-                        isModelsComparisonLoading || isManualSegmentation
-                      }
-                      onClick={() => this._onUpdateNClusters({isInc: true})}
-                    >
-                      +
-                    </button>
-                  </InputButtons>
-                </StyledInput>
-              </StyledControl>
-            )}
-          </div>
+                <option value="actual" disabled={nClasses > 2}>
+                  Ground Truth
+                </option>
+                <option value="performance">Performance</option>
+              </select>
+              <SelectArrow height="16" />
+            </StyledSelect>
+          </StyledControl>
         )}
-      </ContainerDimensions>
+        {!isManualSegmentation && (
+          <StyledControl
+            name="N_Segments"
+            stackDirection={flexDirection}
+            isHidden={isHorizontal && width < WIDTH_LADDER[2]}
+          >
+            <StyledInput>
+              <input value={nClusters} size="small" readOnly />
+              <InputButtons>
+                <button
+                  disabled={isModelsComparisonLoading || isManualSegmentation}
+                  onClick={() => this._onUpdateNClusters({isInc: false})}
+                >
+                  -
+                </button>
+                <button
+                  disabled={isModelsComparisonLoading || isManualSegmentation}
+                  onClick={() => this._onUpdateNClusters({isInc: true})}
+                >
+                  +
+                </button>
+              </InputButtons>
+            </StyledInput>
+          </StyledControl>
+        )}
+      </div>
     );
   }
 }

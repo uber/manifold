@@ -1,6 +1,5 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
-import ContainerDimensions from 'react-container-dimensions';
 import styled from 'styled-components';
 import {connect} from '../custom-connect';
 
@@ -40,6 +39,7 @@ export class FeatureAttributionContainer extends PureComponent {
     selector: PropTypes.func,
     // todo: update with detailed propTypes
     data: PropTypes.arrayOf(PropTypes.object),
+    width: PropTypes.number,
     colors: PropTypes.arrayOf(PropTypes.string),
     geoPositions: PropTypes.array,
     selectedInstances: PropTypes.array,
@@ -51,23 +51,19 @@ export class FeatureAttributionContainer extends PureComponent {
   };
 
   render() {
-    const {data, colors, selectedInstances} = this.props;
+    const {data, width, colors, selectedInstances} = this.props;
     if (!data || data.length === 0) {
       return null;
     }
     return (
       <Container>
         <StyledLegend data={LEGEND_DATA} colorScale={id => colors[id]} />
-        <ContainerDimensions>
-          {({width, height}) => (
-            <FeatureListView
-              data={data}
-              width={width}
-              colors={colors}
-              selectedInstances={selectedInstances}
-            />
-          )}
-        </ContainerDimensions>
+        <FeatureListView
+          data={data}
+          width={width}
+          colors={colors}
+          selectedInstances={selectedInstances}
+        />
       </Container>
     );
   }

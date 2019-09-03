@@ -12,5 +12,8 @@ export * from './constants';
 // Containers
 export * from './components';
 
+// Utilities
+export {validateInputData} from './utils';
+
 // Default export
 export {default} from './components';

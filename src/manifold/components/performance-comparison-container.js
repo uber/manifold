@@ -1,6 +1,5 @@
-// @noflow
 import React, {PureComponent} from 'react';
-import ContainerDimensions from 'react-container-dimensions';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {connect} from '../custom-connect';
 import {scaleBand, scaleLinear, scaleOrdinal} from 'd3-scale';
@@ -84,7 +83,16 @@ const mapStateToProps = (state, props) => {
 };
 
 export class PerformanceComparisonContainer extends PureComponent {
-  static propTypes = {};
+  static propTypes = {
+    /* function to select manifold state from redux state of an application; `state => state.path.to.manifold.state` */
+    selector: PropTypes.func,
+    // todo: update with detailed propTypes
+    data: PropTypes.arrayOf(PropTypes.object),
+    width: PropTypes.number,
+    height: PropTypes.number,
+    groupColors: PropTypes.arrayOf(PropTypes.string),
+  };
+
   static defaultProps = {
     groupColors: [COLORS.PINK, COLORS.BLUE],
   };
@@ -92,6 +100,8 @@ export class PerformanceComparisonContainer extends PureComponent {
   render() {
     const {
       data,
+      width,
+      height,
       modelMeta,
       metric,
       segmentIds,
@@ -109,7 +119,7 @@ export class PerformanceComparisonContainer extends PureComponent {
     }
     const padding = isThumbnail ? PADDING_THUMBNAIL : PADDING;
     return (
-      <Container>
+      <Container ref={this.container} key="perf-comp">
         {!isThumbnail && (
           <StyledLegend
             data={modelMeta}
@@ -118,38 +128,34 @@ export class PerformanceComparisonContainer extends PureComponent {
             selectedModels={selectedModels}
           />
         )}
-        <ContainerDimensions>
-          {({width, height}) => (
-            <Content>
-              <MultiWayPlot
-                width={width - GROUPING_WIDTH}
-                height={isThumbnail ? height : height - LEGEND_HEIGHT}
-                padding={padding}
-                data={data}
-                metaData={modelMeta}
-                ordering={segmentOrdering}
-                xLabel={metric}
-                getXScale={scaleLinear}
-                xDomain={rawDataRange}
-                getYScale={GET_YSCALE}
-                yDomain={segmentIds}
-                colorScale={colorScale}
-                yRangeByGroup={densityRange}
-                isThumbnail={isThumbnail}
-              />
-              <SegmentGrouping
-                height={isThumbnail ? height : height - LEGEND_HEIGHT}
-                width={GROUPING_WIDTH}
-                getYScale={GET_YSCALE}
-                yDomain={segmentIds}
-                segmentGroups={segmentGroups}
-                groupColors={groupColors}
-                padding={padding}
-                isThumbnail={isThumbnail}
-              />
-            </Content>
-          )}
-        </ContainerDimensions>
+        <Content>
+          <MultiWayPlot
+            width={width - GROUPING_WIDTH}
+            height={isThumbnail ? height : height - LEGEND_HEIGHT}
+            padding={padding}
+            data={data}
+            metaData={modelMeta}
+            ordering={segmentOrdering}
+            xLabel={metric}
+            getXScale={scaleLinear}
+            xDomain={rawDataRange}
+            getYScale={GET_YSCALE}
+            yDomain={segmentIds}
+            colorScale={colorScale}
+            yRangeByGroup={densityRange}
+            isThumbnail={isThumbnail}
+          />
+          <SegmentGrouping
+            height={isThumbnail ? height : height - LEGEND_HEIGHT}
+            width={GROUPING_WIDTH}
+            getYScale={GET_YSCALE}
+            yDomain={segmentIds}
+            segmentGroups={segmentGroups}
+            groupColors={groupColors}
+            padding={padding}
+            isThumbnail={isThumbnail}
+          />
+        </Content>
       </Container>
     );
   }
