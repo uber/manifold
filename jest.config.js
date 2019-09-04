@@ -1,4 +1,3 @@
-// @flow
 /* global module */
 const packageAliases = require('./alias.config')();
 
