@@ -22,7 +22,7 @@ export const CHART_PROP_TYPES = {
   height: PropTypes.number,
   data: PropTypes.shape({
     distributions: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
-    distributionsValueRange: PropTypes.arrayOf(PropTypes.number),
+    distributionsMaxValues: PropTypes.arrayOf(PropTypes.number),
     distributionsNormalized: PropTypes.arrayOf(
       PropTypes.arrayOf(PropTypes.number)
     ),

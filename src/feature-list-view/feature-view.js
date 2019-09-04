@@ -218,9 +218,11 @@ class FeatureView extends PureComponent {
     if (!isFocused) {
       return null;
     }
-    const {width, height} = this.props;
     const {
-      data: {distributionsValueRange},
+      width,
+      height,
+      colors,
+      data: {distributionsMaxValues},
     } = this.props;
     const dy = height - HEADER_HEIGHT - FOOTER_HEIGHT;
     return (
@@ -230,11 +232,26 @@ class FeatureView extends PureComponent {
           AXES_MARGIN}, ${HEADER_HEIGHT})`}
       >
         <line x1={0} y1={0} x2={0} y2={dy} stroke="#ccc" />
-        <text fill="#666" dx={4} fontSize={'0.7em'} alignmentBaseline="hanging">
-          {numeral(distributionsValueRange[1]).format('0,0.[00]')}
+        <text
+          fill={colors[0]}
+          dx={4}
+          dy={-2}
+          fontSize={'0.7em'}
+          alignmentBaseline="bottom"
+        >
+          {numeral(distributionsMaxValues[0]).format('0,0.[00]')}
         </text>
         <text
-          fill="#666"
+          fill={colors[1]}
+          dx={4}
+          dy={2}
+          fontSize={'0.7em'}
+          alignmentBaseline="hanging"
+        >
+          {numeral(distributionsMaxValues[1]).format('0,0.[00]')}
+        </text>
+        <text
+          fill="#000"
           dx={4}
           y={dy}
           fontSize={'0.7em'}

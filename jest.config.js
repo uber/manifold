@@ -14,7 +14,7 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: ['packages/**/*.js'],
   coverageDirectory: './coverage',
-  coveragePathIgnorePatterns: ['__fixtures__', 'stories'],
+  coveragePathIgnorePatterns: ['__fixtures__', 'stories', '__tests__'],
   coverageReporters: ['cobertura', 'text', 'html'],
   moduleNameMapper: aliasMapper,
   modulePathIgnorePatterns: ['/dist/'],
