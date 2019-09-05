@@ -292,14 +292,15 @@ export default createStore(reducer, initialState);
 ```
 
 ### Mount Component
-If you mount manifold reducer in another address instead of `manifold` in the step above, you will need to specify the path to it when you mount the component
-with the `statePath` prop.
+If you mount manifold reducer in another address instead of `manifold` in the step above, you will need to specify the path to it when you mount the component with the `getState` prop. `width` and `height` are both needed explicitly. If you have geo-spatial features and need to see them on a map, you will also need a [mapbox token](https://docs.mapbox.com/help/how-mapbox-works/access-tokens/).
 
 ```js
 import Manifold from '@uber/manifold';
+const manifoldGetState = state => state.pathToManifold;
+const yourMapboxToken = ...;
 
 const Main = props => (
-  <Manifold statePath={'pathTo.manifold'}/>
+  <Manifold getState={manifoldGetState} width={width} height={height} mapboxToken={yourMapboxToken}/>
 );
 ```
 
