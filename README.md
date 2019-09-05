@@ -296,7 +296,7 @@ If you mount manifold reducer in another address instead of `manifold` in the st
 
 ```js
 import Manifold from '@uber/manifold';
-const manifoldGetState = state => state.pathToManifold;
+const manifoldGetState = state => state.pathTo.manifold;
 const yourMapboxToken = ...;
 
 const Main = props => (
