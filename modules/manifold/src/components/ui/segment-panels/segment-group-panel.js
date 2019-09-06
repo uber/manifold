@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 
 import SegmentButtonGroup from './segment-button-group';
 import {SegmentPanel} from '../styled-components';
-import {updateSegmentGroups} from '../../utils';
-import {COLORS} from '../../constants';
+import {updateSegmentGroups} from './utils';
 
 export default class SegmentGroupPanel extends PureComponent {
   state = {
@@ -19,12 +18,15 @@ export default class SegmentGroupPanel extends PureComponent {
     selected: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
     /** callback function to surface the updated segment grouping */
     onUpdateSegmentGroups: PropTypes.func,
+    /** colors indicatin each group */
+    colors: PropTypes.arrayOf(PropTypes.string),
   };
 
   static defaultProps = {
     candidates: [],
     selected: [[], []],
     onUpdateSegmentGroups: () => {},
+    colors: ['#f00', '#000'],
   };
 
   /**
@@ -65,27 +67,21 @@ export default class SegmentGroupPanel extends PureComponent {
   };
 
   render() {
-    const {
-      candidates,
-      selected: [groupA, groupB],
-    } = this.state;
+    const {colors} = this.props;
+    const {candidates, selected} = this.state;
 
     return (
       <SegmentPanel>
-        <SegmentButtonGroup
-          id={0}
-          color={COLORS.PINK}
-          candidates={candidates}
-          selected={groupA}
-          onSelect={this._updateSelectedSegmentGroups}
-        />
-        <SegmentButtonGroup
-          id={1}
-          color={COLORS.BLUE}
-          candidates={candidates}
-          selected={groupB}
-          onSelect={this._updateSelectedSegmentGroups}
-        />
+        {[0, 1].map(groupId => (
+          <SegmentButtonGroup
+            id={groupId}
+            key={groupId}
+            color={colors[groupId]}
+            candidates={candidates}
+            selected={selected[groupId]}
+            onSelect={this._updateSelectedSegmentGroups}
+          />
+        ))}
       </SegmentPanel>
     );
   }
