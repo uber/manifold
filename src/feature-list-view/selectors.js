@@ -1,4 +1,3 @@
-// @noflow
 import {createSelector} from 'reselect';
 import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
 import {
@@ -32,7 +31,7 @@ const getFeatureMeta = createSelector(
       };
     }
     const allValues = values.reduce((acc, arr) => acc.concat(arr), []);
-    const {type, domain} = computeFeatureMeta(allValues);
+    const {type, domain} = computeFeatureMeta(feature.name, allValues);
     return {
       type,
       domain,
