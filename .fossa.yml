@@ -8,6 +8,10 @@ cli:
   project: git@github.com:uber/manifold.git
 analyze:
   modules:
+  - name: js
+    type: npm
+    target: binding/jupyter-utils/js
+    path: binding/jupyter-utils/js
   - name: .
     type: npm
     target: .
@@ -16,3 +20,7 @@ analyze:
     type: npm
     target: website
     path: website
+  - name: python
+    type: pip
+    target: binding/jupyter-utils/python
+    path: binding/jupyter-utils/python

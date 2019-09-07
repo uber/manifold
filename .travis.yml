@@ -2,10 +2,13 @@ language: node_js
 install:
   - npm install -g codecov
   - yarn --ignore-engines
+before_script:
+	- "curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | sudo bash"
 node_js:
   - 8
 script:
   - npm run lint
   - npm run test
   - codecov
+  - fossa
 cache: yarn
