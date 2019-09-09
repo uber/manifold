@@ -79,6 +79,7 @@
     "traverse": "scripts/traverse.sh",
     "clean": "ocular-clean",
     "build": "ocular-clean && ocular-build && lerna run build",
+    "publish": "ocular-publish",
     "install:all": "yarn clean && yarn install && yarn install:web",
     "install:web": "yarn install:example && cd website && yarn install",
     "install:example": "cd examples/manifold && yarn install",
