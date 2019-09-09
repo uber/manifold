@@ -11,6 +11,7 @@ import {
   predColName,
   scoreColName,
   makeUuid,
+  FEATURE_TYPE,
 } from '../constants';
 
 export const defaultInputDataTransformer = values => {
