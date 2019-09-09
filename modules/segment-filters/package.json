@@ -1,0 +1,34 @@
+{
+  "name": "@uber/segment-filters",
+  "version": "1.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Model-Agnostic Visual Debugging Tool for Machine Learning",
+  "license": "Apache-2.0",
+  "author": "Firenze11 <lezhi.li@uber.com>",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uber/manifold.git"
+  },
+  "keywords": [
+    "ml",
+    "visualization",
+    "model agnostic",
+    "model debugging",
+    "babel",
+    "react",
+    "redux",
+    "es6"
+  ],
+  "dependencies": {
+    "@uber/mlvis-common": "^1.0.0",
+    "prop-types": "^15.7.2"
+  },
+  "peerDependencies": {
+    "antd": "^3.18.2",
+    "react": "^16.7.0",
+    "styled-components": "^4.2.0"
+  }
+}
