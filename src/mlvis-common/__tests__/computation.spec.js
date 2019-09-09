@@ -8,6 +8,7 @@ import {
   computeModelsMeta,
   computeFeaturesMeta,
   isFeatureInvalid,
+  computeDataType,
   computeFeatureType,
   computeFeatureMeta,
   computeSegmentedFeatureDistributions,
@@ -16,7 +17,7 @@ import {
   logLoss,
   absoluteError,
 } from '../utils';
-import {FEATURE_TYPE} from '../constants';
+import {FEATURE_TYPE, DATA_TYPE} from '../constants';
 import {tensor} from '@tensorflow/tfjs-core';
 
 test('utils: dotRange', () => {
@@ -89,6 +90,23 @@ test('utils: isFeatureInvalid', () => {
   expect(isFeatureInvalid(arr1)).toBeTruthy();
 });
 
+test('utils: computeDataType', () => {
+  const arr1 = dotRange(11);
+  const arr2 = dotRange(5).map(d => d + 0.1);
+  const arr3 = dotRange(2).reduce((acc, i) => {
+    acc.push('a' + String(i));
+    return acc;
+  }, []);
+  const arr4 = [undefined, null, NaN, ''];
+  const arr5 = arr4.concat([true]);
+
+  expect(computeDataType(arr1)).toBe(DATA_TYPE.INTEGER);
+  expect(computeDataType(arr2)).toBe(DATA_TYPE.REAL);
+  expect(computeDataType(arr3)).toBe(DATA_TYPE.STRING);
+  expect(computeDataType(arr4)).toBe(DATA_TYPE.NULL);
+  expect(computeDataType(arr5)).toBe(DATA_TYPE.BOOLEAN);
+});
+
 test('utils: computeFeatureType', () => {
   const arr1 = dotRange(11).reduce((acc, i) => {
     return acc.concat([1, 2, 3, 4, 5, 6, 7]);
@@ -126,31 +144,38 @@ test('utils: computeFeatureMeta', () => {
   expect(computeFeatureMeta('catFeature', arr1)).toEqual({
     name: 'catFeature',
     type: FEATURE_TYPE.CATEGORICAL,
+    dataType: DATA_TYPE.INTEGER,
     domain: [1, 2, 3, 4, 5, 6, 7],
   });
   expect(computeFeatureMeta('catFeature', arr2)).toEqual({
     name: 'catFeature',
     type: FEATURE_TYPE.CATEGORICAL,
+    dataType: DATA_TYPE.STRING,
     domain: ['a0', 'a1'],
   });
   expect(computeFeatureMeta('nullFeature', arr3)).toEqual({
     name: 'nullFeature',
     type: null,
+    dataType: DATA_TYPE.STRING,
     domain: null,
   });
   expect(computeFeatureMeta('uuid', arr3)).toEqual({
     name: 'uuid',
     type: FEATURE_TYPE.UUID,
+    dataType: DATA_TYPE.STRING,
     domain: null,
   });
   expect(computeFeatureMeta('numFeature', arr4)).toEqual({
     name: 'numFeature',
     type: FEATURE_TYPE.NUMERICAL,
+    dataType: DATA_TYPE.INTEGER,
     domain: dotRange(101),
   });
-  expect(computeFeatureMeta('numFeature', arr5)).toEqual({
-    name: 'numFeature',
+  expect(computeFeatureMeta('hybridFeature', arr5)).toEqual({
+    name: 'hybridFeature',
     type: FEATURE_TYPE.CATEGORICAL,
+    // Todo: only checking the first element for data type for now. Might need to change in the future
+    dataType: DATA_TYPE.INTEGER,
     domain: [1, 2, 'a'],
   });
 });

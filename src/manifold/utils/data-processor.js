@@ -1,5 +1,3 @@
-import Processors from 'kepler.gl/processors';
-import {zipObjects} from '../utils';
 import {
   computeModelsMeta,
   computeFeatureMeta,
@@ -210,12 +208,6 @@ export function columnsAndFieldsFromX(x) {
       fields.push(computeFeatureMeta(fieldName, featureData));
     }
   });
-
-  // make compatible w/ kepler fields
-  const _fields = Processors.getFieldsFromData(x, fields.map(f => f.name));
-  // both `fields` (for kepler) and `featuresMeta` have key "type". Rename that of `fields` to "dataType"
-  const rename = [{type: 'dataType'}, {}];
-  fields = zipObjects([_fields, fields], 'name', rename);
 
   return {
     columns,

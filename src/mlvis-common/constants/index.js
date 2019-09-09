@@ -2,6 +2,16 @@ import PropTypes from 'prop-types';
 
 export const UUID_NAME = 'uuid';
 
+export const NULL_VALS = [undefined, null, NaN, ''];
+
+export const DATA_TYPE = {
+  STRING: 'string',
+  BOOLEAN: 'boolean',
+  INTEGER: 'integer',
+  REAL: 'real',
+  NULL: 'null',
+};
+
 export const FEATURE_TYPE = {
   UUID: 'uuid',
   BOOLEAN: 'boolean',
