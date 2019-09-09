@@ -14,6 +14,23 @@ module.exports = () =>
     if (!fs.lstatSync(packagePath).isDirectory()) {
       return aliasMap;
     }
+    // packages/some-package/package.json
+    const packageJsonPath = resolve(packagePath, 'package.json');
+    // bypass alias mapping if no package.json exists
+    if (!fs.existsSync(packageJsonPath)) {
+      return aliasMap;
+    }
+    const packageInfo = require(packageJsonPath);
+    // @mlvis/some-package => some-package
+    const packageName = packageInfo.name.replace(/^(@mlvis\/)/, '');
+
+    // TODO: use this instead when each module is done refactoring
+    // {@mlvis/some-package: './modules/some-package/src'}
+    // aliasMap[packageInfo.name] = resolve(packageDir, packageName, 'src');
+
+    // TODO: replace all reference to packages/... to @mlvis/some-package inside
+    // each module
+    // {'packages/some-package' : './modules/some-package/src'}
     aliasMap[`${ROOT_ALIAS}/${pkg}`] = resolve(MODULES_ROOT, pkg, 'src');
     return aliasMap;
   }, {});

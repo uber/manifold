@@ -1,5 +1,5 @@
 {
-  "name": "@uber/multi-way-plot",
+  "name": "@mlvis/multi-way-plot",
   "version": "1.0.0",
   "publishConfig": {
     "access": "public"

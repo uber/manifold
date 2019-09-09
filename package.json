@@ -1,5 +1,5 @@
 {
-  "name": "manifold.ml",
+  "name": "manifold",
   "version": "1.0.0",
   "description": "Model-Agnostic Visual Debugging Tool for Machine Learning",
   "license": "Apache-2.0",
@@ -72,7 +72,7 @@
     "antd": "^3.10.1"
   },
   "scripts": {
-    "lint": "eslint src",
+    "lint": "eslint modules",
     "cover": "jest --coverage --config=jest.config.js",
     "test": "jest",
     "sync": "scripts/sync.sh",
