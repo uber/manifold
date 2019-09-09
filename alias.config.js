@@ -26,7 +26,7 @@ module.exports = () =>
 
     // TODO: use this instead when each module is done refactoring
     // {@mlvis/some-package: './modules/some-package/src'}
-    // aliasMap[packageInfo.name] = resolve(packageDir, packageName, 'src');
+    // aliasMap[packageInfo.name] = resolve(MODULES_ROOT, packageName, 'src');
 
     // TODO: replace all reference to packages/... to @mlvis/some-package inside
     // each module
