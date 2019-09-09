@@ -5,7 +5,11 @@ import {
   logLoss,
   absoluteError,
 } from 'packages/mlvis-common/utils';
-import {UUID_NAME, FIELD_TYPE} from 'packages/mlvis-common/constants';
+import {
+  UUID_NAME,
+  FIELD_TYPE,
+  FEATURE_TYPE,
+} from 'packages/mlvis-common/constants';
 import {
   GROUND_TRUTH_NAME,
   predColName,
