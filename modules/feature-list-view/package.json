@@ -22,7 +22,7 @@
     "es6"
   ],
   "dependencies": {
-    "@uber/mlvis-common": "^1.0.0",
+    "@mlvis/mlvis-common": "^1.0.0",
     "d3-scale": "^3.0.0",
     "numeral": "^2.0.6",
     "react-d3-axis": "^0.1.1",

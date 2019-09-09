@@ -23,7 +23,7 @@
     "es6"
   ],
   "dependencies": {
-    "@uber/mlvis-common": "^1.0.0",
+    "@mlvis/mlvis-common": "^1.0.0",
     "prop-types": "^15.7.2"
   },
   "peerDependencies": {
