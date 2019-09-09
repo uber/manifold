@@ -203,12 +203,11 @@ export const computeFeatureType = (
  * */
 export const computeFeatureMeta = (name, data, resolution) => {
   const uniques = Array.from(new Set(data));
-  const dataType = computeDataType(uniques);
   if (uniques.length == data.length && name === UUID_NAME) {
     return {
       name,
       type: FEATURE_TYPE.UUID,
-      dataType,
+      dataType: DATA_TYPE.STRING,
       domain: null,
     };
   }
@@ -217,10 +216,11 @@ export const computeFeatureMeta = (name, data, resolution) => {
     return {
       name,
       type: null,
-      dataType,
+      dataType: null,
       domain: null,
     };
   }
+  const dataType = computeDataType(uniques);
   const type = computeFeatureType(name, data, uniques);
   let domain;
   switch (type) {

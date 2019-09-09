@@ -156,7 +156,7 @@ test('utils: computeFeatureMeta', () => {
   expect(computeFeatureMeta('nullFeature', arr3)).toEqual({
     name: 'nullFeature',
     type: null,
-    dataType: DATA_TYPE.STRING,
+    dataType: null,
     domain: null,
   });
   expect(computeFeatureMeta('uuid', arr3)).toEqual({

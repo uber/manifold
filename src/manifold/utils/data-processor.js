@@ -12,6 +12,7 @@ import {
   predColName,
   scoreColName,
   makeUuid,
+  FEATURE_TYPE,
 } from '../constants';
 
 export const defaultInputDataTransformer = values => {
@@ -203,7 +204,8 @@ export function columnsAndFieldsFromX(x) {
   const xFieldNames = Object.keys(x[0]);
   xFieldNames.forEach(fieldName => {
     const featureData = x.map(row => row[fieldName]);
-    if (!isFeatureInvalid(featureData)) {
+    const field = computeFeatureMeta(fieldName, featureData);
+    if (field.type !== 'null') {
       columns.push(featureData);
       fields.push(computeFeatureMeta(fieldName, featureData));
     }
