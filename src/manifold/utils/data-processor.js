@@ -1,7 +1,6 @@
 import {
   computeModelsMeta,
   computeFeatureMeta,
-  isFeatureInvalid,
   dotRange,
   logLoss,
   absoluteError,
@@ -12,7 +11,6 @@ import {
   predColName,
   scoreColName,
   makeUuid,
-  FEATURE_TYPE,
 } from '../constants';
 
 export const defaultInputDataTransformer = values => {
