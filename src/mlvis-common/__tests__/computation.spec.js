@@ -93,17 +93,14 @@ test('utils: isFeatureInvalid', () => {
 test('utils: computeDataType', () => {
   const arr1 = dotRange(11);
   const arr2 = dotRange(5).map(d => d + 0.1);
-  const arr3 = dotRange(2).reduce((acc, i) => {
-    acc.push('a' + String(i));
-    return acc;
-  }, []);
+  const arr3 = dotRange(2).map(i => 'a' + i);
   const arr4 = [undefined, null, NaN, ''];
   const arr5 = arr4.concat([true]);
 
   expect(computeDataType(arr1)).toBe(DATA_TYPE.INTEGER);
   expect(computeDataType(arr2)).toBe(DATA_TYPE.REAL);
   expect(computeDataType(arr3)).toBe(DATA_TYPE.STRING);
-  expect(computeDataType(arr4)).toBe(DATA_TYPE.NULL);
+  expect(computeDataType(arr4)).toBe(null);
   expect(computeDataType(arr5)).toBe(DATA_TYPE.BOOLEAN);
 });
 
@@ -120,8 +117,8 @@ test('utils: computeFeatureType', () => {
 
   expect(computeFeatureType('catFeature', arr1)).toBe(FEATURE_TYPE.CATEGORICAL);
   expect(computeFeatureType('catFeature', arr2)).toBe(FEATURE_TYPE.CATEGORICAL);
-  expect(computeFeatureType('nunFeature', arr3)).toBe(FEATURE_TYPE.NUMERICAL);
-  expect(computeFeatureType('nunFeature', arr4)).toBe(FEATURE_TYPE.CATEGORICAL);
+  expect(computeFeatureType('numFeature', arr3)).toBe(FEATURE_TYPE.NUMERICAL);
+  expect(computeFeatureType('numFeature', arr4)).toBe(FEATURE_TYPE.CATEGORICAL);
   expect(computeFeatureType('feature_lat', [])).toBe(FEATURE_TYPE.GEO);
   expect(computeFeatureType('feature_hexagon', [])).toBe(FEATURE_TYPE.GEO);
 });

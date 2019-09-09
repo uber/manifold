@@ -9,7 +9,6 @@ export const DATA_TYPE = {
   BOOLEAN: 'boolean',
   INTEGER: 'integer',
   REAL: 'real',
-  NULL: null,
 };
 
 export const FEATURE_TYPE = {

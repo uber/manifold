@@ -139,7 +139,7 @@ export const computeDataType = data => {
     }
   }
   if (i >= data.length) {
-    return DATA_TYPE.NULL;
+    return null;
   }
   switch (typeof data[i]) {
     case 'number':
@@ -153,7 +153,7 @@ export const computeDataType = data => {
     case 'string':
       return DATA_TYPE.STRING;
     default:
-      return DATA_TYPE.NULL;
+      return null;
   }
 };
 

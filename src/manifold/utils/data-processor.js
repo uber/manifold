@@ -5,7 +5,11 @@ import {
   logLoss,
   absoluteError,
 } from 'packages/mlvis-common/utils';
-import {UUID_NAME, FIELD_TYPE} from 'packages/mlvis-common/constants';
+import {
+  UUID_NAME,
+  FIELD_TYPE,
+  FEATURE_TYPE,
+} from 'packages/mlvis-common/constants';
 import {
   GROUND_TRUTH_NAME,
   predColName,
@@ -203,7 +207,7 @@ export function columnsAndFieldsFromX(x) {
   xFieldNames.forEach(fieldName => {
     const featureData = x.map(row => row[fieldName]);
     const field = computeFeatureMeta(fieldName, featureData);
-    if (field.type !== 'null') {
+    if (field.type !== null) {
       columns.push(featureData);
       fields.push(computeFeatureMeta(fieldName, featureData));
     }
