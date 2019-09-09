@@ -84,7 +84,7 @@ export const computeModelsMeta = yPred => {
     nClasses,
     classLabels,
   };
-}; 
+};
 
 /**
  * compute basic information of features
@@ -132,7 +132,7 @@ export const isFeatureInvalid = (
  * @param {Array} data feature values
  * @returns {String} one of kepler data types https://github.com/keplergl/kepler.gl/blob/master/src/constants/default-settings.js#L259
  */
-export const computeDataType = (data) => {
+export const computeDataType = data => {
   for (var i = 0; i < data.length; i += 1) {
     if (!NULL_VALS.includes(data[i])) {
       break;
@@ -140,8 +140,8 @@ export const computeDataType = (data) => {
   }
   if (i >= data.length) {
     return DATA_TYPE.NULL;
-  } 
-  switch (typeof (data[i])) {
+  }
+  switch (typeof data[i]) {
     case 'number':
       if (Number.isInteger(data[i])) {
         return DATA_TYPE.INTEGER;
