@@ -70,7 +70,7 @@ export function validateInputData(data, relayError) {
   }
   const nInstances = x.length;
   if (yTrue.length !== nInstances || yPred.some(y => y.length !== nInstances)) {
-    return processError(
+    return processError( 
       new Error(
         'Number of data instances in `x`, `yTrue` and `yPred` are not consistent. ' +
           'Check the shape of your input data.'
@@ -115,7 +115,7 @@ export function validateInputData(data, relayError) {
     }
     // classification
     else {
-      if (predObjKeys.indexOf(trueEle) < 0) {
+      if (predObjKeys.indexOf(String(trueEle)) < 0) {
         return processError(
           new Error(
             `Class label at yTrue[${i}] is not found in corresbonding yPred.
