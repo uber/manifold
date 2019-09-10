@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import {Select, Slider} from 'antd';
 import SegmentFilterDistribution from './segment-filter-distribution';
-import {FEATURE_TYPE} from './constants';
+import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
 const SegmentFilterContainer = styled.div`
   &:not(:last-child) {

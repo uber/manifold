@@ -3,10 +3,9 @@ const fs = require('fs');
 
 const ROOT = resolve(__dirname, '.');
 const MODULES_ROOT = resolve(ROOT, 'modules');
-const ROOT_ALIAS = 'packages';
 
 // this function looks into all packages under ./src and creates alias for local dev
-// {@uber/some-package: './src/some-package'}
+// {@mlvis/some-package: './modules/some-package/src'}
 module.exports = () =>
   fs.readdirSync(MODULES_ROOT).reduce((aliasMap, pkg) => {
     // src/some-package
@@ -23,14 +22,6 @@ module.exports = () =>
     const packageInfo = require(packageJsonPath);
     // @mlvis/some-package => some-package
     const packageName = packageInfo.name.replace(/^(@mlvis\/)/, '');
-
-    // TODO: use this instead when each module is done refactoring
-    // {@mlvis/some-package: './modules/some-package/src'}
-    // aliasMap[packageInfo.name] = resolve(MODULES_ROOT, packageName, 'src');
-
-    // TODO: replace all reference to packages/... to @mlvis/some-package inside
-    // each module
-    // {'packages/some-package' : './modules/some-package/src'}
-    aliasMap[`${ROOT_ALIAS}/${pkg}`] = resolve(MODULES_ROOT, pkg, 'src');
+    aliasMap[packageInfo.name] = resolve(MODULES_ROOT, packageName, 'src');
     return aliasMap;
   }, {});

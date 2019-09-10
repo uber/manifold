@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import {Button, Input, Select, Tag} from 'antd';
 import SegmentFilterList from './segment-filter-list';
-import {FEATURE_TYPE, FILTER_TYPE} from './constants';
+import {FEATURE_TYPE, FILTER_TYPE} from '@mlvis/mlvis-common/constants';
 
 const FEATURE_TYPE_TO_FILTER_TYPE_MAP = {
   [FEATURE_TYPE.BOOLEAN]: FILTER_TYPE.INCLUDE,
