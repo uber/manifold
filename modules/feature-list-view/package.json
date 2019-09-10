@@ -1,6 +1,6 @@
 {
   "name": "@mlvis/feature-list-view",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.0",
   "license": "Apache-2.0",
   "description": "Feature List View component of the Manifold",
   "publishConfig": {
@@ -23,11 +23,11 @@
     "es6"
   ],
   "dependencies": {
-    "@mlvis/mlvis-common": "^1.0.0",
+    "@mlvis/mlvis-common": "^1.0.0-alpha.0",
     "d3-scale": "^3.0.0",
     "numeral": "^2.0.6",
-    "react-d3-axis": "^0.1.1",
-    "prop-types": "^15.7.2"
+    "prop-types": "^15.7.2",
+    "react-d3-axis": "^0.1.1"
   },
   "peerDependencies": {
     "react": "^16.7.0",
