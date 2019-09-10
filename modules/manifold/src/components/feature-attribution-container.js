@@ -8,7 +8,7 @@ import {updateSelectedInstances} from '../actions';
 import {getSelectedInstances} from '../selectors/base';
 import {getFeatures} from '../selectors/adaptors';
 import FeatureListView from 'packages/feature-list-view';
-import {LegendGroup} from 'packages/mlvis-common/ui';
+import {LegendGroup} from './ui';
 
 const LEGEND_DATA = [
   {id: 0, name: 'data group 0'},

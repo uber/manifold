@@ -1,10 +1,9 @@
-// @noflow
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {hexToRGB} from './utils';
+import {hexToRGB} from 'packages/mlvis-common/utils';
 import {Tab, TabGroup} from './tabs';
-import {Question, Split} from '../icons';
+import {Question, Split} from 'packages/mlvis-common/icons';
 
 const Container = styled.div`
   width: 100%

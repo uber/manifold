@@ -1,5 +1,5 @@
 import React from 'react';
-import {HELP_TYPE} from '../constants';
+import {HELP_TYPE} from './constants';
 
 // page contents are auto-generated htmls using pandoc from userguide.md
 // todo: add a script for automatically generate docs content.

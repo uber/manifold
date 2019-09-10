@@ -8,17 +8,16 @@ import {
   VIEW_TAB,
   VIEW_NAME,
   HELP_TYPE,
+  HELP_PAGES,
 } from '../constants';
-import {StyledControlContainer} from './styled-components';
-
-import {Headline, HelpDialog} from 'packages/mlvis-common/ui';
+import {StyledControlContainer} from './ui/styled-components';
+import {Headline, HelpDialog} from './ui';
 import PerfroamnceComparisonControlContainer from './performance-comparison-control-container';
 import FeatureAttributionControlContainer from './feature-attribution-control-container';
 import FiltersContainer from './filters-container';
 import PerformanceComparisonContainer from './performance-comparison-container';
 import FeatureAttributionContainer from './feature-attribution-container';
 import GeoFeatureContainer from './geo-feature-container';
-import {HELP_PAGES} from './help-pages';
 
 const mapStateToProps = (state, props) => {
   // TODO; further investigate preferred pattern of connecting component to state
