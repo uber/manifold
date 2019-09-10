@@ -4,7 +4,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "description": "Model-Agnostic Visual Debugging Tool for Machine Learning",
+  "description": "Multi Way Plot component of the Manifold",
   "license": "Apache-2.0",
   "author": "Firenze11 <lezhi.li@uber.com>",
   "main": "dist/index.js",

@@ -5,6 +5,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "description": "A suite of common utilities for mlvis",
   "contributors": [
     "Lezhi Li <lezhi.li@uber.com>",
     "Yang Wang <gnavvy@uber.com>"

@@ -2,6 +2,7 @@
   "name": "@mlvis/feature-list-view",
   "version": "1.0.0",
   "license": "Apache-2.0",
+  "description": "Feature List View component of the Manifold",
   "publishConfig": {
     "access": "public"
   },
