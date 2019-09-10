@@ -3,8 +3,8 @@ import {
   FEATURE_TYPE,
   FILTER_TYPE,
   LAT_LNG_PAIRS,
-} from 'packages/mlvis-common/constants';
-import {dotRange} from 'packages/mlvis-common/utils';
+} from '@mlvis/mlvis-common/constants';
+import {dotRange} from '@mlvis/mlvis-common/utils';
 import assert from 'assert';
 
 export const computeWidthLadder = (widths, margin) => {

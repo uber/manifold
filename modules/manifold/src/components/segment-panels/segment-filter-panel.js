@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {FILTER_TYPE, FEATURE_TYPE} from 'packages/mlvis-common/constants';
+import {FILTER_TYPE, FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
 import SegmentButtonGroup from './segment-button-group';
 import {SegmentPanel, StyledSelect, SelectArrow} from '../styled-components';

@@ -4,10 +4,10 @@ import styled from 'styled-components';
 import ContainerDimensions from 'react-container-dimensions';
 
 import FileUploader from './file-uploader';
-import Manifold from 'packages/manifold';
+import Manifold from '@mlvis/manifold';
 // todo: temp
-import {loadUserData} from 'packages/manifold/actions';
-// import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
+import {loadUserData} from '@mlvis/manifold/actions';
+// import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 // import {loadMAData} from './actions';
 
 const getManifoldState = state => state.demo.manifold;

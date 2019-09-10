@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Control from './styled-control-wrapper';
-import {ArrowDown} from 'packages/mlvis-common/icons';
+import {ArrowDown} from '@mlvis/mlvis-common/icons';
 
 const CONTROL_MARGIN = 20;
 export const StyledControlContainer = styled.div`

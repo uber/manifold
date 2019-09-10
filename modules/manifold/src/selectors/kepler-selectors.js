@@ -7,8 +7,8 @@ import {
   getColumnTypeRanges,
   getDataIdsInSegmentGroups,
 } from './compute';
-import {dotRange, mean} from 'packages/mlvis-common/utils';
-import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
+import {dotRange, mean} from '@mlvis/mlvis-common/utils';
+import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
 import {groupLatLngPairs, aggregateDataset, concatDataset} from '../utils';
 import {

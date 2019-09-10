@@ -4,8 +4,8 @@ import {
   dotRange,
   logLoss,
   absoluteError,
-} from 'packages/mlvis-common/utils';
-import {UUID_NAME, FIELD_TYPE} from 'packages/mlvis-common/constants';
+} from '@mlvis/mlvis-common/utils';
+import {UUID_NAME, FIELD_TYPE} from '@mlvis/mlvis-common/constants';
 import {
   GROUND_TRUTH_NAME,
   predColName,

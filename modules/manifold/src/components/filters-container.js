@@ -1,7 +1,7 @@
 // @noflow
 import React, {PureComponent} from 'react';
 import {connect} from '../custom-connect';
-import {SegmentFilters} from 'packages/segment-filters';
+import {SegmentFilters} from '@mlvis/segment-filters';
 
 import {fetchBackendData, fetchModels, updateSegmentFilters} from '../actions';
 import {

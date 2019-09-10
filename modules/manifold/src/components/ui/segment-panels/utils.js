@@ -1,4 +1,4 @@
-import {FEATURE_TYPE, FILTER_TYPE} from 'packages/mlvis-common/constants';
+import {FEATURE_TYPE, FILTER_TYPE} from '@mlvis/mlvis-common/constants';
 
 /**
  * update segment grouping when user (de)select a segment from either group

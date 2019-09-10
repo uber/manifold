@@ -6,7 +6,7 @@ import numeral from 'numeral';
 import CategoricalFeatureView from './categorical-feature-view';
 import NumericalFeatureView from './numerical-feature-view';
 import {withDerivedData} from './utils';
-import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
+import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 import {
   CHART_PROP_TYPES,
   CHART_DEFAULT_PROPS,

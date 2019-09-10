@@ -4,7 +4,7 @@ import {
   getSegmentFiltersFromValues,
   getFilterValsFromProps,
 } from '../components/ui/segment-panels/utils';
-import {FEATURE_TYPE, FILTER_TYPE} from 'packages/mlvis-common/constants';
+import {FEATURE_TYPE, FILTER_TYPE} from '@mlvis/mlvis-common/constants';
 
 test('utils: updateSegmentGroups', () => {
   // deselect segment 1 from group 0

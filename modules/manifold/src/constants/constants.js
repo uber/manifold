@@ -1,4 +1,4 @@
-import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
+import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
 export const COLORS = {
   PINK: '#ff0099',

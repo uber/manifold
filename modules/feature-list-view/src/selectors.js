@@ -1,11 +1,11 @@
 import {createSelector} from 'reselect';
-import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
+import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 import {
   computeFeatureMeta,
   computeSegmentedFeatureDistributions,
   computeSegmentedFeatureDistributionsNormalized,
   computeDivergence,
-} from 'packages/mlvis-common/utils';
+} from '@mlvis/mlvis-common/utils';
 
 export const featureSelector = props => props.data;
 

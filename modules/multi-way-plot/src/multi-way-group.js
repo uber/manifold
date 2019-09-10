@@ -5,7 +5,7 @@ import {withDerivedDataGroup as withDerivedData} from './utils';
 import {
   CHART_DEFAULT_PROPS,
   CHART_PROP_TYPES,
-} from 'packages/mlvis-common/constants';
+} from '@mlvis/mlvis-common/constants';
 
 class MultiWayGroup extends PureComponent {
   static propTypes = {

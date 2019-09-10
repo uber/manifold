@@ -1,6 +1,6 @@
 import {interpolateRgb} from 'd3-interpolate';
 import {color} from 'd3-color';
-import {dotRange} from 'packages/mlvis-common/utils';
+import {dotRange} from '@mlvis/mlvis-common/utils';
 
 export const FILTER_TYPES = {
   range: 'range',

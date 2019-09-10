@@ -1,5 +1,5 @@
 import {createSelector} from 'reselect';
-import {dotRange} from 'packages/mlvis-common/utils';
+import {dotRange} from '@mlvis/mlvis-common/utils';
 import {getDivergenceThreshold, getMetric} from './base';
 import {getModelsMeta, getFeaturesMeta} from './compute';
 import {getModelsPerformance, getFeaturesDistribution} from './data';

@@ -8,8 +8,8 @@ import {
   SelectArrow,
 } from './ui/styled-components';
 import {SegmentFilterPanel, SegmentGroupPanel} from './ui/segment-panels';
-import {dotRange} from 'packages/mlvis-common/utils';
-import {FILTER_TYPE, FEATURE_TYPE} from 'packages/mlvis-common/constants';
+import {dotRange} from '@mlvis/mlvis-common/utils';
+import {FILTER_TYPE, FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 import {CONTROL_MARGIN, COLORS} from '../constants';
 
 import {

@@ -1,11 +1,11 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {withXYScales} from 'packages/mlvis-common/utils';
+import {withXYScales} from '@mlvis/mlvis-common/utils';
 import {
   CHART_DEFAULT_PROPS,
   CHART_PROP_TYPES,
-} from 'packages/mlvis-common/constants';
+} from '@mlvis/mlvis-common/constants';
 const TEXTS = ['Group 0', 'Group 1'];
 const LEFT_PADDING = 5;
 

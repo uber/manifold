@@ -8,8 +8,8 @@ import {
   computeSegmentedFeatureDistributionsNormalized,
   computeDivergence,
   computePercentiles,
-} from 'packages/mlvis-common/utils';
-import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
+} from '@mlvis/mlvis-common/utils';
+import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
 import {
   rootSelector,

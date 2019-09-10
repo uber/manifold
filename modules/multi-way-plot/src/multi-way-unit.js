@@ -2,13 +2,13 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {area} from 'd3-shape';
-import {dotRange} from 'packages/mlvis-common/utils';
+import {dotRange} from '@mlvis/mlvis-common/utils';
 import {withDerivedDataUnit as withDerivedData} from './utils';
 
 import {
   CHART_DEFAULT_PROPS,
   CHART_PROP_TYPES,
-} from 'packages/mlvis-common/constants';
+} from '@mlvis/mlvis-common/constants';
 
 class MultiWayUnit extends PureComponent {
   static propTypes = {

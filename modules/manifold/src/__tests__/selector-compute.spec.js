@@ -5,8 +5,8 @@ import {
   getDataIdsInSegments,
   getSegmentedCatNumFeatures,
 } from '../selectors/compute';
-import {dotRange} from 'packages/mlvis-common/utils';
-import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
+import {dotRange} from '@mlvis/mlvis-common/utils';
+import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
 test('selector: compute/getDataIdsInSegmentsUnsorted', () => {
   const nClusters = 3;

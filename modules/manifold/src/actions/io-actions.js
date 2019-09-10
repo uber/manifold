@@ -1,5 +1,5 @@
 import {createAction} from 'redux-actions';
-import {parsePromise} from 'packages/mlvis-common/utils';
+import {parsePromise} from '@mlvis/mlvis-common/utils';
 import {loadData, modelsPerformance, featuresDistribution} from '../io';
 import {
   defaultInputDataTransformer,
