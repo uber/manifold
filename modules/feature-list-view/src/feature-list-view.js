@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import FeatureView from './feature-view';
-import {COLOR} from 'packages/mlvis-common/constants';
+import {COLOR} from '@mlvis/mlvis-common/constants';
 
 import {ITEM_HEIGHT} from './constants';
 

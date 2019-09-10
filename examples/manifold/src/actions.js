@@ -1,5 +1,5 @@
 // @noflow
-import {loadLocalData} from 'packages/manifold/actions';
+import {loadLocalData} from '@mlvis/manifold/actions';
 
 export const UPDATE_VIEWPORT = 'UPDATE_VIEWPORT';
 

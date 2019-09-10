@@ -3,7 +3,7 @@ import {routerReducer} from 'react-router-redux';
 import thunk from 'redux-thunk';
 import window from 'global/window';
 import demoReducer from './reducers';
-import {enhanceReduxMiddleware} from 'packages/manifold/middleware';
+import {enhanceReduxMiddleware} from '@mlvis/manifold/middleware';
 
 const reducers = combineReducers({
   demo: demoReducer,

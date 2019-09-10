@@ -5,6 +5,7 @@ examples/**/*-lock.json
 examples/**/data
 scripts/sync.sh
 scripts/traverse.sh
+scripts/traverse.py
 *.log
 .cache/
 coverage*/

@@ -1,4 +1,4 @@
-import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
+import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 import {DEFAULT_STATE, handleUpdateFeatureTypes} from '../reducers';
 
 test('reducer: handleUpdateFeatureTypes', () => {

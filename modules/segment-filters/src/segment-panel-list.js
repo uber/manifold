@@ -8,7 +8,7 @@ import SegmentPanel from './segment-panel';
 import {Button} from 'antd';
 
 // CONSTANTS
-import {FEATURE_TYPE} from './constants';
+import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
 const SegmentPanelListContainer = styled.div`
   color: #666;

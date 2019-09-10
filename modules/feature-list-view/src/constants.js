@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import {FEATURE_TYPE, COLOR} from 'packages/mlvis-common/constants';
+import {FEATURE_TYPE, COLOR} from '@mlvis/mlvis-common/constants';
 
 // height of each feature view chart
 export const ITEM_HEIGHT = 72;

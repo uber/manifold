@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {Cancel} from 'packages/mlvis-common/icons';
+import {Cancel} from '@mlvis/mlvis-common/icons';
 
 const Container = styled.div`
   transition: 0.5s;

@@ -7,7 +7,7 @@ import {COLORS} from '../constants';
 import {updateSelectedInstances} from '../actions';
 import {getSelectedInstances} from '../selectors/base';
 import {getFeatures} from '../selectors/adaptors';
-import FeatureListView from 'packages/feature-list-view';
+import FeatureListView from '@mlvis/feature-list-view';
 import {LegendGroup} from './ui';
 
 const LEGEND_DATA = [

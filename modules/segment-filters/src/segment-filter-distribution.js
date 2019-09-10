@@ -2,7 +2,7 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 
-import {FEATURE_TYPE} from './constants';
+import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
 // TODO make responsive
 const DEFAULT_WIDTH = 192;

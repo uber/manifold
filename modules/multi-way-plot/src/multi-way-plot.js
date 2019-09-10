@@ -4,8 +4,8 @@ import {scaleLinear} from 'd3-scale';
 import {
   CHART_DEFAULT_PROPS,
   CHART_PROP_TYPES,
-} from 'packages/mlvis-common/constants';
-import {withXYScales} from 'packages/mlvis-common/utils';
+} from '@mlvis/mlvis-common/constants';
+import {withXYScales} from '@mlvis/mlvis-common/utils';
 import MultiWayGroup from './multi-way-group';
 import {Axis, axisPropsFromTickScale} from 'react-d3-axis';
 

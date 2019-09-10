@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, {css, keyframes} from 'styled-components';
-import {dotRange} from 'packages/mlvis-common/utils';
+import {dotRange} from '@mlvis/mlvis-common/utils';
 
 const ProgressTrack = styled.div`
   width: 100%;

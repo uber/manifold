@@ -1,6 +1,6 @@
 // @noflow
 import {createSelector} from 'reselect';
-import {computePercentiles, computeDensity} from 'packages/mlvis-common/utils';
+import {computePercentiles, computeDensity} from '@mlvis/mlvis-common/utils';
 
 const getData = props => props.data;
 

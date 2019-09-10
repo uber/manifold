@@ -1,7 +1,7 @@
 // todo: add tests to this file
-import {UUID_NAME} from 'packages/mlvis-common/constants';
+import {UUID_NAME} from '@mlvis/mlvis-common/constants';
 import {makeUuid} from '../constants';
-import {transposeData} from 'packages/mlvis-common/utils';
+import {transposeData} from '@mlvis/mlvis-common/utils';
 import {
   KEPLER_GL_VERSION,
   FILTER_TYPES,

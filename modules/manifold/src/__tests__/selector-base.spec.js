@@ -1,5 +1,5 @@
 import {getRawSegmentIds, getSegmentOrdering} from '../selectors/base';
-import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
+import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
 const TEST_STATE = {
   nClusters: 5,

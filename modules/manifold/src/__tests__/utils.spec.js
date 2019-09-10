@@ -12,8 +12,8 @@ import {
   removeSuffixAndDelimiters,
   groupLatLngPairs,
 } from '../utils';
-import {mean} from 'packages/mlvis-common/utils';
-import {FEATURE_TYPE, FILTER_TYPE} from 'packages/mlvis-common/constants';
+import {mean} from '@mlvis/mlvis-common/utils';
+import {FEATURE_TYPE, FILTER_TYPE} from '@mlvis/mlvis-common/constants';
 
 test('utils: isValidSegmentGroups', () => {
   // not ok if one group is empty

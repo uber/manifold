@@ -10,7 +10,7 @@ import {
   FEATURE_TYPE,
   FIELD_TYPE,
   UUID_NAME,
-} from 'packages/mlvis-common/constants';
+} from '@mlvis/mlvis-common/constants';
 
 test('data-processor: getAllColumnsAndFields', () => {
   const x = [{a: 5, b: 'a'}, {a: 3, b: 'b'}];
