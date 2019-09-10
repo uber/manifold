@@ -1,0 +1,36 @@
+{
+  "name": "@mlvis/feature-list-view",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "description": "Feature List View component of the Manifold",
+  "publishConfig": {
+    "access": "public"
+  },
+  "contributors": [
+    "Yang Wang <gnavvy@uber.com>",
+    "Lezhi Li <lezhi.li@uber.com>"
+  ],
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uber/manifold.git"
+  },
+  "keywords": [
+    "ml",
+    "babel",
+    "react",
+    "redux",
+    "es6"
+  ],
+  "dependencies": {
+    "@mlvis/mlvis-common": "^1.0.0",
+    "d3-scale": "^3.0.0",
+    "numeral": "^2.0.6",
+    "react-d3-axis": "^0.1.1",
+    "prop-types": "^15.7.2"
+  },
+  "peerDependencies": {
+    "react": "^16.7.0",
+    "reselect": "^3.0.1"
+  }
+}
