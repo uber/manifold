@@ -1,9 +1,6 @@
-import Processors from 'kepler.gl/processors';
-import {zipObjects} from '../utils';
 import {
   computeModelsMeta,
   computeFeatureMeta,
-  isFeatureInvalid,
   dotRange,
   logLoss,
   absoluteError,
@@ -115,7 +112,7 @@ export function validateInputData(data, relayError) {
     }
     // classification
     else {
-      if (predObjKeys.indexOf(trueEle) < 0) {
+      if (predObjKeys.indexOf(String(trueEle)) < 0) {
         return processError(
           new Error(
             `Class label at yTrue[${i}] is not found in corresbonding yPred.
@@ -205,17 +202,12 @@ export function columnsAndFieldsFromX(x) {
   const xFieldNames = Object.keys(x[0]);
   xFieldNames.forEach(fieldName => {
     const featureData = x.map(row => row[fieldName]);
-    if (!isFeatureInvalid(featureData)) {
+    const field = computeFeatureMeta(fieldName, featureData);
+    if (field.type !== null) {
       columns.push(featureData);
       fields.push(computeFeatureMeta(fieldName, featureData));
     }
   });
-
-  // make compatible w/ kepler fields
-  const _fields = Processors.getFieldsFromData(x, fields.map(f => f.name));
-  // both `fields` (for kepler) and `featuresMeta` have key "type". Rename that of `fields` to "dataType"
-  const rename = [{type: 'dataType'}, {}];
-  fields = zipObjects([_fields, fields], 'name', rename);
 
   return {
     columns,

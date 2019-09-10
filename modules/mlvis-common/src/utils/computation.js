@@ -2,6 +2,8 @@ import assert from 'assert';
 import * as tf from '@tensorflow/tfjs-core';
 import {kldivergence, quantileSeq} from 'mathjs';
 import {
+  NULL_VALS,
+  DATA_TYPE,
   FEATURE_TYPE,
   LAT_LNG_PAIRS,
   HEX_INDICATORS,
@@ -86,10 +88,8 @@ export const computeModelsMeta = yPred => {
 
 /**
  * compute basic information of features
- * @param {[Object]} featureData - An array of objects, csv raw feature data.
- * @return {String} name
- * @return {[Number|String]} domain
- * @return {String} type - one of FEATURE_TYPE.CATEGORICAL, FEATURE_TYPE.NUMERICAL, FEATURE_TYPE.GEO
+ * @param {Array<Object>} x - An array of objects, csv raw feature data.
+ * @return {Array<Object>} feature fields (only valid features are kept). Each object has keys `name` `type` `dataType` `domain`
  */
 export const computeFeaturesMeta = (
   x,
@@ -125,6 +125,36 @@ export const isFeatureInvalid = (
       uniques.length > data.length * invalidPercentageThreshold &&
       uniques.length > invalidCountThreshold)
   );
+};
+
+/**
+ * get data type of feature values
+ * @param {Array} data feature values
+ * @returns {String} one of kepler data types https://github.com/keplergl/kepler.gl/blob/master/src/constants/default-settings.js#L259
+ */
+export const computeDataType = data => {
+  for (var i = 0; i < data.length; i += 1) {
+    if (!NULL_VALS.includes(data[i])) {
+      break;
+    }
+  }
+  if (i >= data.length) {
+    return null;
+  }
+  switch (typeof data[i]) {
+    case 'number':
+      if (Number.isInteger(data[i])) {
+        return DATA_TYPE.INTEGER;
+      } else {
+        return DATA_TYPE.REAL;
+      }
+    case 'boolean':
+      return DATA_TYPE.BOOLEAN;
+    case 'string':
+      return DATA_TYPE.STRING;
+    default:
+      return null;
+  }
 };
 
 /**
@@ -177,6 +207,7 @@ export const computeFeatureMeta = (name, data, resolution) => {
     return {
       name,
       type: FEATURE_TYPE.UUID,
+      dataType: DATA_TYPE.STRING,
       domain: null,
     };
   }
@@ -185,9 +216,11 @@ export const computeFeatureMeta = (name, data, resolution) => {
     return {
       name,
       type: null,
+      dataType: null,
       domain: null,
     };
   }
+  const dataType = computeDataType(uniques);
   const type = computeFeatureType(name, data, uniques);
   let domain;
   switch (type) {
@@ -203,6 +236,7 @@ export const computeFeatureMeta = (name, data, resolution) => {
   return {
     name,
     type,
+    dataType,
     domain,
   };
 };

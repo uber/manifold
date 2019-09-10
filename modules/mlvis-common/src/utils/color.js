@@ -1,4 +1,3 @@
-// @noflow
 import {interpolatePuBu} from 'd3-scale-chromatic';
 
 const DEFAULT_COLOR = [255, 128, 128];
