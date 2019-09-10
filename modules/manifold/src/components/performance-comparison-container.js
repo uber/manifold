@@ -6,7 +6,7 @@ import {scaleBand, scaleLinear, scaleOrdinal} from 'd3-scale';
 import {schemeSet2 as colorScheme} from 'd3-scale-chromatic';
 
 import MultiWayPlot from 'packages/multi-way-plot/';
-import {LegendGroup} from 'packages/mlvis-common/ui';
+import {LegendGroup} from './ui';
 import SegmentGrouping from 'packages/multi-way-plot/segment-grouping';
 
 import {COLORS} from '../constants';

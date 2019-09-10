@@ -1,6 +1,5 @@
-// @noflow
+import {FEATURE_TYPE} from 'packages/mlvis-common/constants';
 import {DEFAULT_STATE, handleUpdateFeatureTypes} from '../reducers';
-import {FEATURE_TYPE} from '../constants';
 
 test('reducer: handleUpdateFeatureTypes', () => {
   const state1 = handleUpdateFeatureTypes(DEFAULT_STATE, {

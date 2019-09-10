@@ -6,10 +6,11 @@ import {
   StyledSlider,
   StyledSelect,
   SelectArrow,
-} from './styled-components';
+} from './ui/styled-components';
+import {SegmentFilterPanel, SegmentGroupPanel} from './ui/segment-panels';
 import {dotRange} from 'packages/mlvis-common/utils';
 import {FILTER_TYPE, FEATURE_TYPE} from 'packages/mlvis-common/constants';
-import {CONTROL_MARGIN} from '../constants';
+import {CONTROL_MARGIN, COLORS} from '../constants';
 
 import {
   fetchFeatures,
@@ -26,8 +27,6 @@ import {
 } from '../selectors/base';
 import {getFeaturesMeta} from '../selectors/compute';
 import {computeWidthLadder, isValidSegmentGroups} from '../utils';
-
-import {SegmentFilterPanel, SegmentGroupPanel} from './segment-panels';
 
 const mapDispatchToProps = {
   fetchFeatures,
@@ -211,6 +210,7 @@ class FeatureAttributionControlContainer extends PureComponent {
               candidates={candidateSegments}
               selected={segmentGroups}
               onUpdateSegmentGroups={this._updateSegmentGroups}
+              colors={[COLORS.PINK, COLORS.BLUE]}
             />
           )}
         </StyledControl>

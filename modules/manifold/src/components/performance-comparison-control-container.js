@@ -8,7 +8,7 @@ import {
   StyledInput,
   InputButtons,
   SelectArrow,
-} from './styled-components';
+} from './ui/styled-components';
 import {computeWidthLadder} from '../utils';
 
 import {
