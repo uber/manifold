@@ -1,9 +1,9 @@
 {
   "name": "manifold",
-  "version": "0.0.1",
+  "version": "1.0.0-alpha.0",
   "description": "A suite of machine learning visualization utilities",
   "license": "Apache-2.0",
-  "private": "true",
+  "private": true,
   "author": "Firenze11 <lezhi.li@uber.com>",
   "main": "dist/index.js",
   "repository": {
