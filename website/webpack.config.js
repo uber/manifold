@@ -9,7 +9,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const ROOT = resolve(__dirname, '..');
 const NODE_MODULES = resolve(ROOT, 'node_modules');
-const packageAliases = require(resolve(ROOT, 'alias.config'));
+const packageAliases = require(resolve(ROOT, 'alias.config'))();
 
 const COMMON_CONFIG = {
   entry: ['./src/main'],

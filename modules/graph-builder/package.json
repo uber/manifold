@@ -1,0 +1,28 @@
+{
+  "name": "@mlvis/graph-builder",
+  "description": "A thin wrapper over graph.gl for exploring a graph interactively.",
+  "version": "1.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Javid Hsueh",
+  "main": "dist/index.js",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "copy": "cp -r package.json dist",
+    "build": "npm run clean && npm run transpile",
+    "transpile": "NODE_ENV=production babel src -d dist -s --config-file ../../babel.config.js && npm run copy"
+  },
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "note": "lerna requires this to publish scoped packages",
+    "access": "public"
+  },
+  "dependencies": {
+    "@uber/graph.gl": "^0.0.39"
+  },
+  "peerDependencies": {
+    "prop-types": "^15.7.1",
+    "react": "^16.6.1"
+  }
+}

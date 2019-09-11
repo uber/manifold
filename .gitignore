@@ -12,3 +12,22 @@ coverage*/
 jsconfig.json
 dist
 data/
+.DS_Store
+
+# Python
+
+__pycache__
+*.pyc
+.idea
+*.egg-info
+.python-version
+
+# Jupyter Bindings
+.ipynb_checkpoints
+bindings/jupyter/**/static/
+bindings/jupyter/**/*env/
+bindings/jupyter/build
+bindings/jupyter/*.ipynb
+bindings/jupyter/**/metadata
+examples/jupyter/**/venv/
+examples/jupyter/**/lib/

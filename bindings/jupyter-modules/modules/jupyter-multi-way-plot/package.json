@@ -1,0 +1,15 @@
+{
+  "name": "@mlvis/jupyter-multi-way-plot",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "webpack --progress",
+    "watch": "webpack --watch --progress"
+  },
+  "dependencies": {
+    "d3-scale": "^3.0.0",
+    "d3-scale-chromatic": "^1.3.3",
+    "global": "^4.4.0",
+    "react": "^16.8.0"
+  }
+}

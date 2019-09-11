@@ -1,0 +1,16 @@
+include README.md
+include .coverage.rc
+include jrequirements.json
+
+# Javascript files
+graft mlvis/static
+prune **/node_modules
+prune coverage
+prune lib
+
+# Patterns to exclude from any directory
+global-exclude *~
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude .git
+global-exclude .ipynb_checkpoints

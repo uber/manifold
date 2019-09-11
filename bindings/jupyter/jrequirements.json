@@ -1,0 +1,17 @@
+{
+  "FeatureListView": {
+    "@uber/feature-list-view": "external"
+  },
+  "GraphBuilder": {
+    "@uber/jupyter-graph-builder": "external"
+  },
+  "Manifold": {
+    "@uber/juypter-manifold": "external"
+  },
+  "MultiWayPlot": {
+    "@uber/jupyter-multi-way-plot": "external"
+  },
+  "StackedCalendar": {
+    "@uber/stacked-calendar": "external"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@mlvis/jupyter-manifold",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "webpack --progress",
+    "watch": "webpack --watch --progress"
+  },
+  "dependencies": {
+    "global": "^4.4.0",
+    "react": "^16.8.0",
+    "react-dom": "^16.9.0",
+    "react-redux": "^5.0.7",
+    "reduce-reducers": "^1.0.4",
+    "redux": "^4.0.1",
+    "redux-actions": "^2.6.5",
+    "redux-thunk": "^2.3.0"
+  }
+}

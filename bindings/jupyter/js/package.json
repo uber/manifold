@@ -1,0 +1,30 @@
+{
+  "name": "jupyter-binding",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "watch": "node --max_old_space_size=8192 node_modules/.bin/webpack --progress --watch"
+  },
+  "dependencies": {
+    "global": "^4.4.0",
+    "react": "^16.8.0",
+    "reselect": "^4.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.4.4",
+    "babel-eslint": "^10.0.1",
+    "babel-loader": "^8.0.5",
+    "@babel/polyfill": "^7.1.0",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-flow": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "css-loader": "^0.28.11",
+    "file-loader": "^1.1.6",
+    "style-loader": "^0.19.1",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2"
+  }
+}

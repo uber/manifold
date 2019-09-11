@@ -6,10 +6,11 @@ const MODULES_ROOT = resolve(ROOT, 'modules');
 
 // this function looks into all packages under ./src and creates alias for local dev
 // {@mlvis/some-package: './modules/some-package/src'}
-module.exports = () =>
-  fs.readdirSync(MODULES_ROOT).reduce((aliasMap, pkg) => {
+module.exports = modulesDir => () => {
+  const mdir = modulesDir || MODULES_ROOT;
+  return fs.readdirSync(mdir).reduce((aliasMap, pkg) => {
     // src/some-package
-    const packagePath = resolve(MODULES_ROOT, pkg);
+    const packagePath = resolve(mdir, pkg);
     if (!fs.lstatSync(packagePath).isDirectory()) {
       return aliasMap;
     }
@@ -22,6 +23,7 @@ module.exports = () =>
     const packageInfo = require(packageJsonPath);
     // @mlvis/some-package => some-package
     const packageName = packageInfo.name.replace(/^(@mlvis\/)/, '');
-    aliasMap[packageInfo.name] = resolve(MODULES_ROOT, packageName, 'src');
+    aliasMap[packageInfo.name] = resolve(mdir, packageName, 'src');
     return aliasMap;
   }, {});
+};

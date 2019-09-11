@@ -9,7 +9,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const ROOT = resolve(__dirname, '../..');
 const NODE_MODULES = resolve(ROOT, 'node_modules');
-const packageAliases = require(resolve(ROOT, 'alias.config'));
+const packageAliases = require(resolve(ROOT, 'alias.config'))();
 
 module.exports = {
   // 'cheap-module-eval-source-map' is faster than 'source-map' in webpack v4

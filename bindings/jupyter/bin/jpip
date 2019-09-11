@@ -1,0 +1,88 @@
+#!/usr/bin/env python
+
+# WIP
+# A CLI tool for installing custom javascript components inside the mlvis library
+import os, sys
+
+LIB_DIR = path = os.path.dirname(__file__)
+BIN_DIR = os.getcwd()
+
+
+COMMANDS = [
+    'pyextension'
+]
+
+
+OPTIONS = [
+    '--py'
+]
+
+
+PYEXTENSION_OPTIONS = [
+    '--py',
+    '--source'
+]
+
+
+def install_python_extension(name, code):
+    if name is None or code is None:
+        # TODO: a better error message
+        raise Exception('name or code is not defined')
+
+    print('The name of the extension is + ' + name)
+    print('The source dir of the extension is ' + code)
+
+
+def pyextension_command(popt_pairs):
+    name = None
+    source = None
+    for opt, value in popt_pairs:
+        if opt == '--py':
+            name = value
+        elif opt == '--source':
+            source = value
+    install_python_extension(name, source)
+
+
+if __name__ == '__main__':
+    argv = sys.argv
+    argc = len(argv)
+    if argc == 1:
+        # TODO: list help information
+        print('Please specify options.')
+        sys.exit(1)
+
+    comm_set = set(COMMANDS)
+    opt_set = set(OPTIONS)
+
+    if (argv[1] not in comm_set) and (argv[1] not in opt_set):
+        print('the option ' + argv[1] + ' is unrecognized.')
+        sys.exit(1)
+    if argv[1] == 'pyextension':
+        if argc < 3:
+            # TODO: list help information
+            print('Please specify options for pyextension.')
+            sys.exit(1)
+
+        popt_set = set(PYEXTENSION_OPTIONS)
+        popt_pairs = []
+
+
+        if argv[2] not in popt_set:
+            # TODO: list help information
+            print('Option ' + argv[2] + 'is not unrecognized for pyextension.')
+            sys.exit(1)
+
+        i = 2
+        while i < argc:
+            arg = argv[i]
+            if arg in popt_set:
+                i = i + 1
+                if i >= argc:
+                    # TODO: list help information
+                    print('Please specify options for ' + arg + '.')
+                    sys.exit(1)
+                popt_pairs.append((arg, argv[i]))
+            i = i + 1
+
+        pyextension_command(popt_pairs)
