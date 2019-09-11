@@ -2,9 +2,6 @@
   "name": "@mlvis/stacked-calendar",
   "description": "A day-hour calendar view with stacked charts for each hour",
   "version": "1.0.0",
-  "publishConfig": {
-    "access": "public"
-  },
   "author": "Yang Wang",
   "main": "dist/index.js",
   "dependencies": {

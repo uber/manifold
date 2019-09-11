@@ -2,9 +2,6 @@
   "name": "@mlvis/graph-builder",
   "description": "A thin wrapper over graph.gl for exploring a graph interactively.",
   "version": "1.0.0",
-  "publishConfig": {
-    "access": "public"
-  },
   "author": "Javid Hsueh",
   "main": "dist/index.js",
   "scripts": {
