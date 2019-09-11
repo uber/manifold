@@ -4,7 +4,7 @@ const getLocalModuleAliases = require(resolve(ROOT, 'alias.config.js'))();
 const externals = ['base/js/namespace', 'base/js/events', 'base/js/utils'];
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   context: resolve(__dirname),
   entry: {
     app: [resolve('./src')],
