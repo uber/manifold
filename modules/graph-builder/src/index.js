@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import GraphGL, {D3ForceLayout, JSONLoader, NODE_TYPE} from '@uber/graph.gl';
+import GraphGL, {D3ForceLayout, JSONLoader, NODE_TYPE} from 'graph.gl';
 
 const Identity = n => n;
 

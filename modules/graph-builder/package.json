@@ -19,7 +19,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@uber/graph.gl": "^0.0.39"
+    "graph.gl": "^1.0.0"
   },
   "peerDependencies": {
     "prop-types": "^15.7.1",
