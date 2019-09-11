@@ -20,7 +20,7 @@ import {
 } from '../selectors/adaptors';
 import {
   getFeatureDistributionParams,
-  getRawSegmentIds,
+  getSegmentIds,
   getSelectedModels,
   getSegmentOrdering,
 } from '../selectors/base';
@@ -68,7 +68,7 @@ const mapStateToProps = (state, props) => {
 
   return {
     data: getModels(state),
-    segmentIds: getRawSegmentIds(state),
+    segmentIds: getSegmentIds(state),
 
     rawDataRange: getRawDataRange(state),
     densityRange: getDensityRange(state),

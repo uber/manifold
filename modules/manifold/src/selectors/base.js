@@ -17,11 +17,11 @@ export const getHasBackend = state =>
 export const getModelsComparisonParams = createSelector(
   rootSelector,
   (state = {}) => {
-    const {nClusters, metric, baseModels, segmentFilters} = state;
+    const {nClusters, metric, baseCols, segmentFilters} = state;
     return {
       nClusters,
       metric,
-      baseModels,
+      baseCols,
       segmentFilters,
     };
   }
@@ -84,7 +84,7 @@ export const getSelectedInstances = createSelector(
   state => state.selectedInstances
 );
 
-export const getRawSegmentIds = createSelector(
+export const getSegmentIds = createSelector(
   rootSelector,
   (state = {}) => {
     const {nClusters} = state;
@@ -119,9 +119,4 @@ export const getDisplayGeoFeatures = createSelector(
 export const getColorByFeature = createSelector(
   rootSelector,
   state => state.colorByFeature
-);
-
-export const getPresetFeatureTypes = createSelector(
-  rootSelector,
-  state => state.featureTypes
 );

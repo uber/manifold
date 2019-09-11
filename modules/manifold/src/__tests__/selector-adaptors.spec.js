@@ -8,7 +8,7 @@ import {
 
 // Use `.resultFunc` to test individual selector logic without having to mock dependency selectors
 // https://github.com/reduxjs/reselect#q-how-do-i-test-a-selector
-test('selector: adapter/getRawSegmentIds', () => {
+test('selector: adapter/getRawDataRange', () => {
   const perfBySegment = [
     {data: [{percentiles: [-10, 0, 5]}, {percentiles: [-1, 0, 1]}]},
     {data: [{percentiles: [-1, 0, 10]}, {percentiles: [-5, 0, 1]}]},

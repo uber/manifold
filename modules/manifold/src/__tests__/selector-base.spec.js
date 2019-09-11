@@ -1,16 +1,12 @@
-import {getRawSegmentIds, getSegmentOrdering} from '../selectors/base';
-import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
+import {getSegmentIds, getSegmentOrdering} from '../selectors/base';
 
 const TEST_STATE = {
   nClusters: 5,
   segmentGroups: [[3, 4], [0]],
-  featureTypes: {
-    [FEATURE_TYPE.GEO]: [['lng1', 'lat1'], ['lng2', 'lat2']],
-  },
 };
 
-test('selector: base/getRawSegmentIds', () => {
-  expect(getRawSegmentIds(TEST_STATE)).toEqual([0, 1, 2, 3, 4]);
+test('selector: base/getSegmentIds', () => {
+  expect(getSegmentIds(TEST_STATE)).toEqual([0, 1, 2, 3, 4]);
 });
 
 test('selector: base/getSegmentOrdering', () => {

@@ -1,4 +1,3 @@
-// @noflow
 export const convertToCdnUrl = fileName =>
   `https://d1a3f4spazzrp4.cloudfront.net/manifold/data/${fileName}`;
 

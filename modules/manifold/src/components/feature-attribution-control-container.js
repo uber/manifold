@@ -103,7 +103,7 @@ class FeatureAttributionControlContainer extends PureComponent {
     className: '',
     flexDirection: 'row',
     width: 240,
-    modelComparisonParams: {nClusters: 4},
+    nClusters: 4,
     featureDistributionParams: {segmentGroups: [[], []]},
     // add missing default props before refactoring
     divergenceThreshold: 1,
