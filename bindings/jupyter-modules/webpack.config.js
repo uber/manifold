@@ -1,6 +1,6 @@
 const {resolve} = require('path');
 const ROOT = resolve(__dirname, '../..');
-const getLocalModuleAliases = require(resolve(ROOT, 'alias.config.js'))();
+const getLocalModuleAliases = require(resolve(ROOT, 'alias.config.js'));
 const externals = ['base/js/namespace', 'base/js/events', 'base/js/utils'];
 
 module.exports = {

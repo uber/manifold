@@ -4,7 +4,7 @@ const ROOT = resolve(__dirname, '../../..');
 const JUPYTER_MODULES_ROOT = resolve(__dirname, '../../jupyter-modules');
 const JUPYTER_MODULES = resolve(JUPYTER_MODULES_ROOT, 'modules');
 
-const AliasConfig = require(resolve(ROOT, 'alias.config.js'));
+const AliasConfig = require(resolve(ROOT, 'alias.config.js')).AliasConfig;
 const getLocalModuleAliases = AliasConfig();
 const getJupyterModuleAliases = AliasConfig(JUPYTER_MODULES);
 

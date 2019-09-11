@@ -4,7 +4,7 @@ const fs = require('fs');
 const ROOT = resolve(__dirname, '.');
 const MODULES_ROOT = resolve(ROOT, 'modules');
 
-module.exports = modulesDir => {
+const AliasConfig = modulesDir => {
   const mdir = modulesDir || MODULES_ROOT;
   // this function looks into all packages under ./src and creates alias for local dev
   // {@mlvis/some-package: './modules/some-package/src'}
@@ -28,3 +28,5 @@ module.exports = modulesDir => {
       return aliasMap;
     }, {});
 };
+module.exports = AliasConfig(MODULES_ROOT);
+module.exports.AliasConfig = AliasConfig;
