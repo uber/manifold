@@ -19,7 +19,8 @@
     "es6"
   ],
   "workspaces": [
-    "modules/*"
+    "modules/*",
+    "bindings/jupyter-modules/modules/*"
   ],
   "devDependencies": {
     "@babel/cli": "^7.1.2",
@@ -78,6 +79,7 @@
     "test": "jest",
     "sync": "scripts/sync.sh",
     "traverse": "python scripts/traverse.py",
+    "lerna": "lerna",
     "clean": "ocular-clean",
     "build": "ocular-clean && ocular-build && lerna run build",
     "publish": "ocular-publish",

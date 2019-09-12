@@ -1,9 +1,9 @@
 {
   "name": "@mlvis/jupyter-graph-builder",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "build": "webpack --progress",
+    "build": "webpack",
     "watch": "webpack --watch --progress"
   },
   "dependencies": {

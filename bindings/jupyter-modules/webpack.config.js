@@ -5,10 +5,6 @@ const externals = ['base/js/namespace', 'base/js/events', 'base/js/utils'];
 
 module.exports = {
   mode: 'development',
-  context: resolve(__dirname),
-  entry: {
-    app: [resolve('./src')],
-  },
   module: {
     rules: [
       {

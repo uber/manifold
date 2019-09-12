@@ -1,7 +1,7 @@
 {
   "lerna": "3.14.1",
   "version": "1.0.0",
-  "packages": ["modules/*"],
+  "packages": ["modules/*", "bindings/jupyter-modules/modules/*"],
   "npmClient": "yarn",
   "useWorkspaces": true
 }
