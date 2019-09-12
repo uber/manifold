@@ -21,10 +21,10 @@ jupyter nbextension enable --py --sys-prefix mlvis
 
 ##### Javascript
 
-First, copy over the contents from jupyter-packages
+First, build the jupyter-modules from the project root
 
 ```
-cd ../jupyter-packages
+cd ../../
 yarn
 yarn build
 ```
