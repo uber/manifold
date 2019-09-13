@@ -15,12 +15,6 @@
     "react": "^16.6.1",
     "reselect": "^3.0.1"
   },
-  "scripts": {
-    "clean": "rm -rf dist",
-    "copy": "cp -r package.json dist",
-    "build": "npm run clean && npm run transpile",
-    "transpile": "NODE_ENV=production babel src -d dist -s --config-file ../../babel.config.js && npm run copy"
-  },
   "publishConfig": {
     "note": "lerna requires this to publish scoped packages",
     "access": "public"

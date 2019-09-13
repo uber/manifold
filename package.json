@@ -20,7 +20,7 @@
   ],
   "workspaces": [
     "modules/*",
-    "bindings/jupyter-modules/modules/*"
+    "bindings/jupyter-modules/*"
   ],
   "devDependencies": {
     "@babel/cli": "^7.1.2",

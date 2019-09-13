@@ -4,12 +4,6 @@
   "version": "1.0.0",
   "author": "Javid Hsueh",
   "main": "dist/index.js",
-  "scripts": {
-    "clean": "rm -rf dist",
-    "copy": "cp -r package.json dist",
-    "build": "npm run clean && npm run transpile",
-    "transpile": "NODE_ENV=production babel src -d dist -s --config-file ../../babel.config.js && npm run copy"
-  },
   "license": "UNLICENSED",
   "publishConfig": {
     "note": "lerna requires this to publish scoped packages",
