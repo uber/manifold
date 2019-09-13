@@ -47,12 +47,11 @@
     "redux": "^4.0.1",
     "redux-actions": "^2.6.5",
     "redux-thunk": "^2.3.0",
-    "styled-components": "^4.0.0"
+    "reselect": "^4.0.0"
   },
   "peerDependencies": {
     "antd": "^3.10.1",
     "react": "^16.7.0",
-    "reselect": "^4.0.0",
     "styled-components": "^4.2.0"
   },
   "gitHead": "0824af3683e1f960379508a01cf599a468dcef88"

@@ -27,11 +27,11 @@
     "d3-scale": "^3.0.0",
     "numeral": "^2.0.6",
     "prop-types": "^15.7.2",
-    "react-d3-axis": "^0.1.1"
+    "react-d3-axis": "^0.1.1",
+    "reselect": "^3.0.1"
   },
   "peerDependencies": {
-    "react": "^16.7.0",
-    "reselect": "^3.0.1"
+    "react": "^16.7.0"
   },
   "gitHead": "0824af3683e1f960379508a01cf599a468dcef88"
 }
