@@ -1,6 +1,6 @@
 {
   "name": "manifold",
-  "version": "1.0.0-alpha.13",
+  "version": "1.0.0",
   "description": "A suite of machine learning visualization utilities",
   "license": "Apache-2.0",
   "private": true,
