@@ -1,6 +1,6 @@
 {
   "name": "@mlvis/segment-filters",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "publishConfig": {
     "access": "public"
   },
@@ -23,7 +23,7 @@
     "es6"
   ],
   "dependencies": {
-    "@mlvis/mlvis-common": "1.0.0-alpha.5",
+    "@mlvis/mlvis-common": "1.0.0-alpha.6",
     "prop-types": "^15.7.2"
   },
   "peerDependencies": {
@@ -31,5 +31,5 @@
     "react": "^16.7.0",
     "styled-components": "^4.2.0"
   },
-  "gitHead": "9a63e2f1d8903397e9b2adecb4eac252bef3372c"
+  "gitHead": "a7135ea8ff946dd33d73f98b23cc0cbfc8bd33cf"
 }
