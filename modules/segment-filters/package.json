@@ -1,6 +1,6 @@
 {
   "name": "@mlvis/segment-filters",
-  "version": "1.0.0-alpha.13",
+  "version": "1.0.0",
   "publishConfig": {
     "access": "public"
   },
@@ -23,7 +23,7 @@
     "es6"
   ],
   "dependencies": {
-    "@mlvis/mlvis-common": "^1.0.0-alpha.13",
+    "@mlvis/mlvis-common": "^1.0.0",
     "prop-types": "^15.7.2"
   },
   "peerDependencies": {
