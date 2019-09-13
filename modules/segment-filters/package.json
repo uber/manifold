@@ -30,6 +30,5 @@
     "antd": "^3.18.2",
     "react": "^16.7.0",
     "styled-components": "^4.2.0"
-  },
-  "gitHead": "0824af3683e1f960379508a01cf599a468dcef88"
+  }
 }
