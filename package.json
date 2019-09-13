@@ -1,6 +1,6 @@
 {
   "name": "manifold",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.12",
   "description": "A suite of machine learning visualization utilities",
   "license": "Apache-2.0",
   "private": true,
@@ -64,7 +64,6 @@
     "puppeteer": "^1.9.0",
     "react": "^16.7.0",
     "react-test-renderer": "^16.5.2",
-    "reselect": "^4.0.0",
     "sass-loader": "^7.1.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
