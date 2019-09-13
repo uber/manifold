@@ -1,6 +1,6 @@
 {
   "name": "@mlvis/multi-way-plot",
-  "version": "1.0.0-alpha.10",
+  "version": "1.0.0-alpha.11",
   "publishConfig": {
     "access": "public"
   },
@@ -23,7 +23,7 @@
     "es6"
   ],
   "dependencies": {
-    "@mlvis/mlvis-common": "1.0.0-alpha.10",
+    "@mlvis/mlvis-common": "1.0.0-alpha.11",
     "d3-scale": "^3.0.0",
     "d3-scale-chromatic": "^1.3.3",
     "d3-shape": "^1.3.5",
@@ -35,5 +35,5 @@
     "reselect": "^4.0.0",
     "styled-components": "^4.2.0"
   },
-  "gitHead": "a7135ea8ff946dd33d73f98b23cc0cbfc8bd33cf"
+  "gitHead": "0824af3683e1f960379508a01cf599a468dcef88"
 }
