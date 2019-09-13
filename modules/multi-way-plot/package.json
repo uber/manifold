@@ -1,6 +1,6 @@
 {
   "name": "@mlvis/multi-way-plot",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "publishConfig": {
     "access": "public"
   },
@@ -23,7 +23,7 @@
     "es6"
   ],
   "dependencies": {
-    "@mlvis/mlvis-common": "1.0.0-alpha.4",
+    "@mlvis/mlvis-common": "1.0.0-alpha.5",
     "d3-scale": "^3.0.0",
     "d3-scale-chromatic": "^1.3.3",
     "d3-shape": "^1.3.5",
