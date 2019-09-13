@@ -1,6 +1,6 @@
 {
   "name": "@mlvis/feature-list-view",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "license": "Apache-2.0",
   "description": "Feature List View component of the Manifold",
   "publishConfig": {
@@ -11,6 +11,9 @@
     "Lezhi Li <lezhi.li@uber.com>"
   ],
   "main": "dist/esm/index.js",
+  "exports": {
+    "./": "./dist/esm/"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uber/manifold.git"
@@ -23,7 +26,7 @@
     "es6"
   ],
   "dependencies": {
-    "@mlvis/mlvis-common": "1.0.0-alpha.6",
+    "@mlvis/mlvis-common": "1.0.0-alpha.7",
     "d3-scale": "^3.0.0",
     "numeral": "^2.0.6",
     "prop-types": "^15.7.2",
