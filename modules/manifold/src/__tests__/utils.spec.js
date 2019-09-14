@@ -8,6 +8,7 @@ import {
   computeSortedOrder,
   registerExternalReducers,
   zipObjects,
+  product,
   selectFields,
   removeSuffixAndDelimiters,
   groupLatLngPairs,
@@ -135,6 +136,19 @@ test('utils: zipObjects', () => {
     {name: 'bob', score: 80, gradeScore: 'B'},
   ];
   expect(zipObjects(arrays, 'name', rename)).toEqual(zipped);
+});
+
+test('utils: product', () => {
+  expect(product([[1, 2], [3, 4], [5, 6]])).toEqual([
+    [1, 3, 5],
+    [1, 3, 6],
+    [1, 4, 5],
+    [1, 4, 6],
+    [2, 3, 5],
+    [2, 3, 6],
+    [2, 4, 5],
+    [2, 4, 6],
+  ]);
 });
 
 test('utils: selectFields', () => {

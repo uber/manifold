@@ -388,6 +388,32 @@ export function zipObjects(arrays, joinField, rename) {
   });
 }
 
+export function product(collectionArr) {
+  let result = [];
+  function recur(collection) {
+    if (collection.length < collectionArr.length) {
+      collectionArr[collection.length].forEach(value => {
+        recur(collection.concat(value));
+      });
+    } else {
+      result.push(collection);
+    }
+  }
+  recur([]);
+  return result;
+}
+
+// todo: to be consolidated with `computeNumericalFeatureDomain`
+export function getColumnDomain(values) {
+  let min = Infinity;
+  let max = -Infinity;
+  values.forEach(val => {
+    if (val < min) min = val;
+    if (val > max) max = val;
+  });
+  return [min, max];
+}
+
 /*
  * Only retain a field in `data` if it first appears in `fields`
  * @example

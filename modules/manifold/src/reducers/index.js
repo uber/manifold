@@ -2,17 +2,25 @@ import {handleActions} from 'redux-actions';
 import reduceReducers from 'reduce-reducers';
 import keplerGlReducer from 'kepler.gl/reducers';
 import {
-  UPDATE_DIVERGENCE_THRESHOLD,
-  FETCH_BACKEND_DATA_START,
-  FETCH_BACKEND_DATA_SUCCESS,
+  handleUpdateMetric,
+  handleUpdateSegmentationMethod,
+  handleUpdateBaseCols,
+  handleUpdateNClusters,
+  handleUpdateSegmentFilters,
+  handleUpdateSegmentGroups,
+} from './data-slicing';
+import {
   FETCH_MODELS_START,
   FETCH_MODELS_SUCCESS,
+  FETCH_BACKEND_DATA_START,
+  FETCH_BACKEND_DATA_SUCCESS,
   FETCH_FEATURES_START,
   FETCH_FEATURES_SUCCESS,
   LOAD_LOCAL_DATA_START,
   LOAD_LOCAL_DATA_SUCCESS,
   LOAD_LOCAL_DATA_FAILURE,
   UPDATE_SELECTED_INSTANCES,
+  UPDATE_DIVERGENCE_THRESHOLD,
   UPDATE_SELECTED_MODELS,
   UPDATE_N_CLUSTERS,
   UPDATE_METRIC,
@@ -22,9 +30,10 @@ import {
   UPDATE_SEGMENT_GROUPS,
   UPDATE_DISPLAY_GEO_FEATURES,
   UPDATE_COLOR_BY_FEATURE,
-} from './actions';
-import {METRIC} from './constants';
-import {getDefaultSegmentGroups, registerExternalReducers} from './utils';
+} from '../actions';
+
+import {METRIC} from '../constants';
+import {defaultBaseCols, registerExternalReducers} from '../utils';
 
 export const DEFAULT_STATE = {
   // TODO: these are fields used with Python backend. Consider consolidate/remove
@@ -72,17 +81,17 @@ export const DEFAULT_STATE = {
 };
 
 // -- remote data source -- //
-const handleUpdateDivergenceThreshold = (state, {payload}) => ({
+export const handleUpdateDivergenceThreshold = (state, {payload}) => ({
   ...state,
   divergenceThreshold: payload,
 });
 
-const handleFetchBackendDataStart = (state, {payload}) => ({
+export const handleFetchBackendDataStart = (state, {payload}) => ({
   ...state,
   isBackendDataLoading: true,
 });
 
-const handleFetchBackendDataSuccess = (state, {payload}) => {
+export const handleFetchBackendDataSuccess = (state, {payload}) => {
   return {
     ...state,
     metaData: payload,
@@ -90,12 +99,12 @@ const handleFetchBackendDataSuccess = (state, {payload}) => {
   };
 };
 
-const handleFetchModelsStart = (state, {payload}) => ({
+export const handleFetchModelsStart = (state, {payload}) => ({
   ...state,
   isModelsComparisonLoading: true,
 });
 
-const handleFetchModelsSuccess = (state, {payload}) => {
+export const handleFetchModelsSuccess = (state, {payload}) => {
   const {modelsPerformance = []} = payload[0];
   const defaultSelectedModels = modelsPerformance.reduce((acc, d) => {
     acc[d.modelId] = false;
@@ -109,48 +118,49 @@ const handleFetchModelsSuccess = (state, {payload}) => {
   };
 };
 
-const handleFetchFeaturesStart = (state, {payload}) => ({
+export const handleFetchFeaturesStart = (state, {payload}) => ({
   ...state,
   isFeaturesDistributionLoading: true,
 });
 
-const handleFetchFeaturesSuccess = (state, {payload}) => ({
+export const handleFetchFeaturesSuccess = (state, {payload}) => ({
   ...state,
   features: payload,
   isFeaturesDistributionLoading: false,
 });
 
 // -- local data source -- //
-const handleLoadLocalDataStart = (state, {payload}) => ({
+export const handleLoadLocalDataStart = (state, {payload}) => ({
   ...state,
   isLocalDataLoading: true,
   dataLoadingFailure: null,
 });
 
-const handleLoadLocalDataSuccess = (state, {payload}) => {
+export const handleLoadLocalDataSuccess = (state, {payload}) => {
   const {data, modelsMeta, columnTypeRanges} = payload;
   return {
     ...state,
     data,
     modelsMeta,
     columnTypeRanges,
+    baseCols: defaultBaseCols(columnTypeRanges),
     isLocalDataLoading: false,
   };
 };
 
-const handleLoadLocalDataFailure = (state, {payload}) => ({
+export const handleLoadLocalDataFailure = (state, {payload}) => ({
   ...state,
   isLocalDataLoading: false,
   dataLoadingError: payload,
 });
 
 // -- UI actions -- //
-const handleUpdateSelectedInstances = (state, {payload}) => ({
+export const handleUpdateSelectedInstances = (state, {payload}) => ({
   ...state,
   selectedInstances: payload.map(d => d.object),
 });
 
-const handleUpdateSelectModels = (state, {payload}) => ({
+export const handleUpdateSelectModels = (state, {payload}) => ({
   ...state,
   selectedModelMap: {
     ...state.selectedModelMap,
@@ -158,56 +168,14 @@ const handleUpdateSelectModels = (state, {payload}) => ({
   },
 });
 
-const handleUpdateNClusters = (state, {payload}) => {
-  const delta = payload === 'INC' ? 1 : payload === 'DEC' ? -1 : 0;
-  return {
-    ...state,
-    nClusters: state.nClusters + delta,
-    segmentGroups: getDefaultSegmentGroups(state.nClusters + delta),
-  };
-};
-
-const handleUpdateMetric = (state, {payload}) => ({
-  ...state,
-  metric: payload,
-});
-
-const handleUpdateSegmentationMethod = (state, {payload}) => ({
-  ...state,
-  isManualSegmentation: payload === 'manual',
-});
-
-const handleUpdateSegmentFilters = (state, {payload = []}) => {
-  const {nClusters} = state;
-  const newNClusters = payload && payload.length ? payload.length : nClusters;
-  return {
-    ...state,
-    segmentFilters: payload,
-    nClusters: newNClusters,
-    segmentGroups: getDefaultSegmentGroups(newNClusters),
-  };
-};
-
-const handleUpdateBaseCols = (state, {payload}) => ({
-  ...state,
-  baseCols: payload,
-});
-
-const handleUpdateSegmentGroups = (state, {payload}) => {
-  return {
-    ...state,
-    segmentGroups: payload,
-  };
-};
-
-const handleUpdateDisplayGeoFeatures = (state, {payload}) => {
+export const handleUpdateDisplayGeoFeatures = (state, {payload}) => {
   return {
     ...state,
     displayGeoFeatures: [payload],
   };
 };
 
-const handleUpdateColorByFeature = (state, {payload}) => {
+export const handleUpdateColorByFeature = (state, {payload}) => {
   return {
     ...state,
     colorByFeature: payload,

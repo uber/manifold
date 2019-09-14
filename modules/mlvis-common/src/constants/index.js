@@ -19,12 +19,12 @@ export const FEATURE_TYPE = {
   GEO: 'geo',
 };
 
-// todo: resolve feature - field naming convension issue
-export const FIELD_TYPE = {
-  ...FEATURE_TYPE,
+export const FIELD_ROLE = {
+  UUID: 'uuid',
+  FEATURE: 'feature',
   PREDICTION: 'preidiction',
-  SCORE: 'score',
   GROUND_TRUTH: 'groundTruth',
+  SCORE: 'score',
 };
 
 export const FILTER_TYPE = {

@@ -1,11 +1,18 @@
 import {
   computeModelsMeta,
   computeFeatureMeta,
+  computeDataType,
   dotRange,
   logLoss,
   absoluteError,
 } from '@mlvis/mlvis-common/utils';
-import {UUID_NAME, FIELD_TYPE} from '@mlvis/mlvis-common/constants';
+import {getColumnDomain} from './utils';
+import {
+  UUID_NAME,
+  FEATURE_TYPE,
+  FIELD_ROLE,
+  DATA_TYPE,
+} from '@mlvis/mlvis-common/constants';
 import {
   GROUND_TRUTH_NAME,
   predColName,
@@ -166,9 +173,9 @@ export function getAllColumnsAndFields(x, yPred, yTrue, modelsMeta) {
   columns.unshift(dotRange(yTrue.length).map(makeUuid));
   fields.unshift({
     name: UUID_NAME,
-    type: FIELD_TYPE.UUID,
-    // todo: add consts for kepler data types
-    dataType: 'string',
+    type: FEATURE_TYPE.UUID,
+    role: FIELD_ROLE.UUID,
+    dataType: DATA_TYPE.STRING,
   });
   // reassign tableFieldIndex
   fields.forEach((f, i) => {
@@ -235,8 +242,9 @@ export function columnsAndFieldsFromYPred(yPred, classLabels) {
       columns.push(singleModelPredArr.map(predObj => predObj[classCol]));
       fields.push({
         name,
-        type: FIELD_TYPE.PREDICTION,
-        dataType: 'float',
+        type: FEATURE_TYPE.NUMERICAL,
+        role: FIELD_ROLE.PREDICTION,
+        dataType: DATA_TYPE.REAL,
       });
     });
   });
@@ -252,14 +260,15 @@ export function columnsAndFieldsFromYPred(yPred, classLabels) {
  * @param {Array<Number|String>} yTrue ground truth
  * @return {Object} {columns - array of array of columns; fields: array of field metadata} in the same order
  */
-export function columnsAndFieldsFromYTrue(yTrue) {
+export function columnsAndFieldsFromYTrue(yTrue, nClasses) {
   return {
     columns: [yTrue],
     fields: [
       {
         name: GROUND_TRUTH_NAME,
-        type: FIELD_TYPE.GROUND_TRUTH,
-        dataType: typeof yTrue[0] === 'string' ? 'string' : 'float',
+        type: nClasses < 2 ? FEATURE_TYPE.NUMERICAL : FEATURE_TYPE.CATEGORICAL,
+        role: FIELD_ROLE.GROUND_TRUTH,
+        dataType: computeDataType(yTrue),
       },
     ],
   };
@@ -267,7 +276,7 @@ export function columnsAndFieldsFromYTrue(yTrue) {
 
 /**
  * compute model score columns given yPred, yTrue columns
- * @param {Array<Array<Number|String>} yPred prediction columns, from all models and all classes
+ * @param {Array<Array<Number>} yPred prediction columns, from all models and all classes
  * @param {Array<Array<Number|String>} yTrue ground truth columns
  * @param {Object} modelMeta contains {nModels, nClasses, classLabels}
  * @param {scoreFunc} function to compute score
@@ -300,10 +309,13 @@ export function columnsAndFieldsFromScore(
     );
     return _scoreFunc(columnsYTrue[0], predictArr, classLabels);
   });
+  const domains = columns.map(getColumnDomain);
   const fields = dotRange(nModels).map(modelId => ({
     name: scoreColName(modelId),
-    type: FIELD_TYPE.SCORE,
-    dataType: 'float',
+    type: FEATURE_TYPE.NUMERICAL,
+    role: FIELD_ROLE.SCORE,
+    dataType: 'real',
+    domain: domains[modelId],
   }));
 
   return {

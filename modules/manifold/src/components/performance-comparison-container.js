@@ -17,12 +17,12 @@ import {
   getModelIds,
   getModelMeta,
   getDisplayMetric,
+  getSegmentIds,
+  getSegmentOrdering,
 } from '../selectors/adaptors';
 import {
   getFeatureDistributionParams,
-  getSegmentIds,
   getSelectedModels,
-  getSegmentOrdering,
 } from '../selectors/base';
 
 const PADDING = {
@@ -69,7 +69,6 @@ const mapStateToProps = (state, props) => {
   return {
     data: getModels(state),
     segmentIds: getSegmentIds(state),
-
     rawDataRange: getRawDataRange(state),
     densityRange: getDensityRange(state),
     modelMeta: getModelMeta(state),

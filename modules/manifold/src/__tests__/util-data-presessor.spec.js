@@ -8,8 +8,9 @@ import {
 import {predColName, scoreColName, GROUND_TRUTH_NAME} from '../constants';
 import {
   FEATURE_TYPE,
-  FIELD_TYPE,
   UUID_NAME,
+  FIELD_ROLE,
+  DATA_TYPE,
 } from '@mlvis/mlvis-common/constants';
 
 test('data-processor: getAllColumnsAndFields', () => {
@@ -81,23 +82,27 @@ test('data-processor: columnsAndFieldsFromYPred', () => {
   expect(fields).toMatchObject([
     {
       name: predColName(0, 0),
-      type: FIELD_TYPE.PREDICTION,
-      dataType: 'float',
+      type: FEATURE_TYPE.NUMERICAL,
+      role: FIELD_ROLE.PREDICTION,
+      dataType: DATA_TYPE.REAL,
     },
     {
       name: predColName(0, 1),
-      type: FIELD_TYPE.PREDICTION,
-      dataType: 'float',
+      type: FEATURE_TYPE.NUMERICAL,
+      role: FIELD_ROLE.PREDICTION,
+      dataType: DATA_TYPE.REAL,
     },
     {
       name: predColName(1, 0),
-      type: FIELD_TYPE.PREDICTION,
-      dataType: 'float',
+      type: FEATURE_TYPE.NUMERICAL,
+      role: FIELD_ROLE.PREDICTION,
+      dataType: DATA_TYPE.REAL,
     },
     {
       name: predColName(1, 1),
-      type: FIELD_TYPE.PREDICTION,
-      dataType: 'float',
+      type: FEATURE_TYPE.NUMERICAL,
+      role: FIELD_ROLE.PREDICTION,
+      dataType: DATA_TYPE.REAL,
     },
   ]);
 });
@@ -109,8 +114,9 @@ test('data-processor: columnsAndFieldsFromYTrue', () => {
   expect(fields).toMatchObject([
     {
       name: GROUND_TRUTH_NAME,
-      type: FIELD_TYPE.GROUND_TRUTH,
-      dataType: 'float',
+      type: FEATURE_TYPE.CATEGORICAL,
+      role: FIELD_ROLE.GROUND_TRUTH,
+      dataType: DATA_TYPE.INTEGER,
     },
   ]);
 });
@@ -133,13 +139,15 @@ test('data-processor: columnsAndFieldsFromScore', () => {
   expect(f1).toMatchObject([
     {
       name: scoreColName(0),
-      type: FIELD_TYPE.SCORE,
-      dataType: 'float',
+      type: FEATURE_TYPE.NUMERICAL,
+      role: FIELD_ROLE.SCORE,
+      dataType: DATA_TYPE.REAL,
     },
     {
       name: scoreColName(1),
-      type: FIELD_TYPE.SCORE,
-      dataType: 'float',
+      type: FEATURE_TYPE.NUMERICAL,
+      role: FIELD_ROLE.SCORE,
+      dataType: DATA_TYPE.REAL,
     },
   ]);
   const yPred2 = [[0.1, 0.6], [0.5, 0.3], [0.4, 0.1]];
@@ -159,8 +167,9 @@ test('data-processor: columnsAndFieldsFromScore', () => {
   expect(f2).toMatchObject([
     {
       name: scoreColName(0),
-      type: FIELD_TYPE.SCORE,
-      dataType: 'float',
+      type: FEATURE_TYPE.NUMERICAL,
+      role: FIELD_ROLE.SCORE,
+      dataType: DATA_TYPE.REAL,
     },
   ]);
 });

@@ -54,9 +54,9 @@ export const getMetric = createSelector(
   rootSelector,
   state => state.metric
 );
-export const getBaseModels = createSelector(
+export const getBaseCols = createSelector(
   rootSelector,
-  state => state.baseModels
+  state => state.baseCols
 );
 export const getNClusters = createSelector(
   rootSelector,
@@ -82,28 +82,6 @@ export const getSelectedModels = createSelector(
 export const getSelectedInstances = createSelector(
   rootSelector,
   state => state.selectedInstances
-);
-
-export const getSegmentIds = createSelector(
-  rootSelector,
-  (state = {}) => {
-    const {nClusters} = state;
-    return Number.isInteger(nClusters)
-      ? Array.from(Array(nClusters).keys())
-      : [];
-  }
-);
-
-export const getSegmentOrdering = createSelector(
-  rootSelector,
-  (state = {}) => {
-    // order by non-group, control group, treatment group
-    const {nClusters, segmentGroups} = state;
-    const nonGroup = Array.from(Array(nClusters).keys()).filter(
-      e => !segmentGroups[0].includes(e) && !segmentGroups[1].includes(e)
-    );
-    return nonGroup.concat(segmentGroups[1]).concat(segmentGroups[0]);
-  }
 );
 
 export const getIsManualSegmentation = createSelector(

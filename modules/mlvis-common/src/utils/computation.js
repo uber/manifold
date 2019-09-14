@@ -8,6 +8,7 @@ import {
   LAT_LNG_PAIRS,
   HEX_INDICATORS,
   UUID_NAME,
+  FIELD_ROLE,
 } from '../constants';
 
 // dotRange(3) ==> [0, 1, 2];
@@ -207,6 +208,7 @@ export const computeFeatureMeta = (name, data, resolution) => {
     return {
       name,
       type: FEATURE_TYPE.UUID,
+      role: FIELD_ROLE.UUID,
       dataType: DATA_TYPE.STRING,
       domain: null,
     };
@@ -216,6 +218,7 @@ export const computeFeatureMeta = (name, data, resolution) => {
     return {
       name,
       type: null,
+      role: null,
       dataType: null,
       domain: null,
     };
@@ -236,6 +239,7 @@ export const computeFeatureMeta = (name, data, resolution) => {
   return {
     name,
     type,
+    role: FIELD_ROLE.FEATURE,
     dataType,
     domain,
   };

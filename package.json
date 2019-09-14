@@ -67,7 +67,7 @@
     "sass-loader": "^7.1.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
-    "styled-components": "^4.0.0",
+    "styled-components": "^4.3.2",
     "webpack-bundle-analyzer": "^3.4.1"
   },
   "scripts": {

@@ -1,4 +1,3 @@
-import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 import {absoluteError, logLoss} from '@mlvis/mlvis-common/utils';
 
 export const COLORS = {
@@ -26,6 +25,11 @@ export const METRIC = {
     },
   },
   ACTUAL: 'actual',
+};
+
+export const SEGMENTATION_METHOD = {
+  MANUAL: 'manual',
+  AUTO: 'auto',
 };
 
 export const SCORE_PREFIX = '@score:';
