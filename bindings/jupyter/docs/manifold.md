@@ -8,6 +8,7 @@ As a visual analytics tool, Manifold allows ML practitioners to look beyond over
 
 ## Usage
 
+
 ```python
 from mlvis import Manifold
 import sys, json, math
@@ -53,15 +54,15 @@ data = {
   x:     [...],         # feature data
   yPred: [[...], ...]   # prediction data
   yTrue: [...],         # ground truth data
-}
+};
 ```
 
 Each element in these lists represents one data point in your evaluation dataset, and the order of data instances in `x`, `yPred` and `yTrue` should all match.
 Recommended instance count for each of these datasets is 10000 - 15000. If you have a larger dataset that you want to analyze, a random subset of your data generally suffices to reveal the important patterns in it.
 
-##### `x` (list | ndarray, required):
+##### `x` (list | ndarray | data_frame, required):
+A list/ndarray/data_frame of instances with features. Example (2 data instances):
 
-A list/ndarray of instances with features. Example (2 data instances):
 
 ```python
 x = [
@@ -72,6 +73,7 @@ x = [
 
 Example with ndarray:
 
+
 ```python
 import numpy as np
 x = np.array([
@@ -81,12 +83,71 @@ x = np.array([
 x
 ```
 
+
+
+
     array([{'feature_0': 21, 'feature_1': 'B'},
            {'feature_0': 36, 'feature_1': 'A'}], dtype=object)
 
-##### `yPred` (list, required):
 
+
+Example with data_frame
+
+
+```python
+import pandas as pd
+x = pd.DataFrame([
+  {'feature_0': 21, 'feature_1': 'B'},
+  {'feature_0': 36, 'feature_1': 'A'}
+])
+x
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>feature_0</th>
+      <th>feature_1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>21</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>36</td>
+      <td>A</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+##### `yPred` (list, required):
 A list of list or data frames, each child list is a prediction array from one model for each data instance. Example (3 models, 2 data instances, 2 classes `['false', 'true']`):
+
 
 ```python
 yPred = [
@@ -98,8 +159,10 @@ yPred = [
 
 Example with a list of data frame:
 
+
 ```python
 import pandas as pd
+from IPython.display import display
 yPred = [
   pd.DataFrame([{'false': 0.1, 'true': 0.9}, {'false': 0.8, 'true': 0.2}]),
   pd.DataFrame([{'false': 0.3, 'true': 0.7}, {'false': 0.9, 'true': 0.1}]),
@@ -107,25 +170,138 @@ yPred = [
 ]
 for i, y in enumerate(yPred):
     print('Model ' + str(i) + ' is:')
-    print(y)
+    display(y)
 ```
 
     Model 0 is:
-       false  true
-    0    0.1   0.9
-    1    0.8   0.2
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>false</th>
+      <th>true</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.1</td>
+      <td>0.9</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0.8</td>
+      <td>0.2</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
     Model 1 is:
-       false  true
-    0    0.3   0.7
-    1    0.9   0.1
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>false</th>
+      <th>true</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.3</td>
+      <td>0.7</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0.9</td>
+      <td>0.1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
     Model 2 is:
-       false  true
-    0    0.6   0.4
-    1    0.4   0.6
 
-##### `yTrue` (list | ndarray, required):
 
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>false</th>
+      <th>true</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.6</td>
+      <td>0.4</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0.4</td>
+      <td>0.6</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+##### `yTrue` (list | ndarray | data_frame, required):
 A list, ground truth for each data instance. Values must be numbers for regression model, must be strings that match object keys in `yPred` for classification models. Example (2 data instances, 2 classes ['false', 'true']):
+
 
 ```python
 yTrue = [
@@ -136,6 +312,7 @@ yTrue = [
 
 Example with ndarray:
 
+
 ```python
 import numpy as np
 yTrue = np.array([
@@ -145,4 +322,58 @@ yTrue = np.array([
 yTrue
 ```
 
+
+
+
     array(['true', 'false'], dtype='<U5')
+
+
+
+Example with data_frame
+
+
+```python
+import pandas as pd
+yTrue = pd.DataFrame([
+  'true',
+  'false'
+])
+yTrue
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>true</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>false</td>
+    </tr>
+  </tbody>
+</table>
+</div>
