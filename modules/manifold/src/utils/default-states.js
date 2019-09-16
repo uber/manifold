@@ -192,27 +192,21 @@ export const isValidSegmentFilterFromFieldDef = (filter, field) => {
   const {type: featureType, domain} = field;
 
   if (featureType === FEATURE_TYPE.CATEGORICAL) {
-    assert(
-      domain && domain.length && domain.length,
-      '`field.domain` must be an array'
-    );
+    assert(domain && domain.length, '`field.domain` must be an array');
     return (
       filterType === FILTER_TYPE.INCLUDE &&
-      // filter must consain a subset of column domain
+      // filter must contain a subset of column domain
       value.length < domain.length &&
       value.every(val => domain.includes(val))
     );
   } else if (featureType === FEATURE_TYPE.NUMERICAL) {
-    assert(
-      domain && domain.length && domain.length,
-      '`field.domain` must be an array'
-    );
+    assert(domain && domain.length, '`field.domain` must be an array');
     return (
       filterType === FILTER_TYPE.RANGE &&
       value &&
       value.length === 2 &&
       value[0] < value[1] &&
-      // filter must consain a subset of column domain
+      // filter must contain a subset of column domain
       (domain[0] > value[0] || domain[domain.length - 1] < value[1]) &&
       // filter must be non-empty
       (domain[0] <= value[1] && domain[domain.length - 1] >= value[0])
@@ -245,6 +239,7 @@ export const isValidSegmentGroups = state => {
   } = state;
   const nSegments = isManualSegmentation ? segmentFilters.length : nClusters;
   for (let i = 0; i < segmentGroups.length; i++) {
+    // no groups should be empty
     if (!segmentGroups[i].length) {
       return false;
     }
@@ -252,6 +247,7 @@ export const isValidSegmentGroups = state => {
     const otherGroup = segmentGroups[(i + 1) % 2];
     for (let j = 0; j < segmentGroups[i].length; j++) {
       const segmentId = segmentGroups[i][j];
+      // no segment index should be out of range; no overlapping between 2 segment groups
       if (
         segmentId < 0 ||
         segmentId >= nSegments ||

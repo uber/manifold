@@ -6,7 +6,7 @@ import {
   logLoss,
   absoluteError,
 } from '@mlvis/mlvis-common/utils';
-import {getColumnDomain} from './utils';
+import {getColumnMinMax} from './utils';
 import {
   UUID_NAME,
   FEATURE_TYPE,
@@ -309,12 +309,12 @@ export function columnsAndFieldsFromScore(
     );
     return _scoreFunc(columnsYTrue[0], predictArr, classLabels);
   });
-  const domains = columns.map(getColumnDomain);
+  const domains = columns.map(getColumnMinMax);
   const fields = dotRange(nModels).map(modelId => ({
     name: scoreColName(modelId),
     type: FEATURE_TYPE.NUMERICAL,
     role: FIELD_ROLE.SCORE,
-    dataType: 'real',
+    dataType: DATA_TYPE.REAL,
     domain: domains[modelId],
   }));
 

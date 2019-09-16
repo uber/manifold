@@ -12,15 +12,14 @@ export const METRIC = {
     ABSOLUTE_ERROR: {
       name: 'absolute error',
       description:
-        'absolute value of difference between predicted value and ground truth',
+        'the absolute value of difference between predicted value and ground truth',
       func: absoluteError,
     },
   },
   BINARY_CLASSIFICATION: {
     LOG_LOSS: {
       name: 'log loss',
-      description:
-        'absolute value of difference between predicted value and ground truth',
+      description: 'the logarithmic loss for predicted probability values',
       func: logLoss,
     },
   },

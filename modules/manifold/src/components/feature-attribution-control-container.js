@@ -26,7 +26,7 @@ import {
   getSegmentFilters,
 } from '../selectors/base';
 import {getFeaturesMeta} from '../selectors/compute';
-import {computeWidthLadder, isValidSegmentGroups} from '../utils';
+import {computeWidthLadder} from '../utils';
 
 const mapDispatchToProps = {
   fetchFeatures,
@@ -121,27 +121,16 @@ class FeatureAttributionControlContainer extends PureComponent {
   };
 
   _updateSegmentGroups = segmentGroups => {
-    const {
-      hasBackend,
-      featureDistributionParams,
-      modelComparisonParams: {nClusters},
-    } = this.props;
+    const {hasBackend, featureDistributionParams} = this.props;
 
     // TODO constraints each group should have at least one segment
-    if (isValidSegmentGroups(segmentGroups, nClusters)) {
-      this.props.updateSegmentGroups(segmentGroups);
-      // TODO do we still need the hasBackend logic?
-      if (hasBackend) {
-        this.props.fetchFeatures({
-          ...featureDistributionParams,
-          segmentGroups,
-        });
-      }
-    } else {
-      /* eslint-disable no-console */
-      // TODO this should be visible in the UI
-      console.warn('invalid segment groups');
-      /* eslint-enable no-console */
+    this.props.updateSegmentGroups(segmentGroups);
+    // TODO do we still need the hasBackend logic?
+    if (hasBackend) {
+      this.props.fetchFeatures({
+        ...featureDistributionParams,
+        segmentGroups,
+      });
     }
   };
 

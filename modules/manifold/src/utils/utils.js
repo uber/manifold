@@ -358,6 +358,15 @@ export function zipObjects(arrays, joinField, rename) {
   });
 }
 
+// adapted from lodash.product https://github.com/SeregPie/lodash.product
+/**
+ * get the cartesian product from a few arrays
+ * @param {Array<Array<Any>>} collectionArr
+ * @return {Array<Array<Any>>}
+ * @example
+ * product([[false, true], ['a', 'b', 'c'], [{}]]);
+ * // returns [[false, 'a', {}], [false, 'b', {}], [false, 'c', {}], [true, 'a', {}], [true, 'b', {}], [true, 'c', {}]]
+ */
 export function product(collectionArr) {
   let result = [];
   function recur(collection) {
@@ -374,7 +383,7 @@ export function product(collectionArr) {
 }
 
 // todo: to be consolidated with `computeNumericalFeatureDomain`
-export function getColumnDomain(values) {
+export function getColumnMinMax(values) {
   let min = Infinity;
   let max = -Infinity;
   values.forEach(val => {

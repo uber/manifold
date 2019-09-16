@@ -144,7 +144,7 @@ export const getDataIdsInSegmentsUnsorted = createSelector(
       return computeManualSegmentationResult(data, segmentFilters);
     } else {
       assert(
-        !isNaN(nClusters) && nClusters !== null,
+        nClusters !== null && !isNaN(nClusters),
         'must provide `nClusters for automatic segmentation'
       );
       return computeAutoSegmentationResult(data, columnTypeRanges, nClusters);
