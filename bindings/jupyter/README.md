@@ -1,8 +1,8 @@
-# Introduction
+# Jupyter Binding
 
 <img alt="Jupyter" src="https://d1a3f4spazzrp4.cloudfront.net/mlvis/jupyter/docs/demo.gif"></img>
 
-The mlvis library contains a suite a visualization components. This library is still under active development. The current version consists of several prebuilt visualization components:
+The jupyter binding of this project is a [Python library](https://pypi.org/project/mlvis/) that consists of several prebuilt visualization components:
 
 - [Stacked Calendar](docs/stacked-calendar.md)
 - [Graph Builder](docs/graph-builder.md)
