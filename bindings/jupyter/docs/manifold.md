@@ -100,49 +100,12 @@ x = pd.DataFrame([
   {'feature_0': 21, 'feature_1': 'B'},
   {'feature_0': 36, 'feature_1': 'A'}
 ])
-x
+print(x)
 ```
 
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>feature_0</th>
-      <th>feature_1</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>0</td>
-      <td>21</td>
-      <td>B</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>36</td>
-      <td>A</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+       feature_0 feature_1
+    0         21         B
+    1         36         A
 
 
 ##### `yPred` (list, required):
@@ -170,133 +133,21 @@ yPred = [
 ]
 for i, y in enumerate(yPred):
     print('Model ' + str(i) + ' is:')
-    display(y)
+    print(y)
 ```
 
     Model 0 is:
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>false</th>
-      <th>true</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>0</td>
-      <td>0.1</td>
-      <td>0.9</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>0.8</td>
-      <td>0.2</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
+       false  true
+    0    0.1   0.9
+    1    0.8   0.2
     Model 1 is:
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>false</th>
-      <th>true</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>0</td>
-      <td>0.3</td>
-      <td>0.7</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>0.9</td>
-      <td>0.1</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
+       false  true
+    0    0.3   0.7
+    1    0.9   0.1
     Model 2 is:
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>false</th>
-      <th>true</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>0</td>
-      <td>0.6</td>
-      <td>0.4</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>0.4</td>
-      <td>0.6</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+       false  true
+    0    0.6   0.4
+    1    0.4   0.6
 
 
 ##### `yTrue` (list | ndarray | data_frame, required):
@@ -338,42 +189,9 @@ yTrue = pd.DataFrame([
   'true',
   'false'
 ])
-yTrue
+print(yTrue)
 ```
 
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>0</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>0</td>
-      <td>true</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>false</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+           0
+    0   true
+    1  false
