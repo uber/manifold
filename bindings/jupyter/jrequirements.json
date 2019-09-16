@@ -1,0 +1,17 @@
+{
+  "FeatureListView": {
+    "@mlvis/feature-list-view": "external"
+  },
+  "GraphBuilder": {
+    "@mlvis/jupyter-graph-builder": "external"
+  },
+  "Manifold": {
+    "@mlvis/juypter-manifold": "external"
+  },
+  "MultiWayPlot": {
+    "@mlvis/jupyter-multi-way-plot": "external"
+  },
+  "StackedCalendar": {
+    "@mlvis/stacked-calendar": "external"
+  }
+}
