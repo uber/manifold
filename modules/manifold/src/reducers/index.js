@@ -53,22 +53,29 @@ export const DEFAULT_STATE = {
     yTrue: [],
     score: [],
   },
-  //
   modelsMeta: {
+    // {Number} number of models
     nModels: undefined,
-    nClusters: undefined,
+    // {Number} number of classes
+    nClasses: undefined,
+    // {Array<String>} an array of class names
     classLabels: [],
   },
   isDataLoadingError: false,
 
   /** data generation states */
+  // {Object} metric configuration, contains {name, description, func}
   metric: METRIC.REGRESSION.ABSOLUTE_ERROR,
 
   /** data slicing states */
   isManualSegmentation: false,
+  // {Array<Number>} use which columns to slice. An array of column ids
   baseCols: [],
+  // {Array<Array<Object>>} filter logic corresponding to data segment (only applicable to manual slicing)
   segmentFilters: [],
+  // {Number} number of clusters to use in automatic slicing (only applicable to automatic slicing)
   nClusters: 4,
+  // {Array<Array<Number>>} which segments to group together for comparing against each other. An array of array of segment IDs
   segmentGroups: [[2, 3], [0, 1]],
 
   /** display states */

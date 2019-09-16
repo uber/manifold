@@ -1,5 +1,4 @@
 import {createSelector} from 'reselect';
-import {Array} from 'global';
 import get from 'lodash.get';
 
 // selector  dependencies:

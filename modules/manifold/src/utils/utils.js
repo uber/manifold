@@ -456,6 +456,25 @@ export function groupLatLngPairs(fields) {
   }, []);
 }
 
+/**
+ * function to set `state[field]` to a default value if and only if current state[field] value id invalid
+ * @param {Objetct} state - redux state
+ * @param {String} field - field name in `state`
+ * @param {Function} validateFunc - function to decide whether `state[field]` is invalid. Input: state; output: boolean
+ * @param {Function} setDefaultFunc - function to return a default value for `state[field]`. Input: state; output: field value
+ * @return updated redux state
+ *
+ * @example
+ * const state1 = {a: {c: 5}, b: 6};
+ * const state2 = {a: {c: 5}, b: 11};
+ * const field = 'b';
+ * const validateFunc = state => state.b >= state.a.c * 2;
+ * const setDefaultFunc = state => 2 * state.a.c;
+ * validateAndSetDefaultStateSingle(state1, field, validateFunc, setDefaultFunc)
+ * // returns {a: {c: 5}, b: 10}
+ * validateAndSetDefaultStateSingle(state2, field, validateFunc, setDefaultFunc)
+ * // returns {a: {c: 5}, b: 11}
+ */
 export function validateAndSetDefaultStateSingle(
   state,
   field,
@@ -473,13 +492,41 @@ export function validateAndSetDefaultStateSingle(
   };
 }
 
+/**
+ * Used for configuring 1) validation criteria for each field in state;
+ * 2) default value fro each state if they are invalid; 3) dependency chain among fields
+ * @param {Array<String>} fieldChain - an array of field names in `state`.
+ * Order if the fields dignify the dependency relationship between fields:
+ * default values of fields with a larger index might depend on (zero or more) fields with a smaller index
+ * fields with a larger index never depend on fields with smaller indices
+ * @param {Map<String:Function>} validateFuncs - a mapping from each of the field names to functions to check whether those fields are valid
+ * @param {Map<String:Function>} setDefaultFuncs - a mapping from each of the field names to functions that returns default value of that field
+ * @return {Function} a function to validate each of the fields in state on-by-one, and set them to default if they are invalid. Input: state; output: updated state
+ *
+ * @example
+ * const state = {a: 2, b: 2, c: 2};
+ * const validateFuncs = {
+ *   b: state => state.b > state.a,
+ *   c: state => state.c > state.b,
+ * };
+ * const setDefaultFuncs = {
+ *   b: state => state.a + 1,
+ *   c: state => state.b + 2,
+ * };
+ * const validateAndSetDefault = validateAndSetDefaultStatesConfigurator(['b', 'c'], validateFuncs, setDefaultFuncs);
+ * const validateAndSetDefaultReversed = validateAndSetDefaultStatesConfigurator(['c', 'b'], validateFuncs, setDefaultFuncs);
+ * validateAndSetDefault(state);
+ * // returns {a: 2, b: 3, c: 5}
+ * validateAndSetDefaultReversed(state);
+ * // returns {a: 2, b: 3, c: 4}
+ */
 export function validateAndSetDefaultStatesConfigurator(
-  fields,
+  fieldChain,
   validateFuncs,
   setDefaultFuncs
 ) {
   return state => {
-    return fields.reduce((acc, field) => {
+    return fieldChain.reduce((acc, field) => {
       const validateFunc = validateFuncs[field];
       const setDefaultFunc = setDefaultFuncs[field];
       assert(

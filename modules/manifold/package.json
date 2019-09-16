@@ -36,7 +36,6 @@
     "global": "^4.3.2",
     "kepler.gl": "^1.1.7",
     "lodash.get": "^4.4.2",
-    "lodash.product": "^18.9.19",
     "mathjs": "^5.2.3",
     "numeral": "^2.0.6",
     "papaparse": "^4.6.3",

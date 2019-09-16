@@ -12,11 +12,9 @@ import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
 import {
   rootSelector,
-  getMetric,
   getNClusters,
   getSegmentFilters,
   getSegmentGroups,
-  getBaseCols,
   getIsManualSegmentation,
 } from './base';
 import {
