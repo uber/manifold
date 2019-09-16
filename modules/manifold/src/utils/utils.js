@@ -231,36 +231,6 @@ export const aggregateDataset = (
   };
 };
 
-export function getDefaultSegmentGroups(nClusters) {
-  const nTreatment = nClusters < 4 ? 1 : 2;
-  const rangeArr = Array.from(Array(nClusters).keys());
-  return [
-    rangeArr.slice(nClusters - nTreatment),
-    rangeArr.slice(0, nClusters - nTreatment),
-  ];
-}
-
-export function isValidSegmentGroups(segmentGroups, nSegments) {
-  for (let i = 0; i < segmentGroups.length; i++) {
-    if (!segmentGroups[i].length) {
-      return false;
-    }
-    // group0 is "otherGroup" for group1; vice versa
-    const otherGroup = segmentGroups[(i + 1) % 2];
-    for (let j = 0; j < segmentGroups[i].length; j++) {
-      const segmentId = segmentGroups[i][j];
-      if (
-        segmentId < 0 ||
-        segmentId >= nSegments ||
-        otherGroup.includes(segmentId)
-      ) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
 /**
  * filter data items w/ a set of filters
  * @param  {Object} data {columns, fields}
@@ -388,6 +358,41 @@ export function zipObjects(arrays, joinField, rename) {
   });
 }
 
+// adapted from lodash.product https://github.com/SeregPie/lodash.product
+/**
+ * get the cartesian product from a few arrays
+ * @param {Array<Array<Any>>} collectionArr
+ * @return {Array<Array<Any>>}
+ * @example
+ * product([[false, true], ['a', 'b', 'c'], [{}]]);
+ * // returns [[false, 'a', {}], [false, 'b', {}], [false, 'c', {}], [true, 'a', {}], [true, 'b', {}], [true, 'c', {}]]
+ */
+export function product(collectionArr) {
+  let result = [];
+  function recur(collection) {
+    if (collection.length < collectionArr.length) {
+      collectionArr[collection.length].forEach(value => {
+        recur(collection.concat(value));
+      });
+    } else {
+      result.push(collection);
+    }
+  }
+  recur([]);
+  return result;
+}
+
+// todo: to be consolidated with `computeNumericalFeatureDomain`
+export function getColumnMinMax(values) {
+  let min = Infinity;
+  let max = -Infinity;
+  values.forEach(val => {
+    if (val < min) min = val;
+    if (val > max) max = val;
+  });
+  return [min, max];
+}
+
 /*
  * Only retain a field in `data` if it first appears in `fields`
  * @example
@@ -458,4 +463,92 @@ export function groupLatLngPairs(fields) {
     }
     return acc;
   }, []);
+}
+
+/**
+ * function to set `state[field]` to a default value if and only if current state[field] value id invalid
+ * @param {Objetct} state - redux state
+ * @param {String} field - field name in `state`
+ * @param {Function} validateFunc - function to decide whether `state[field]` is invalid. Input: state; output: boolean
+ * @param {Function} setDefaultFunc - function to return a default value for `state[field]`. Input: state; output: field value
+ * @return updated redux state
+ *
+ * @example
+ * const state1 = {a: {c: 5}, b: 6};
+ * const state2 = {a: {c: 5}, b: 11};
+ * const field = 'b';
+ * const validateFunc = state => state.b >= state.a.c * 2;
+ * const setDefaultFunc = state => 2 * state.a.c;
+ * validateAndSetDefaultStateSingle(state1, field, validateFunc, setDefaultFunc)
+ * // returns {a: {c: 5}, b: 10}
+ * validateAndSetDefaultStateSingle(state2, field, validateFunc, setDefaultFunc)
+ * // returns {a: {c: 5}, b: 11}
+ */
+export function validateAndSetDefaultStateSingle(
+  state,
+  field,
+  validateFunc,
+  setDefaultFunc
+) {
+  // if `state.field` is valid, don't modify state
+  if (validateFunc(state)) {
+    return state;
+  }
+  // otherwise, create new state
+  return {
+    ...state,
+    [field]: setDefaultFunc(state),
+  };
+}
+
+/**
+ * Used for configuring 1) validation criteria for each field in state;
+ * 2) default value fro each state if they are invalid; 3) dependency chain among fields
+ * @param {Array<String>} fieldChain - an array of field names in `state`.
+ * Order if the fields dignify the dependency relationship between fields:
+ * default values of fields with a larger index might depend on (zero or more) fields with a smaller index
+ * fields with a larger index never depend on fields with smaller indices
+ * @param {Map<String:Function>} validateFuncs - a mapping from each of the field names to functions to check whether those fields are valid
+ * @param {Map<String:Function>} setDefaultFuncs - a mapping from each of the field names to functions that returns default value of that field
+ * @return {Function} a function to validate each of the fields in state on-by-one, and set them to default if they are invalid. Input: state; output: updated state
+ *
+ * @example
+ * const state = {a: 2, b: 2, c: 2};
+ * const validateFuncs = {
+ *   b: state => state.b > state.a,
+ *   c: state => state.c > state.b,
+ * };
+ * const setDefaultFuncs = {
+ *   b: state => state.a + 1,
+ *   c: state => state.b + 2,
+ * };
+ * const validateAndSetDefault = validateAndSetDefaultStatesConfigurator(['b', 'c'], validateFuncs, setDefaultFuncs);
+ * const validateAndSetDefaultReversed = validateAndSetDefaultStatesConfigurator(['c', 'b'], validateFuncs, setDefaultFuncs);
+ * validateAndSetDefault(state);
+ * // returns {a: 2, b: 3, c: 5}
+ * validateAndSetDefaultReversed(state);
+ * // returns {a: 2, b: 3, c: 4}
+ */
+export function validateAndSetDefaultStatesConfigurator(
+  fieldChain,
+  validateFuncs,
+  setDefaultFuncs
+) {
+  return state => {
+    return fieldChain.reduce((acc, field) => {
+      const validateFunc = validateFuncs[field];
+      const setDefaultFunc = setDefaultFuncs[field];
+      assert(
+        typeof validateFunc === 'function' &&
+          typeof setDefaultFunc === 'function',
+        `both validateFuncs[${field}] and setDefaultFuncs[${field}] need to be functions`
+      );
+      return validateAndSetDefaultStateSingle(
+        acc,
+        field,
+        validateFunc,
+        setDefaultFunc
+      );
+    }, state);
+  };
 }

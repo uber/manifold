@@ -1,35 +1,34 @@
-import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
+import {absoluteError, logLoss} from '@mlvis/mlvis-common/utils';
 
 export const COLORS = {
   PINK: '#ff0099',
   BLUE: '#818c81',
-  // TODO add more if we need more than two segment groups
-};
-
-// urls for sample data
-export const SAMPLE_DATA_S3 = {
-  REGRESSION: ['/manifold/feature.csv', '/manifold/pred_reg.csv'],
-  BIN_CLASSIFICATION: [
-    '/manifold/feature.csv',
-    '/manifold/pred_bin_0.csv',
-    '/manifold/pred_bin_1.csv',
-  ],
 };
 
 // "performance": log-loss for classification models, squared-log-error for regression
 // "actual": raw prediction value
 export const METRIC = {
-  PERFORMANCE: 'performance',
+  REGRESSION: {
+    ABSOLUTE_ERROR: {
+      name: 'absolute error',
+      description:
+        'the absolute value of difference between predicted value and ground truth',
+      func: absoluteError,
+    },
+  },
+  BINARY_CLASSIFICATION: {
+    LOG_LOSS: {
+      name: 'log loss',
+      description: 'the logarithmic loss for predicted probability values',
+      func: logLoss,
+    },
+  },
   ACTUAL: 'actual',
 };
 
-// Users will be able to provide a list of feature names that they would like to enforce
-// to be a particular type. If non is provided, the enforced list is empty,
-// and every feature's type will be automatically inferred.
-export const DEFAULT_FEATURE_TYPES = {
-  [FEATURE_TYPE.CATEGORICAL]: [],
-  [FEATURE_TYPE.NUMERICAL]: [],
-  [FEATURE_TYPE.GEO]: [],
+export const SEGMENTATION_METHOD = {
+  MANUAL: 'manual',
+  AUTO: 'auto',
 };
 
 export const SCORE_PREFIX = '@score:';

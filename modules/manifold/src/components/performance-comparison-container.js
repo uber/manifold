@@ -17,13 +17,10 @@ import {
   getModelIds,
   getModelMeta,
   getDisplayMetric,
-} from '../selectors/adaptors';
-import {
-  getFeatureDistributionParams,
-  getRawSegmentIds,
-  getSelectedModels,
+  getSegmentIds,
   getSegmentOrdering,
-} from '../selectors/base';
+} from '../selectors/adaptors';
+import {getSelectedModels, getSegmentGroups} from '../selectors/base';
 
 const PADDING = {
   left: 2,
@@ -64,17 +61,15 @@ const mapDispatchToProps = {
 
 const mapStateToProps = (state, props) => {
   const modelIds = getModelIds(state) || [];
-  const {segmentGroups} = getFeatureDistributionParams(state) || [];
 
   return {
     data: getModels(state),
-    segmentIds: getRawSegmentIds(state),
-
+    segmentIds: getSegmentIds(state),
     rawDataRange: getRawDataRange(state),
     densityRange: getDensityRange(state),
     modelMeta: getModelMeta(state),
     metric: getDisplayMetric(state),
-    segmentGroups,
+    segmentGroups: getSegmentGroups(state),
     colorScale: scaleOrdinal(colorScheme).domain(modelIds),
     selectedModels: getSelectedModels(state),
     segmentOrdering: getSegmentOrdering(state),

@@ -1,4 +1,3 @@
-// @noflow
 import {combineReducers} from 'redux';
 import {handleActions} from 'redux-actions';
 import {UPDATE_VIEWPORT} from './actions';

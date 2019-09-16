@@ -18,7 +18,7 @@ module.exports = {
   coverageReporters: ['cobertura', 'text', 'html'],
   moduleNameMapper: aliasMapper,
   modulePathIgnorePatterns: ['/dist/'],
-  testMatch: ['**/*.(spec|test).js', '**/*-(spec|test).js', '**/test/*.js'],
+  testMatch: ['**/*.(spec|test).js', '**/__tests__/*.js'],
   testPathIgnorePatterns: [
     '/node_modules/',
     '/dist/',

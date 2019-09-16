@@ -1,31 +1,41 @@
 import {handleActions} from 'redux-actions';
 import reduceReducers from 'reduce-reducers';
 import keplerGlReducer from 'kepler.gl/reducers';
+
+import {handleUpdateMetric} from './data-generation';
 import {
-  UPDATE_DIVERGENCE_THRESHOLD,
-  FETCH_BACKEND_DATA_START,
-  FETCH_BACKEND_DATA_SUCCESS,
+  handleUpdateSegmentationMethod,
+  handleUpdateBaseCols,
+  handleUpdateNClusters,
+  handleUpdateSegmentFilters,
+  handleUpdateSegmentGroups,
+} from './data-slicing';
+
+import {
   FETCH_MODELS_START,
   FETCH_MODELS_SUCCESS,
+  FETCH_BACKEND_DATA_START,
+  FETCH_BACKEND_DATA_SUCCESS,
   FETCH_FEATURES_START,
   FETCH_FEATURES_SUCCESS,
   LOAD_LOCAL_DATA_START,
   LOAD_LOCAL_DATA_SUCCESS,
   LOAD_LOCAL_DATA_FAILURE,
-  UPDATE_FEATURE_TYPES,
   UPDATE_SELECTED_INSTANCES,
+  UPDATE_DIVERGENCE_THRESHOLD,
   UPDATE_SELECTED_MODELS,
   UPDATE_N_CLUSTERS,
   UPDATE_METRIC,
   UPDATE_SEGMENTATION_METHOD,
   UPDATE_SEGMENT_FILTERS,
-  UPDATE_BASE_MODELS,
+  UPDATE_BASE_COLS,
   UPDATE_SEGMENT_GROUPS,
   UPDATE_DISPLAY_GEO_FEATURES,
   UPDATE_COLOR_BY_FEATURE,
-} from './actions';
-import {DEFAULT_FEATURE_TYPES} from './constants';
-import {getDefaultSegmentGroups, registerExternalReducers} from './utils';
+} from '../actions';
+
+import {METRIC} from '../constants';
+import {registerExternalReducers} from '../utils';
 
 export const DEFAULT_STATE = {
   // TODO: these are fields used with Python backend. Consider consolidate/remove
@@ -33,56 +43,64 @@ export const DEFAULT_STATE = {
   models: undefined,
   features: undefined,
 
-  // data and metadata
+  /** data and metadata */
   // columns: array of array of columns; fields: array of field metadata
   data: {columns: [], fields: []},
-  // collumnTypeRanges: map from "column type" (x, yPred, etc) to array of 2 elements indicating the start and end index of that column type in dataset
+  // map from "column type" (x, yPred, etc) to array of 2 elements indicating the start and end index of that column type in dataset
   columnRangeType: {
     x: [],
     yPred: [],
     yTrue: [],
     score: [],
   },
-  modelsMeta: {},
-  isBackendDataLoading: false,
-  isModelsComparisonLoading: false,
-  isFeaturesDistributionLoading: false,
-  isDataLoadingError: null,
+  modelsMeta: {
+    // {Number} number of models
+    nModels: undefined,
+    // {Number} number of classes
+    nClasses: undefined,
+    // {Array<String>} an array of class names
+    classLabels: [],
+  },
+  isDataLoadingError: false,
 
-  // display states
-  featureTypes: DEFAULT_FEATURE_TYPES,
+  /** data generation states */
+  // {Object} metric configuration, contains {name, description, func}
+  metric: METRIC.REGRESSION.ABSOLUTE_ERROR,
+
+  /** data slicing states */
+  isManualSegmentation: false,
+  // {Array<Number>} use which columns to slice. An array of column ids
+  baseCols: [],
+  // {Array<Array<Object>>} filter logic corresponding to data segment (only applicable to manual slicing)
+  segmentFilters: [],
+  // {Number} number of clusters to use in automatic slicing (only applicable to automatic slicing)
+  nClusters: 4,
+  // {Array<Array<Number>>} which segments to group together for comparing against each other. An array of array of segment IDs
+  segmentGroups: [[2, 3], [0, 1]],
+
+  /** display states */
   selectedInstances: [],
   divergenceThreshold: 0,
   selectedModelMap: {},
-  // todo: consider changing feature from id to feature def
   displayGeoFeatures: [0],
   colorByFeature: 0,
 
-  // data manipulation states
-  nClusters: 4,
-  metric: 'performance',
-  segmentFilters: undefined,
-  baseModels: [],
-  segmentGroups: [[2, 3], [0, 1]],
-  // TODO change to segmentationMode: [K-Means, Manual-Performance, Manual-Feature]
-  isManualSegmentation: false,
-
-  // external states
+  /** external states */
   keplerGl: {map: {}},
 };
 
 // -- remote data source -- //
-const handleUpdateDivergenceThreshold = (state, {payload}) => ({
+export const handleUpdateDivergenceThreshold = (state, {payload}) => ({
   ...state,
   divergenceThreshold: payload,
 });
 
-const handleFetchBackendDataStart = (state, {payload}) => ({
+export const handleFetchBackendDataStart = (state, {payload}) => ({
   ...state,
   isBackendDataLoading: true,
 });
 
-const handleFetchBackendDataSuccess = (state, {payload}) => {
+export const handleFetchBackendDataSuccess = (state, {payload}) => {
   return {
     ...state,
     metaData: payload,
@@ -90,12 +108,12 @@ const handleFetchBackendDataSuccess = (state, {payload}) => {
   };
 };
 
-const handleFetchModelsStart = (state, {payload}) => ({
+export const handleFetchModelsStart = (state, {payload}) => ({
   ...state,
   isModelsComparisonLoading: true,
 });
 
-const handleFetchModelsSuccess = (state, {payload}) => {
+export const handleFetchModelsSuccess = (state, {payload}) => {
   const {modelsPerformance = []} = payload[0];
   const defaultSelectedModels = modelsPerformance.reduce((acc, d) => {
     acc[d.modelId] = false;
@@ -109,25 +127,25 @@ const handleFetchModelsSuccess = (state, {payload}) => {
   };
 };
 
-const handleFetchFeaturesStart = (state, {payload}) => ({
+export const handleFetchFeaturesStart = (state, {payload}) => ({
   ...state,
   isFeaturesDistributionLoading: true,
 });
 
-const handleFetchFeaturesSuccess = (state, {payload}) => ({
+export const handleFetchFeaturesSuccess = (state, {payload}) => ({
   ...state,
   features: payload,
   isFeaturesDistributionLoading: false,
 });
 
 // -- local data source -- //
-const handleLoadLocalDataStart = (state, {payload}) => ({
+export const handleLoadLocalDataStart = (state, {payload}) => ({
   ...state,
   isLocalDataLoading: true,
   dataLoadingFailure: null,
 });
 
-const handleLoadLocalDataSuccess = (state, {payload}) => {
+export const handleLoadLocalDataSuccess = (state, {payload}) => {
   const {data, modelsMeta, columnTypeRanges} = payload;
   return {
     ...state,
@@ -138,29 +156,19 @@ const handleLoadLocalDataSuccess = (state, {payload}) => {
   };
 };
 
-const handleLoadLocalDataFailure = (state, {payload}) => ({
+export const handleLoadLocalDataFailure = (state, {payload}) => ({
   ...state,
   isLocalDataLoading: false,
   dataLoadingError: payload,
 });
 
-export const handleUpdateFeatureTypes = (state, {payload}) => {
-  return {
-    ...state,
-    featureTypes: {
-      ...state.featureTypes,
-      ...payload,
-    },
-  };
-};
-
 // -- UI actions -- //
-const handleUpdateSelectedInstances = (state, {payload}) => ({
+export const handleUpdateSelectedInstances = (state, {payload}) => ({
   ...state,
   selectedInstances: payload.map(d => d.object),
 });
 
-const handleUpdateSelectModels = (state, {payload}) => ({
+export const handleUpdateSelectModels = (state, {payload}) => ({
   ...state,
   selectedModelMap: {
     ...state.selectedModelMap,
@@ -168,56 +176,14 @@ const handleUpdateSelectModels = (state, {payload}) => ({
   },
 });
 
-const handleUpdateNClusters = (state, {payload}) => {
-  const delta = payload === 'INC' ? 1 : payload === 'DEC' ? -1 : 0;
-  return {
-    ...state,
-    nClusters: state.nClusters + delta,
-    segmentGroups: getDefaultSegmentGroups(state.nClusters + delta),
-  };
-};
-
-const handleUpdateMetric = (state, {payload}) => ({
-  ...state,
-  metric: payload,
-});
-
-const handleUpdateSegmentationMethod = (state, {payload}) => ({
-  ...state,
-  isManualSegmentation: payload === 'manual',
-});
-
-const handleUpdateSegmentFilters = (state, {payload = []}) => {
-  const {nClusters} = state;
-  const newNClusters = payload && payload.length ? payload.length : nClusters;
-  return {
-    ...state,
-    segmentFilters: payload,
-    nClusters: newNClusters,
-    segmentGroups: getDefaultSegmentGroups(newNClusters),
-  };
-};
-
-const handleUpdateBaseModels = (state, {payload}) => ({
-  ...state,
-  baseModels: payload,
-});
-
-const handleUpdateSegmentGroups = (state, {payload}) => {
-  return {
-    ...state,
-    segmentGroups: payload,
-  };
-};
-
-const handleUpdateDisplayGeoFeatures = (state, {payload}) => {
+export const handleUpdateDisplayGeoFeatures = (state, {payload}) => {
   return {
     ...state,
     displayGeoFeatures: [payload],
   };
 };
 
-const handleUpdateColorByFeature = (state, {payload}) => {
+export const handleUpdateColorByFeature = (state, {payload}) => {
   return {
     ...state,
     colorByFeature: payload,
@@ -235,7 +201,6 @@ const manifoldReducer = handleActions(
     [LOAD_LOCAL_DATA_START]: handleLoadLocalDataStart,
     [LOAD_LOCAL_DATA_SUCCESS]: handleLoadLocalDataSuccess,
     [LOAD_LOCAL_DATA_FAILURE]: handleLoadLocalDataFailure,
-    [UPDATE_FEATURE_TYPES]: handleUpdateFeatureTypes,
     [UPDATE_SELECTED_INSTANCES]: handleUpdateSelectedInstances,
     [UPDATE_DIVERGENCE_THRESHOLD]: handleUpdateDivergenceThreshold,
     [UPDATE_SELECTED_MODELS]: handleUpdateSelectModels,
@@ -243,7 +208,7 @@ const manifoldReducer = handleActions(
     [UPDATE_METRIC]: handleUpdateMetric,
     [UPDATE_SEGMENTATION_METHOD]: handleUpdateSegmentationMethod,
     [UPDATE_SEGMENT_FILTERS]: handleUpdateSegmentFilters,
-    [UPDATE_BASE_MODELS]: handleUpdateBaseModels,
+    [UPDATE_BASE_COLS]: handleUpdateBaseCols,
     [UPDATE_SEGMENT_GROUPS]: handleUpdateSegmentGroups,
     [UPDATE_DISPLAY_GEO_FEATURES]: handleUpdateDisplayGeoFeatures,
     [UPDATE_COLOR_BY_FEATURE]: handleUpdateColorByFeature,

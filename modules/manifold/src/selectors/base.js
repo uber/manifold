@@ -1,5 +1,4 @@
 import {createSelector} from 'reselect';
-import {Array} from 'global';
 import get from 'lodash.get';
 
 // selector  dependencies:
@@ -17,11 +16,11 @@ export const getHasBackend = state =>
 export const getModelsComparisonParams = createSelector(
   rootSelector,
   (state = {}) => {
-    const {nClusters, metric, baseModels, segmentFilters} = state;
+    const {nClusters, metric, baseCols, segmentFilters} = state;
     return {
       nClusters,
       metric,
-      baseModels,
+      baseCols,
       segmentFilters,
     };
   }
@@ -54,9 +53,9 @@ export const getMetric = createSelector(
   rootSelector,
   state => state.metric
 );
-export const getBaseModels = createSelector(
+export const getBaseCols = createSelector(
   rootSelector,
-  state => state.baseModels
+  state => state.baseCols
 );
 export const getNClusters = createSelector(
   rootSelector,
@@ -84,28 +83,6 @@ export const getSelectedInstances = createSelector(
   state => state.selectedInstances
 );
 
-export const getRawSegmentIds = createSelector(
-  rootSelector,
-  (state = {}) => {
-    const {nClusters} = state;
-    return Number.isInteger(nClusters)
-      ? Array.from(Array(nClusters).keys())
-      : [];
-  }
-);
-
-export const getSegmentOrdering = createSelector(
-  rootSelector,
-  (state = {}) => {
-    // order by non-group, control group, treatment group
-    const {nClusters, segmentGroups} = state;
-    const nonGroup = Array.from(Array(nClusters).keys()).filter(
-      e => !segmentGroups[0].includes(e) && !segmentGroups[1].includes(e)
-    );
-    return nonGroup.concat(segmentGroups[1]).concat(segmentGroups[0]);
-  }
-);
-
 export const getIsManualSegmentation = createSelector(
   rootSelector,
   (state = {}) => state.isManualSegmentation
@@ -119,9 +96,4 @@ export const getDisplayGeoFeatures = createSelector(
 export const getColorByFeature = createSelector(
   rootSelector,
   state => state.colorByFeature
-);
-
-export const getPresetFeatureTypes = createSelector(
-  rootSelector,
-  state => state.featureTypes
 );
