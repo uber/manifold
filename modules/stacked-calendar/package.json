@@ -2,6 +2,11 @@
   "name": "@mlvis/stacked-calendar",
   "description": "A day-hour calendar view with stacked charts for each hour",
   "version": "1.0.0",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uber/manifold.git"
+  },
   "author": "Yang Wang",
   "main": "dist/index.js",
   "dependencies": {
