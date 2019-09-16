@@ -3,7 +3,7 @@ import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import {Select, Slider} from 'antd';
+import {Select, Slider} from 'baseui';
 import SegmentFilterDistribution from './segment-filter-distribution';
 import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 

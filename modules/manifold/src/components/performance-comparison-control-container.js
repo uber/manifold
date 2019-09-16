@@ -9,6 +9,7 @@ import {
   InputButtons,
   SelectArrow,
 } from './ui/styled-components';
+import {Select, SIZE} from 'baseui/select';
 import {computeWidthLadder} from '../utils';
 
 import {
@@ -24,6 +25,7 @@ import {
   getIsModelsComparisonLoading,
   getModelsComparisonParams,
   getIsManualSegmentation,
+  getMetric,
 } from '../selectors/base';
 import {getModelsMeta} from '../selectors/compute';
 
@@ -42,6 +44,7 @@ const mapDispatchToProps = {
 const mapStateToProps = (state, props) => {
   return {
     hasBackend: getHasBackend(state),
+    metric: getMetric(state),
     modelsMeta: getModelsMeta(state),
     modelComparisonParams: getModelsComparisonParams(state),
     isModelsComparisonLoading: getIsModelsComparisonLoading(state),
@@ -110,6 +113,7 @@ class PerfroamnceComparisonControlContainer extends PureComponent {
       className,
       width,
       flexDirection,
+      metric,
       modelComparisonParams,
       isModelsComparisonLoading,
       isManualSegmentation,
@@ -181,6 +185,27 @@ class PerfroamnceComparisonControlContainer extends PureComponent {
             </StyledInput>
           </StyledControl>
         )}
+
+        {/* <StyledControl
+          name="N_Segments"
+          stackDirection={flexDirection}
+          isHidden={isHorizontal && width < WIDTH_LADDER[2]}
+        >
+          <ItemSelector
+            selectedItems={metric}
+            options={['actual', 'performance']}
+            multiSelect={false}
+            onChange={this._onUpdateMetric}
+          />
+        </StyledControl> */}
+        <Select
+          options={['actual', 'performance']}
+          size={SIZE.compact}
+          // labelKey="id"
+          // valueKey="color"
+          onChange={this._onUpdateMetric}
+          value={metric}
+        />
       </div>
     );
   }

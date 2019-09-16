@@ -37,7 +37,6 @@
     "reselect": "^4.0.0"
   },
   "peerDependencies": {
-    "antd": "^3.18.2",
     "styled-components": "^4.2.0"
   }
 }

@@ -3,7 +3,7 @@ import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import {Button, Input, Select, Tag} from 'antd';
+import {Button, Input, Select, Tag} from 'baseui';
 import SegmentFilterList from './segment-filter-list';
 import {FEATURE_TYPE, FILTER_TYPE} from '@mlvis/mlvis-common/constants';
 

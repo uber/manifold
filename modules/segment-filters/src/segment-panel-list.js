@@ -5,7 +5,7 @@ import styled, {css} from 'styled-components';
 
 // COMPONENTS
 import SegmentPanel from './segment-panel';
-import {Button} from 'antd';
+import {Button} from 'baseui';
 
 // CONSTANTS
 import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
