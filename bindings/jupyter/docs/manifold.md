@@ -125,7 +125,6 @@ Example with a list of data frame:
 
 ```python
 import pandas as pd
-from IPython.display import display
 yPred = [
   pd.DataFrame([{'false': 0.1, 'true': 0.9}, {'false': 0.8, 'true': 0.2}]),
   pd.DataFrame([{'false': 0.3, 'true': 0.7}, {'false': 0.9, 'true': 0.1}]),
