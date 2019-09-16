@@ -94,7 +94,7 @@ class install(_install):
 setup(name='mlvis',
       cmdclass={'develop': develop,
                 'init_jrequirements': init_jrequirements_command},
-      version='0.0.8a1.dev3',
+      version='0.0.8a2.dev1',
       description='A wrapper around react components for use in jupyter notebooks',
       long_description='{}'.format(read(os.path.join('docs', 'introduction.md'))),
       long_description_content_type='text/markdown',
