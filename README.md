@@ -238,14 +238,14 @@ Here are the basic steps to import manifold into your app and load data for visu
 
 ### Install Manifold
 ```bash
-$ npm install @uber/manifold
+$ npm install @mlvis/manifold styled-components
 ```
 
 ### Load and Convert Data
 In order to load your data files to Manifold, use `loadLocalData` action. You could also reshape your data into the required Manifold format using `dataTransformer`.
 
 ```js
-import {loadLocalData} from '@uber/manifold/actions';
+import {loadLocalData} from '@mlvis/manifold/actions';
 
 // create the following action and pass to dispatch
 loadLocalData({
@@ -274,7 +274,7 @@ const defaultDataTransformer = fileList => ({
 Manifold uses Redux to manage its internal state. You need to register manifold reducer to the main reducer of your app:
 
 ```js
-import manifoldReducer from '@uber/manifold/reducers';
+import manifoldReducer from '@mlvis/manifold/reducers';
 import {combineReducers, createStore, compose} from 'redux';
 
 const initialState = {};
@@ -295,7 +295,7 @@ export default createStore(reducer, initialState);
 If you mount manifold reducer in another address instead of `manifold` in the step above, you will need to specify the path to it when you mount the component with the `getState` prop. `width` and `height` are both needed explicitly. If you have geo-spatial features and need to see them on a map, you will also need a [mapbox token](https://docs.mapbox.com/help/how-mapbox-works/access-tokens/).
 
 ```js
-import Manifold from '@uber/manifold';
+import Manifold from '@mlvis/manifold';
 const manifoldGetState = state => state.pathTo.manifold;
 const yourMapboxToken = ...;
 
