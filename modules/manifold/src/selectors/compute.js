@@ -1,8 +1,7 @@
 import {createSelector} from 'reselect';
+import assert from 'assert';
 
 import {
-  dotRange,
-  computeClusters,
   computeDensity,
   computeSegmentedFeatureDistributions,
   computeSegmentedFeatureDistributionsNormalized,
@@ -13,18 +12,16 @@ import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
 import {
   rootSelector,
-  getMetric,
   getNClusters,
   getSegmentFilters,
   getSegmentGroups,
-  getBaseModels,
   getIsManualSegmentation,
 } from './base';
 import {
   sliceDataset,
-  gatherDataset,
-  filterDataset,
   computeSortedOrder,
+  computeManualSegmentationResult,
+  computeAutoSegmentationResult,
 } from '../utils';
 
 const MODEL_PERF_HISTOGRAM_RESOLUTION = 50;
@@ -124,56 +121,40 @@ export const getMetaDataFromRaw = createSelector(
 // ---------------------- PERFORMANCE COMPARISON VIEW ------------------------ //
 // ------------------------------------------------------------------------- //
 
-// return a list of column ids to include in the clustering
-// to do: make it flexible / adjustible
-export const getClusteringInputColumnIds = createSelector(
-  [getColumnTypeRanges, getModelsMeta, getBaseModels, getMetric],
-  columnTypeRanges => {
-    if (!columnTypeRanges) {
-      return null;
-    }
-    return dotRange(...columnTypeRanges.score);
-  }
-);
-
-// return a sub dataset to include in the clustering
-export const getClusteringInputDataset = createSelector(
-  [getData, getClusteringInputColumnIds],
-  (data, colIds) => {
-    if (!data || !colIds) {
-      return null;
-    }
-    return gatherDataset(data, colIds);
-  }
-);
-
 // return an array of array of ids representing data rows in each cluster
 // e.g. [[0, 5, 6], [3, 4], [1, 2, 7]]
 export const getDataIdsInSegmentsUnsorted = createSelector(
-  [getClusteringInputDataset, getData, getNClusters, getSegmentFilters],
-  (clusteringInput, allData, nClusters = 4, segmentFilters) => {
-    if (!clusteringInput || !allData) {
+  [
+    getData,
+    getColumnTypeRanges,
+    getIsManualSegmentation,
+    getNClusters,
+    getSegmentFilters,
+  ],
+  (data, columnTypeRanges, isManual, nClusters, segmentFilters) => {
+    if (!data || !columnTypeRanges) {
       return null;
     }
-    if (segmentFilters && segmentFilters.length) {
-      return segmentFilters.map(filter => filterDataset(allData, filter));
+    // todo: add `baseCols` in this logic
+    if (isManual) {
+      assert(
+        segmentFilters && segmentFilters.length && segmentFilters[0].length,
+        'must provide `segmentFilters` for manual segmentation'
+      );
+      return computeManualSegmentationResult(data, segmentFilters);
+    } else {
+      assert(
+        nClusters !== null && !isNaN(nClusters),
+        'must provide `nClusters for automatic segmentation'
+      );
+      return computeAutoSegmentationResult(data, columnTypeRanges, nClusters);
     }
-    const {columns} = clusteringInput;
-    const clusterIds = computeClusters(columns, nClusters, true);
-    // todo: simplify the following ligic. `clusterIds` representation is sufficient
-    const result = [];
-    for (let i = 0; i < nClusters; i++) {
-      result.push([]);
-    }
-    for (let i = 0; i < clusterIds.length; i++) {
-      result[clusterIds[i]].push(i);
-    }
-    return result.filter(r => r.length > 0);
   }
 );
 
 export const getModelPerfHistogramsUnsorted = createSelector(
-  [getClusteringInputDataset, getDataIdsInSegmentsUnsorted],
+  // todo: score to display is different from score to segment on
+  [getScore, getDataIdsInSegmentsUnsorted],
   (data, segmentedIds) => {
     if (!data || !segmentedIds) {
       return null;

@@ -1,4 +1,6 @@
 import {
+  getSegmentIds,
+  getSegmentOrdering,
   getRawDataRange,
   getDensityRange,
   getModelIds,
@@ -8,7 +10,20 @@ import {
 
 // Use `.resultFunc` to test individual selector logic without having to mock dependency selectors
 // https://github.com/reduxjs/reselect#q-how-do-i-test-a-selector
-test('selector: adapter/getRawSegmentIds', () => {
+
+test('selector: base/getSegmentIds', () => {
+  const ids1 = [0, 1, 2, 3, 4];
+  expect(getSegmentIds.resultFunc(false, 5, [7, 8, 9])).toEqual(ids1);
+  expect(getSegmentIds.resultFunc(true, 5, [7, 8, 9])).toEqual([0, 1, 2]);
+});
+
+test('selector: base/getSegmentOrdering', () => {
+  expect(getSegmentOrdering.resultFunc([0, 1, 2, 3, 4], [[3, 4], [0]])).toEqual(
+    [1, 2, 0, 3, 4]
+  );
+});
+
+test('selector: adapter/getRawDataRange', () => {
   const perfBySegment = [
     {data: [{percentiles: [-10, 0, 5]}, {percentiles: [-1, 0, 1]}]},
     {data: [{percentiles: [-1, 0, 10]}, {percentiles: [-5, 0, 1]}]},

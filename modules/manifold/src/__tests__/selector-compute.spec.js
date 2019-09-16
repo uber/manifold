@@ -9,14 +9,14 @@ import {dotRange} from '@mlvis/mlvis-common/utils';
 import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
 test('selector: compute/getDataIdsInSegmentsUnsorted', () => {
-  const nClusters = 3;
   const result = getDataIdsInSegmentsUnsorted.resultFunc(
-    {columns: [[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]]},
-    {columns: []},
-    nClusters,
+    {columns: [[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]], fields: ['field1', 'field2']},
+    {score: [0, 1]},
+    false,
+    3,
     []
   );
-  expect(result.length).toBe(nClusters);
+  expect(result.length).toBe(3);
   result.forEach(clusterArr => {
     expect(result.length).toBeGreaterThan(0);
   });

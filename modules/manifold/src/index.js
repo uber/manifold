@@ -1,5 +1,3 @@
-// @noflow
-
 // Reducers
 export {default as manifoldReducer} from './reducers';
 

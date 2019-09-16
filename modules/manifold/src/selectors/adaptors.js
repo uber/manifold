@@ -1,11 +1,36 @@
 import {createSelector} from 'reselect';
 import {dotRange} from '@mlvis/mlvis-common/utils';
-import {getDivergenceThreshold, getMetric} from './base';
+import {
+  getNClusters,
+  getSegmentGroups,
+  getSegmentFilters,
+  getDivergenceThreshold,
+  getMetric,
+  getIsManualSegmentation,
+} from './base';
 import {getModelsMeta, getFeaturesMeta} from './compute';
 import {getModelsPerformance, getFeaturesDistribution} from './data';
 // ------------------------------------------------------------------------------------------- //
 // -- THE ADAPTOR SELECTORS DO NECESSARY TRANSFORMATION TO THE OUTPUTS OF THE DATA SELECTOR -- //
 // ------------------------------------------------------------------------------------------- //
+
+export const getSegmentIds = createSelector(
+  [getIsManualSegmentation, getNClusters, getSegmentFilters],
+  (isManual, nClusters, segmentFilters) => {
+    const nSegments = isManual ? segmentFilters.length : nClusters;
+    return Array.from(Array(nSegments).keys());
+  }
+);
+
+export const getSegmentOrdering = createSelector(
+  [getSegmentIds, getSegmentGroups],
+  (segmentIds, segmentGroups) => {
+    const nonGroup = segmentIds.filter(
+      e => !segmentGroups[0].includes(e) && !segmentGroups[1].includes(e)
+    );
+    return nonGroup.concat(segmentGroups[1]).concat(segmentGroups[0]);
+  }
+);
 
 // segment filters
 export const getSegmentFilterAttributes = createSelector(
