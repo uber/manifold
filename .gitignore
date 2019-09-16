@@ -6,6 +6,7 @@ examples/**/data
 scripts/sync.sh
 scripts/traverse.sh
 scripts/traverse.py
+test/
 *.log
 .cache/
 coverage*/

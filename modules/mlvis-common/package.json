@@ -10,7 +10,7 @@
     "Lezhi Li <lezhi.li@uber.com>",
     "Yang Wang <gnavvy@uber.com>"
   ],
-  "main": "dist/index.js",
+  "main": "dist/esm/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uber/manifold.git"
@@ -33,11 +33,11 @@
     "mathjs": "^5.2.3",
     "papaparse": "^4.6.3",
     "prop-types": "^15.7.2",
-    "random": "^2.1.1"
+    "random": "^2.1.1",
+    "reselect": "^4.0.0"
   },
   "peerDependencies": {
     "antd": "^3.18.2",
-    "styled-components": "^4.2.0",
-    "reselect": "^4.0.0"
+    "styled-components": "^4.2.0"
   }
 }
