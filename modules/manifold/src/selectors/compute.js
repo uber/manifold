@@ -1,4 +1,5 @@
 import {createSelector} from 'reselect';
+import assert from 'assert';
 
 import {
   computeDensity,
@@ -132,19 +133,23 @@ export const getDataIdsInSegmentsUnsorted = createSelector(
     getNClusters,
     getSegmentFilters,
   ],
-  (allData, columnTypeRanges, isManual, nClusters, segmentFilters) => {
-    if (!allData || !columnTypeRanges) {
+  (data, columnTypeRanges, isManual, nClusters, segmentFilters) => {
+    if (!data || !columnTypeRanges) {
       return null;
     }
-    // todo: instead of checking whether segmentFilters exist, explicitly check whether a data slicing config is ready
-    if (isManual && segmentFilters) {
-      return computeManualSegmentationResult(allData, segmentFilters);
-    } else {
-      return computeAutoSegmentationResult(
-        allData,
-        columnTypeRanges,
-        nClusters
+    // todo: add `baseCols` in this logic
+    if (isManual) {
+      assert(
+        segmentFilters && segmentFilters.length && segmentFilters[0].length,
+        'must provide `segmentFilters` for manual segmentation'
       );
+      return computeManualSegmentationResult(data, segmentFilters);
+    } else {
+      assert(
+        !isNaN(nClusters) && nClusters !== null,
+        'must provide `nClusters for automatic segmentation'
+      );
+      return computeAutoSegmentationResult(data, columnTypeRanges, nClusters);
     }
   }
 );

@@ -1,5 +1,4 @@
 import {
-  isValidSegmentGroups,
   sliceDataset,
   concatDataset,
   gatherDataset,
@@ -12,19 +11,11 @@ import {
   selectFields,
   removeSuffixAndDelimiters,
   groupLatLngPairs,
-} from '../utils';
+  validateAndSetDefaultStateSingle,
+  validateAndSetDefaultStatesConfigurator,
+} from '..';
 import {mean} from '@mlvis/mlvis-common/utils';
 import {FEATURE_TYPE, FILTER_TYPE} from '@mlvis/mlvis-common/constants';
-
-test('utils: isValidSegmentGroups', () => {
-  // not ok if one group is empty
-  expect(isValidSegmentGroups([[], [1]], 5)).toBeFalsy();
-  // not ok if index out of range
-  expect(isValidSegmentGroups([[1], [5]], 5)).toBeFalsy();
-  // not ok if index repeated in 2 groups
-  expect(isValidSegmentGroups([[1, 2, 3], [1, 4]], 5)).toBeFalsy();
-  expect(isValidSegmentGroups([[1, 2, 3], [0, 4]], 5)).toBeTruthy();
-});
 
 test('utils: computeSortedOrder', () => {
   const arr1 = [{a: 5}, {a: 3}, {a: 1}, {a: 4}, {a: 2}];
@@ -180,4 +171,92 @@ test('utils: groupLatLngPairs', () => {
     },
   ];
   expect(groupLatLngPairs(fields)).toEqual(result);
+});
+
+test('utils: validateAndSetDefaultStateSingle', () => {
+  const state1 = {a: {c: 5}, b: 6};
+  const state2 = {a: {c: 5}, b: 11};
+  const field = 'b';
+  const validateFunc = state => state.b >= state.a.c * 2;
+  const setDefaultFunc = state => 2 * state.a.c;
+
+  const result1 = validateAndSetDefaultStateSingle(
+    state1,
+    field,
+    validateFunc,
+    setDefaultFunc
+  );
+  const result2 = validateAndSetDefaultStateSingle(
+    state2,
+    field,
+    validateFunc,
+    setDefaultFunc
+  );
+  expect(result1).toEqual({a: {c: 5}, b: 10});
+  expect(result2).toEqual({a: {c: 5}, b: 11});
+  // should create state if field is not valid
+  expect(result1).not.toBe(state1);
+  // should not change state if field is valid
+  expect(result2).toBe(state2);
+  // should not affect other fields
+  expect(result1.a).toBe(state1.a);
+  expect(result2.a).toBe(state2.a);
+});
+
+test('utils: validateAndSetDefaultStatesConfigurator', () => {
+  const fields = ['b', 'c'];
+  const fieldsReverseOrder = ['c', 'b'];
+  const validateFuncs = {
+    b: state => state.b > state.a,
+    c: state => state.c > state.b,
+  };
+  const setDefaultFuncs = {
+    b: state => state.a + 1,
+    c: state => state.b + 2,
+  };
+  const validateAndSetDefault = validateAndSetDefaultStatesConfigurator(
+    fields,
+    validateFuncs,
+    setDefaultFuncs
+  );
+  const validateAndSetDefaultReverseOrder = validateAndSetDefaultStatesConfigurator(
+    fieldsReverseOrder,
+    validateFuncs,
+    setDefaultFuncs
+  );
+  const state1_1 = {a: 2, b: 2, c: 2};
+  const result1_1 = validateAndSetDefault(state1_1);
+  // test updating both field `b` and field `c`
+  expect(result1_1).toEqual({a: 2, b: 3, c: 5});
+  expect(result1_1).not.toBe(state1_1);
+
+  const state1_2 = {...result1_1, b: 4};
+  const result1_2 = validateAndSetDefault(state1_2);
+  // test updaing the state1 a second time, without any fields being invalid
+  expect(result1_2).toEqual({a: 2, b: 4, c: 5});
+  expect(result1_2).toBe(state1_2);
+
+  const state1_3 = {...result1_2, b: 5};
+  const result1_3 = validateAndSetDefault(state1_3);
+  // test updaing the state1 a third time, with some fields being invalid
+  expect(result1_3).toEqual({a: 2, b: 5, c: 7});
+  expect(result1_3).not.toBe(state1_2);
+
+  const state2_1 = {a: 2, b: 2, c: 2};
+  const result2_1 = validateAndSetDefaultReverseOrder(state2_1);
+  // test reversing dependency order between field `b` and field `c`
+  expect(result2_1).toEqual({a: 2, b: 3, c: 4});
+  expect(result2_1).not.toBe(state2_1);
+
+  const state2_2 = {...result2_1, a: 2.5};
+  const result2_2 = validateAndSetDefaultReverseOrder(state2_2);
+  // test updaing the state2 a second time, without any fields being invalid
+  expect(result2_2).toEqual({a: 2.5, b: 3, c: 4});
+  expect(result2_2).toBe(state2_2);
+
+  const state2_3 = {...result2_2, a: 3};
+  const result2_3 = validateAndSetDefaultReverseOrder(state2_3);
+  // test updaing the state2 a third time, with some fields being invalid
+  expect(result2_3).toEqual({a: 3, b: 4, c: 4});
+  expect(result2_3).not.toBe(state2_2);
 });

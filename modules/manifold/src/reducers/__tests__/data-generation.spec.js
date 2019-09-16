@@ -1,7 +1,7 @@
 import {METRIC} from '../../constants';
-import {handleUpdateMetric} from '../data-slicing';
+import {handleUpdateMetric} from '../data-generation';
 
-test('reducers: data/handleUpdateMetric', () => {
+test('reducers: data-generation/handleUpdateMetric', () => {
   const data2 = {
     fields: [
       {name: 'uuid'},

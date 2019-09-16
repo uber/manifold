@@ -6,22 +6,111 @@ import {
 } from '@mlvis/mlvis-common/constants';
 import {dotRange} from '@mlvis/mlvis-common/utils';
 import {product} from './utils';
-// arguments of functions in this file need to be fields in state
+
+//---------BaseCols----------//
+
+export const defaultBaseCols = state => {
+  const {columnTypeRanges} = state;
+  assert(
+    columnTypeRanges.score && columnTypeRanges.score.length == 2,
+    '`columnTypeRanges.score` must contain 2 elements'
+  );
+  return dotRange(...columnTypeRanges.score);
+};
+
+export const isValidBaseCols = state => {
+  const {
+    data: {fields},
+    baseCols,
+  } = state;
+  assert(fields.length, '`data.fields` must be non-empty');
+  return (
+    baseCols &&
+    baseCols.length &&
+    baseCols.every(col => 0 <= col && col < fields.length)
+  );
+};
+
+//---------NClusters----------//
+
+export const defaultNClusters = state => {
+  const {
+    data: {columns},
+  } = state;
+  assert(
+    columns.length && columns[0].length,
+    '`data.columns` must be non-empty'
+  );
+  return Math.min(4, columns[0].length);
+};
+
+export const isValidNClusters = state => {
+  const {
+    nClusters,
+    data: {columns},
+  } = state;
+  assert(
+    columns.length && columns[0].length,
+    '`data.columns` must be non-empty'
+  );
+  return (
+    !isNaN(nClusters) && nClusters !== null && nClusters <= columns[0].length
+  );
+};
+
+//---------SegmentFilters----------//
 
 /**
- * compute default segmentation filters based on columns to filter by
- * @param {Object} data - contains {columns, fields}
- * @param {Array<Number>} baseCols - array of column indexes
  * @return {Array<Array<Object>} length corresponds to number of segments, each element is an array of filters each segment must fulfill
  */
-export const defaultSegmentFiltersFromBaseCols = (data, baseCols) => {
-  const {fields} = data;
+export const defaultSegmentFilters = state => {
+  const {
+    data: {fields},
+    baseCols,
+  } = state;
+  assert(
+    fields.length && baseCols.length,
+    '`data.field` and `baseCols` must be non-empty'
+  );
   const baseColFields = baseCols.map(colId => fields[colId]);
   const filtersByField = baseColFields.map(field =>
     defaultSegmentFiltersFromFieldDef(field)
   );
   // todo: this is not the most efficient way to do filtering (should organize filters by fields). Keeping the structure to for backward compatibility
   return product(filtersByField);
+};
+
+export const isValidSegmentFilters = state => {
+  const {
+    data: {fields},
+    baseCols,
+    segmentFilters,
+  } = state;
+  assert(
+    fields.length && baseCols.length,
+    '`data.field` and `baseCols` must be non-empty'
+  );
+  return (
+    segmentFilters.length &&
+    segmentFilters.every(segmentFilter => {
+      return (
+        segmentFilter.length &&
+        // each baseCol must have a corresponding filter
+        segmentFilter.length === baseCols.length &&
+        segmentFilter.every((filter, i) => {
+          const colId = filter.key;
+          // each baseCol and their corresponding filter must be in the same order
+          if (baseCols[i] !== colId) return false;
+          assert(
+            fields[colId],
+            'columns corresponfing to `filter.key` must exist in data'
+          );
+          // filter type and values must conform with field definition
+          return isValidSegmentFilterFromFieldDef(filter, fields[colId]);
+        })
+      );
+    })
+  );
 };
 
 /**
@@ -91,6 +180,100 @@ const defaultFilterValueFromFieldDef = field => {
   }
 };
 
-export const defaultBaseCols = columnTypeRanges => {
-  return dotRange(...columnTypeRanges.score);
+//todo: consolidate with `isValidFilterVals` in modules/manifold/src/components/ui/segment-panels/utils.js
+/**
+ * given a filter and the corresponding field definition, determine whether the filter is valid
+ * @param  {Object} filter - contains {name, key, type, value}
+ * @param  {object} field - contains {name, tableFieldIndex, type, dataType, role, domain}
+ * @return {boolean}
+ */
+export const isValidSegmentFilterFromFieldDef = (filter, field) => {
+  const {type: filterType, value} = filter;
+  const {type: featureType, domain} = field;
+
+  if (featureType === FEATURE_TYPE.CATEGORICAL) {
+    assert(
+      domain && domain.length && domain.length,
+      '`field.domain` must be an array'
+    );
+    return (
+      filterType === FILTER_TYPE.INCLUDE &&
+      // filter must consain a subset of column domain
+      value.length < domain.length &&
+      value.every(val => domain.includes(val))
+    );
+  } else if (featureType === FEATURE_TYPE.NUMERICAL) {
+    assert(
+      domain && domain.length && domain.length,
+      '`field.domain` must be an array'
+    );
+    return (
+      filterType === FILTER_TYPE.RANGE &&
+      value &&
+      value.length === 2 &&
+      value[0] < value[1] &&
+      // filter must consain a subset of column domain
+      (domain[0] > value[0] || domain[domain.length - 1] < value[1]) &&
+      // filter must be non-empty
+      (domain[0] <= value[1] && domain[domain.length - 1] >= value[0])
+    );
+  } else {
+    return filterType === FILTER_TYPE.FUNC && typeof value === 'function';
+  }
+};
+
+//---------SegmentGroups----------//
+
+export const defaultSegmentGroups = state => {
+  // todo: consolidate with `getSegmentIds` in modules/manifold/src/selectors/adaptors.js
+  const {isManualSegmentation, nClusters, segmentFilters} = state;
+  const nSegments = isManualSegmentation ? segmentFilters.length : nClusters;
+  const nTreatment = nSegments < 4 ? 1 : 2;
+  const rangeArr = Array.from(Array(nSegments).keys());
+  return [
+    rangeArr.slice(nSegments - nTreatment),
+    rangeArr.slice(0, nSegments - nTreatment),
+  ];
+};
+
+export const isValidSegmentGroups = state => {
+  const {
+    segmentGroups,
+    isManualSegmentation,
+    nClusters,
+    segmentFilters,
+  } = state;
+  const nSegments = isManualSegmentation ? segmentFilters.length : nClusters;
+  for (let i = 0; i < segmentGroups.length; i++) {
+    if (!segmentGroups[i].length) {
+      return false;
+    }
+    // group0 is "otherGroup" for group1; vice versa
+    const otherGroup = segmentGroups[(i + 1) % 2];
+    for (let j = 0; j < segmentGroups[i].length; j++) {
+      const segmentId = segmentGroups[i][j];
+      if (
+        segmentId < 0 ||
+        segmentId >= nSegments ||
+        otherGroup.includes(segmentId)
+      ) {
+        return false;
+      }
+    }
+  }
+  return true;
+};
+
+export const setDefaultFuncs = {
+  baseCols: defaultBaseCols,
+  nClusters: defaultNClusters,
+  segmentFilters: defaultSegmentFilters,
+  segmentGroups: defaultSegmentGroups,
+};
+
+export const isValidFuncs = {
+  baseCols: isValidBaseCols,
+  nClusters: isValidNClusters,
+  segmentFilters: isValidSegmentFilters,
+  segmentGroups: isValidSegmentGroups,
 };

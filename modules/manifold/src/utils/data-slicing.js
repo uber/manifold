@@ -16,7 +16,7 @@ export const computeAutoSegmentationResult = (
   const {columns} = clusteringInputDataset;
   const clusterIds = computeClusters(columns, nClusters, true);
 
-  // todo: simplify the following ligic. `clusterIds` representation is sufficient
+  // todo: simplify the following logic. `clusterIds` representation is sufficient
   const result = [];
   for (let i = 0; i < nClusters; i++) {
     result.push([]);

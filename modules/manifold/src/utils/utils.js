@@ -231,36 +231,6 @@ export const aggregateDataset = (
   };
 };
 
-export function getDefaultSegmentGroups(nClusters) {
-  const nTreatment = nClusters < 4 ? 1 : 2;
-  const rangeArr = Array.from(Array(nClusters).keys());
-  return [
-    rangeArr.slice(nClusters - nTreatment),
-    rangeArr.slice(0, nClusters - nTreatment),
-  ];
-}
-
-export function isValidSegmentGroups(segmentGroups, nSegments) {
-  for (let i = 0; i < segmentGroups.length; i++) {
-    if (!segmentGroups[i].length) {
-      return false;
-    }
-    // group0 is "otherGroup" for group1; vice versa
-    const otherGroup = segmentGroups[(i + 1) % 2];
-    for (let j = 0; j < segmentGroups[i].length; j++) {
-      const segmentId = segmentGroups[i][j];
-      if (
-        segmentId < 0 ||
-        segmentId >= nSegments ||
-        otherGroup.includes(segmentId)
-      ) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
 /**
  * filter data items w/ a set of filters
  * @param  {Object} data {columns, fields}
@@ -484,4 +454,45 @@ export function groupLatLngPairs(fields) {
     }
     return acc;
   }, []);
+}
+
+export function validateAndSetDefaultStateSingle(
+  state,
+  field,
+  validateFunc,
+  setDefaultFunc
+) {
+  // if `state.field` is valid, don't modify state
+  if (validateFunc(state)) {
+    return state;
+  }
+  // otherwise, create new state
+  return {
+    ...state,
+    [field]: setDefaultFunc(state),
+  };
+}
+
+export function validateAndSetDefaultStatesConfigurator(
+  fields,
+  validateFuncs,
+  setDefaultFuncs
+) {
+  return state => {
+    return fields.reduce((acc, field) => {
+      const validateFunc = validateFuncs[field];
+      const setDefaultFunc = setDefaultFuncs[field];
+      assert(
+        typeof validateFunc === 'function' &&
+          typeof setDefaultFunc === 'function',
+        `both validateFuncs[${field}] and setDefaultFuncs[${field}] need to be functions`
+      );
+      return validateAndSetDefaultStateSingle(
+        acc,
+        field,
+        validateFunc,
+        setDefaultFunc
+      );
+    }, state);
+  };
 }

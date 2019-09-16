@@ -1,14 +1,16 @@
 import {handleActions} from 'redux-actions';
 import reduceReducers from 'reduce-reducers';
 import keplerGlReducer from 'kepler.gl/reducers';
+
+import {handleUpdateMetric} from './data-generation';
 import {
-  handleUpdateMetric,
   handleUpdateSegmentationMethod,
   handleUpdateBaseCols,
   handleUpdateNClusters,
   handleUpdateSegmentFilters,
   handleUpdateSegmentGroups,
 } from './data-slicing';
+
 import {
   FETCH_MODELS_START,
   FETCH_MODELS_SUCCESS,
@@ -33,7 +35,7 @@ import {
 } from '../actions';
 
 import {METRIC} from '../constants';
-import {defaultBaseCols, registerExternalReducers} from '../utils';
+import {registerExternalReducers} from '../utils';
 
 export const DEFAULT_STATE = {
   // TODO: these are fields used with Python backend. Consider consolidate/remove
@@ -44,22 +46,30 @@ export const DEFAULT_STATE = {
   /** data and metadata */
   // columns: array of array of columns; fields: array of field metadata
   data: {columns: [], fields: []},
-  // collumnTypeRanges: map from "column type" (x, yPred, etc) to array of 2 elements indicating the start and end index of that column type in dataset
+  // map from "column type" (x, yPred, etc) to array of 2 elements indicating the start and end index of that column type in dataset
   columnRangeType: {
     x: [],
     yPred: [],
     yTrue: [],
     score: [],
   },
+  //
   modelsMeta: {
     nModels: undefined,
     nClusters: undefined,
     classLabels: [],
   },
-  isBackendDataLoading: false,
-  isModelsComparisonLoading: false,
-  isFeaturesDistributionLoading: false,
-  isDataLoadingError: null,
+  isDataLoadingError: false,
+
+  /** data generation states */
+  metric: METRIC.REGRESSION.ABSOLUTE_ERROR,
+
+  /** data slicing states */
+  isManualSegmentation: false,
+  baseCols: [],
+  segmentFilters: [],
+  nClusters: 4,
+  segmentGroups: [[2, 3], [0, 1]],
 
   /** display states */
   selectedInstances: [],
@@ -68,15 +78,7 @@ export const DEFAULT_STATE = {
   displayGeoFeatures: [0],
   colorByFeature: 0,
 
-  /** data manipulation states */
-  metric: METRIC.REGRESSION.ABSOLUTE_ERROR,
-  isManualSegmentation: false,
-  baseCols: [],
-  segmentFilters: undefined,
-  nClusters: 4,
-  segmentGroups: [[2, 3], [0, 1]],
-
-  // external states
+  /** external states */
   keplerGl: {map: {}},
 };
 
@@ -143,7 +145,6 @@ export const handleLoadLocalDataSuccess = (state, {payload}) => {
     data,
     modelsMeta,
     columnTypeRanges,
-    baseCols: defaultBaseCols(columnTypeRanges),
     isLocalDataLoading: false,
   };
 };
