@@ -19,7 +19,8 @@
     "es6"
   ],
   "workspaces": [
-    "modules/*"
+    "modules/*",
+    "bindings/jupyter-modules/*"
   ],
   "devDependencies": {
     "@babel/cli": "^7.1.2",
@@ -79,6 +80,7 @@
     "publish": "ocular-publish",
     "-------- LERNA --------": "",
     "bump": "npm run lerna:bump",
+    "lerna": "lerna",
     "lerna:depcheck": "lerna exec --since master --parallel -- depcheck",
     "lerna:bump": "lerna version --no-push && npm run lerna:sync && npm run lerna:git",
     "lerna:sync": "jq -M --argfile lerna lerna.json '.version = $lerna.version' package.json > tmp.json && mv tmp.json package.json",
