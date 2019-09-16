@@ -8,9 +8,9 @@ The data values of each cell (hour) are aggregated, percentiled, and mapped to c
 ## Usage
 
 ```js
-import StackedCalendar from '@uber/stacked-calendar';
+import StackedCalendar from '@mlvis/stacked-calendar';
 
-const App = ({ data, valueRange }) => {
+const App = ({data, valueRange}) => {
   /**
    * data: [
    *   {hour_of_week: 0, value: 0.5},
@@ -42,9 +42,9 @@ const App = ({ data, valueRange }) => {
 To install the dependencies from NPM:
 
 ```bash
-npm install @uber/stacked-calendar
+npm install @mlvis/stacked-calendar
 # or
-yarn install @uber/stacked-calendar
+yarn install @mlvis/stacked-calendar
 ```
 
 ## Properties

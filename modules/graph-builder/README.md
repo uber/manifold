@@ -5,20 +5,17 @@ A generic node-link diagram
 ## Usage
 
 Example:
+
 ```js
-import GraphBuilder from '@uber/graph-builder';
+import GraphBuilder from '@mlvis/graph-builder';
 
 const data = {
-  nodes: [
-    {id: '1'},
-    {id: '2'},
-    {id: '3'},
-  ],
+  nodes: [{id: '1'}, {id: '2'}, {id: '3'}],
   edge: [
     {id: 'e1', sourceId: '1', targetId: '2'},
     {id: 'e2', sourceId: '1', targetId: '3'},
     {id: 'e3', sourceId: '2', targetId: '3'},
-  ]
+  ],
 };
 
 const App = () => (

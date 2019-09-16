@@ -19,19 +19,19 @@ INSTALL_REQUIRES = [
 
 DEFAULT_JREQUIREMENTS = {
     "FeatureListView": {
-        "@uber/feature-list-view": "external"
+        "@mlvis/feature-list-view": "external"
     },
     "GraphBuilder": {
-        "@uber/jupyter-graph-builder": "external"
+        "@mlvis/jupyter-graph-builder": "external"
     },
     "Manifold": {
-        "@uber/juypter-manifold": "external"
+        "@mlvis/juypter-manifold": "external"
     },
     "MultiWayPlot": {
-        "@uber/jupyter-multi-way-plot": "external"
+        "@mlvis/jupyter-multi-way-plot": "external"
     },
     "StackedCalendar": {
-        "@uber/stacked-calendar": "external"
+        "@mlvis/stacked-calendar": "external"
     },
 }
 
@@ -101,7 +101,7 @@ setup(name='mlvis',
       keywords=['data', 'visualization', 'machine learning'],
       url='https://github.com/uber/manifold.git',
       author='Hong Wang',
-      author_email='hongw@uber.com',
+      author_email='hongw@mlvis.com',
       license='Apache License 2.0',
       include_package_data=True,
       packages=find_packages(),
