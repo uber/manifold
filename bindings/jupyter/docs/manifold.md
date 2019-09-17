@@ -8,6 +8,7 @@ As a visual analytics tool, Manifold allows ML practitioners to look beyond over
 
 ## Usage
 
+
 ```python
 from mlvis import Manifold
 import sys, json, math
@@ -59,9 +60,9 @@ data = {
 Each element in these lists represents one data point in your evaluation dataset, and the order of data instances in `x`, `yPred` and `yTrue` should all match.
 Recommended instance count for each of these datasets is 10000 - 15000. If you have a larger dataset that you want to analyze, a random subset of your data generally suffices to reveal the important patterns in it.
 
-##### `x` (list | ndarray, required):
+##### `x` (list | numpy.ndarray | pandas.DataFrame, required):
+A list/ndarray/data_frame of instances with features. Example (2 data instances):
 
-A list/ndarray of instances with features. Example (2 data instances):
 
 ```python
 x = [
@@ -72,6 +73,7 @@ x = [
 
 Example with ndarray:
 
+
 ```python
 import numpy as np
 x = np.array([
@@ -81,12 +83,34 @@ x = np.array([
 x
 ```
 
+
+
+
     array([{'feature_0': 21, 'feature_1': 'B'},
            {'feature_0': 36, 'feature_1': 'A'}], dtype=object)
 
-##### `yPred` (list, required):
 
+
+Example with data_frame:
+
+
+```python
+import pandas as pd
+x = pd.DataFrame([
+  {'feature_0': 21, 'feature_1': 'B'},
+  {'feature_0': 36, 'feature_1': 'A'}
+])
+print(x)
+```
+
+       feature_0 feature_1
+    0         21         B
+    1         36         A
+
+
+##### `yPred` (list, required):
 A list of list or data frames, each child list is a prediction array from one model for each data instance. Example (3 models, 2 data instances, 2 classes `['false', 'true']`):
+
 
 ```python
 yPred = [
@@ -97,6 +121,7 @@ yPred = [
 ```
 
 Example with a list of data frame:
+
 
 ```python
 import pandas as pd
@@ -123,9 +148,10 @@ for i, y in enumerate(yPred):
     0    0.6   0.4
     1    0.4   0.6
 
-##### `yTrue` (list | ndarray, required):
 
+##### `yTrue` (list | numpy.ndarray | pandas.DataFrame, required):
 A list, ground truth for each data instance. Values must be numbers for regression model, must be strings that match object keys in `yPred` for classification models. Example (2 data instances, 2 classes ['false', 'true']):
+
 
 ```python
 yTrue = [
@@ -136,6 +162,7 @@ yTrue = [
 
 Example with ndarray:
 
+
 ```python
 import numpy as np
 yTrue = np.array([
@@ -145,4 +172,25 @@ yTrue = np.array([
 yTrue
 ```
 
+
+
+
     array(['true', 'false'], dtype='<U5')
+
+
+
+Example with data_frame:
+
+
+```python
+import pandas as pd
+yTrue = pd.DataFrame([
+  'true',
+  'false'
+])
+print(yTrue)
+```
+
+           0
+    0   true
+    1  false

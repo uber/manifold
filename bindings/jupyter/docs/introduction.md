@@ -24,4 +24,4 @@ jupyter nbextension enable --py --sys-prefix mlvis
 
 ## Development
 
-Instructions for building this project locally can be found in the [ development documentation](https://github.com/uber/manifold/tree/master/bindings/jupyter/docs/development.md).
+Instructions for building this project locally can be found in the [development documentation](https://github.com/uber/manifold/tree/master/bindings/jupyter/docs/development.md).

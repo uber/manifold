@@ -23,10 +23,9 @@ class Manifold(CommonComponent):
             else:
                 raise exception
 
-        is_numerical_feature = self.check_is_numerical_feature(data['yPred'])
         props['data']['x'] = self.process_x(props['data']['x'])
         props['data']['yPred'] = self.process_y_pred(props['data']['yPred'])
-        props['data']['yTrue'] = self.process_y_true(props['data']['yTrue'], is_numerical_feature)
+        props['data']['yTrue'] = self.process_y_true(props['data']['yTrue'])
         super(Manifold, self).__init__(props)
 
 
@@ -93,14 +92,14 @@ class Manifold(CommonComponent):
             return [y.to_dict('records') if isinstance(y, pd.DataFrame) else y for y in y_pred]
 
 
-    def process_y_true(self, y_true, is_numerical=False):
+    def process_y_true(self, y_true):
         """
         Convert y true feature into the format manifold recognizes
         :param y_true: An ndarray/list for the ground truth
         :return: A list of the ground truths with the manifold data format
         """
         if isinstance(y_true, pd.DataFrame):
-            return y_true.iloc[:, 0].tolist() if is_numerical else y_true.to_dict('records')
+            return y_true.iloc[:, 0].tolist()
         elif isinstance(y_true, np.ndarray):
             return y_true.tolist()
         else:
