@@ -54,13 +54,13 @@ data = {
   x:     [...],         # feature data
   yPred: [[...], ...]   # prediction data
   yTrue: [...],         # ground truth data
-};
+}
 ```
 
 Each element in these lists represents one data point in your evaluation dataset, and the order of data instances in `x`, `yPred` and `yTrue` should all match.
 Recommended instance count for each of these datasets is 10000 - 15000. If you have a larger dataset that you want to analyze, a random subset of your data generally suffices to reveal the important patterns in it.
 
-##### `x` (list | ndarray | data_frame, required):
+##### `x` (list | numpy.ndarray | pandas.DataFrame, required):
 A list/ndarray/data_frame of instances with features. Example (2 data instances):
 
 
@@ -91,7 +91,7 @@ x
 
 
 
-Example with data_frame
+Example with data_frame:
 
 
 ```python
@@ -149,7 +149,7 @@ for i, y in enumerate(yPred):
     1    0.4   0.6
 
 
-##### `yTrue` (list | ndarray | data_frame, required):
+##### `yTrue` (list | numpy.ndarray | pandas.DataFrame, required):
 A list, ground truth for each data instance. Values must be numbers for regression model, must be strings that match object keys in `yPred` for classification models. Example (2 data instances, 2 classes ['false', 'true']):
 
 
@@ -179,7 +179,7 @@ yTrue
 
 
 
-Example with data_frame
+Example with data_frame:
 
 
 ```python
