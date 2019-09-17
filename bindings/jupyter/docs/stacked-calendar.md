@@ -7,6 +7,7 @@ The data values of each cell (hour) are aggregated, percentiled, and mapped to c
 
 ## Usage
 
+
 ```python
 from mlvis import StackedCalendar
 from IPython.display import display
@@ -24,87 +25,23 @@ display(calendar)
 
 ## Data Format
 
+
 ```python
-pd.DataFrame(data)[10000:10010]
+print(pd.DataFrame(data)[10000:10010])
 ```
 
-<div>
-<style>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+           hour_of_week        value
+    10000            66  0.272818888
+    10001            66  0.645657585
+    10002            66  0.243684833
+    10003            66  0.237157524
+    10004            66  0.238575395
+    10005            66  0.175796772
+    10006            66  0.226707148
+    10007            66  0.221181026
+    10008            66  0.263068202
+    10009            66  0.140494919
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>hour_of_week</th>
-      <th>value</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>10000</th>
-      <td>66</td>
-      <td>0.272818888</td>
-    </tr>
-    <tr>
-      <th>10001</th>
-      <td>66</td>
-      <td>0.645657585</td>
-    </tr>
-    <tr>
-      <th>10002</th>
-      <td>66</td>
-      <td>0.243684833</td>
-    </tr>
-    <tr>
-      <th>10003</th>
-      <td>66</td>
-      <td>0.237157524</td>
-    </tr>
-    <tr>
-      <th>10004</th>
-      <td>66</td>
-      <td>0.238575395</td>
-    </tr>
-    <tr>
-      <th>10005</th>
-      <td>66</td>
-      <td>0.175796772</td>
-    </tr>
-    <tr>
-      <th>10006</th>
-      <td>66</td>
-      <td>0.226707148</td>
-    </tr>
-    <tr>
-      <th>10007</th>
-      <td>66</td>
-      <td>0.221181026</td>
-    </tr>
-    <tr>
-      <th>10008</th>
-      <td>66</td>
-      <td>0.263068202</td>
-    </tr>
-    <tr>
-      <th>10009</th>
-      <td>66</td>
-      <td>0.140494919</td>
-    </tr>
-  </tbody>
-</table>
-</div>
 
 ## Properties
 
