@@ -29,7 +29,7 @@ pd.DataFrame(data)[10000:10010]
 ```
 
 <div>
-<style scoped>
+<style>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
     }
