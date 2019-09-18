@@ -23,6 +23,7 @@ export class ManifoldWidgetView extends DOMWidgetView {
     this._update();
     this.listenTo(this.model, 'change:props', this._update, this);
     this.listenTo(this.model, 'change:segments', this._updateFeedback, this);
+    this.options.output.wrapper.css({'z-index': 2});
   };
 
   _updateFeedback = () => {
