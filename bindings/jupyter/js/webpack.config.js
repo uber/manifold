@@ -24,7 +24,7 @@ module.exports = [
     output: {
       path: resolve('../mlvis/static'),
       filename: 'index.js',
-      libraryTarget: 'umd',
+      libraryTarget: 'amd',
     },
     resolve: {
       extensions: ['.js'],
@@ -65,7 +65,7 @@ module.exports = [
     output: {
       path: resolve('../mlvis/static'),
       filename: 'extension.js',
-      libraryTarget: 'umd',
+      libraryTarget: 'amd',
     },
     resolve: {
       extensions: ['.js'],
