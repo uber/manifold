@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import {DOMWidgetModel, DOMWidgetView} from '@jupyter-widgets/base';
 
-export default (Component, name) => {
+export default (Component, name, renderCallback = function() {}) => {
   const classes = {
     [name + 'WidgetModel']: class extends DOMWidgetModel {},
     [name + 'WidgetView']: class extends DOMWidgetView {
@@ -10,6 +10,7 @@ export default (Component, name) => {
         super.render(this);
         this._update();
         this.listenTo(this.model, 'change:props', this._update, this);
+        renderCallback.apply(this);
       };
 
       _update = () => {

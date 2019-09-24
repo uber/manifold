@@ -19,19 +19,19 @@ INSTALL_REQUIRES = [
 
 DEFAULT_JREQUIREMENTS = {
     "FeatureListView": {
-        "@mlvis/feature-list-view": "external"
+        "module": {"@mlvis/feature-list-view": "external"}
     },
     "GraphBuilder": {
-        "@mlvis/jupyter-graph-builder": "external"
+        "module": {"@mlvis/jupyter-graph-builder": "external"}
     },
     "Manifold": {
-        "@mlvis/juypter-manifold": "external"
+        "module": {"@mlvis/juypter-manifold": "external"}
     },
     "MultiWayPlot": {
-        "@mlvis/jupyter-multi-way-plot": "external"
+        "module": {"@mlvis/jupyter-multi-way-plot": "external"}
     },
     "StackedCalendar": {
-        "@mlvis/stacked-calendar": "external"
+        "module": {"@mlvis/stacked-calendar": "external"}
     },
 }
 
@@ -42,7 +42,7 @@ def read(*parts):
 
 def init_jrequirements():
     try:
-        file = open(os.path.join(BASE_DIR, 'resources', 'jrequirements.json'), mode='w')
+        file = open(os.path.join(BASE_DIR, 'jrequirements.json'), mode='w')
         json.dump(DEFAULT_JREQUIREMENTS, file, indent=2)
     finally:
         if file:
