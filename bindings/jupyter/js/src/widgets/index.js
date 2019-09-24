@@ -2,6 +2,7 @@ const Jupyter = require('base/js/namespace');
 const widgetBuilder = require('./react-widget-builder').default;
 const req = require('../../../jrequirements.json');
 
+// TODO: Move these to jrequirements.json
 const reqExt = {
   Manifold: function() {
     this.listenTo(
