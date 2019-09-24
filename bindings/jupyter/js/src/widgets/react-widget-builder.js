@@ -29,7 +29,7 @@ export default (Component, name) => {
     },
   };
   Object.entries(classes).forEach(([name, cls]) => {
-    Object.defineProperty(classes[name], 'name', {
+    Object.defineProperty(cls, 'name', {
       value: name,
       writable: false,
     });
