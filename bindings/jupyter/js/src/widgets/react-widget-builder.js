@@ -1,31 +1,24 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import {
-  BaseComponentWidgetModel,
-  BaseComponentWidgetView,
-} from './base-component-widget';
+import {DOMWidgetModel, DOMWidgetView} from '@jupyter-widgets/base';
 
 export default (Component, name) => {
   const classes = {
-    [name + 'WidgetModel']: class extends BaseComponentWidgetModel {},
-    [name + 'WidgetView']: class extends BaseComponentWidgetView {
+    [name + 'WidgetModel']: class extends DOMWidgetModel {},
+    [name + 'WidgetView']: class extends DOMWidgetView {
       render = () => {
         super.render(this);
         this._update();
         this.listenTo(this.model, 'change:props', this._update, this);
       };
 
-      _onPropsUpdate = props => {
-        const updatedProps = {
-          ...props,
-          widgetModel: this.model,
-          widgetView: this,
-        };
-        const component = React.createElement(Component, updatedProps);
+      _update = () => {
+        const props = JSON.parse(this.model.get('props') || '{}');
+        props.widgetModel = this.model;
+        props.widgetView = this.view;
+        const component = React.createElement(Component, props);
         ReactDom.render(component, this.el);
       };
-
-      _update = this.getUpdatePropsHandler(this._onPropsUpdate);
     },
   };
   Object.entries(classes).forEach(([name, cls]) => {
