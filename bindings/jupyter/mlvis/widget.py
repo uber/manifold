@@ -20,4 +20,5 @@ class Widget(widgets.DOMWidget):
 class CommonComponent(Widget):
     def __init__(self, props={}, **kwargs):
         super(CommonComponent, self).__init__()
+        # TODO: make explicit exception message for the json input is invalid
         self.props = json.dumps(props)
