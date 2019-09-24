@@ -23,7 +23,7 @@ export const updateSegmentationMethod = createAction(
   UPDATE_SEGMENTATION_METHOD
 );
 export const updateSegmentFilters = createAction(UPDATE_SEGMENT_FILTERS);
-export const updatBaseCols = createAction(UPDATE_BASE_COLS);
+export const updateBaseCols = createAction(UPDATE_BASE_COLS);
 export const updateSegmentGroups = createAction(UPDATE_SEGMENT_GROUPS);
 export const updateDisplayGeoFeatures = createAction(
   UPDATE_DISPLAY_GEO_FEATURES

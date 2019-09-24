@@ -25,16 +25,14 @@ export const updateSegmentGroups = (groups, groupId, segmentId) => {
       if (
         // if the group is not the source group users interacted with
         idx !== groupId &&
-        // and it includes the segment Id selected by the user
-        (group || []).includes(segmentId) &&
-        // and it has more than one remaining segments
-        group.length > 1
+        // and it has more than one remaining segments, or exactly one remaining segment that is not equal to segmentId
+        (group.length > 1 || (group.length === 1 && group[0] !== segmentId))
       ) {
         // remove segment Id from the other group
         updatedGroups[idx] = group.filter(id => id !== segmentId);
         // add segment Id to current group, since one segment Id can
         // only exist in one segment group, there won't be duplicates
-        updatedGroups[groupId] = groups[groupId].concat(segmentId);
+        updatedGroups[groupId] = groups[groupId].concat([segmentId]);
       }
     });
   }

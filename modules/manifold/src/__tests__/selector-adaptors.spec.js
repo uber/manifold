@@ -5,7 +5,6 @@ import {
   getDensityRange,
   getModelIds,
   getFeatures,
-  getDisplayMetric,
 } from '../selectors/adaptors';
 
 // Use `.resultFunc` to test individual selector logic without having to mock dependency selectors
@@ -54,16 +53,4 @@ test('selector: adapter/getFeatures', () => {
   const rawFeatures = [{divergence: 0}, {divergence: 1}, {divergence: 2}];
   const features = getFeatures.resultFunc(rawFeatures, 0.5);
   expect(features.length).toBe(2);
-});
-
-test('selector: adapter/getDisplayMetric', () => {
-  expect(getDisplayMetric.resultFunc('actual', {nClasses: 2})).toEqual(
-    'actual'
-  );
-  expect(getDisplayMetric.resultFunc('performance', {nClasses: 1})).toEqual(
-    'squared_error'
-  );
-  expect(getDisplayMetric.resultFunc('performance', {nClasses: 2})).toEqual(
-    'log_loss'
-  );
 });

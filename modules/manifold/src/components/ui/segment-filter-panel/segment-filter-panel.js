@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {FILTER_TYPE, FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
-import SegmentButtonGroup from './segment-button-group';
+import SegmentButtonGroup from '../segment-group-panel/segment-button-group';
 import {SegmentPanel, StyledSelect, SelectArrow} from '../styled-components';
 import {
   isValidFilterVals,
   getFilterValsFromProps,
   getSegmentFiltersFromValues,
-} from './utils';
+} from '../segment-group-panel/utils';
 
 // todo: add timestamp feature type
 // const DATE_STRING_REGEX = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/;

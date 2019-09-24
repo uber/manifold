@@ -16,11 +16,14 @@ import {
   getDensityRange,
   getModelIds,
   getModelMeta,
-  getDisplayMetric,
   getSegmentIds,
   getSegmentOrdering,
 } from '../selectors/adaptors';
-import {getSelectedModels, getSegmentGroups} from '../selectors/base';
+import {
+  getMetric,
+  getSelectedModels,
+  getSegmentGroups,
+} from '../selectors/base';
 
 const PADDING = {
   left: 2,
@@ -68,7 +71,7 @@ const mapStateToProps = (state, props) => {
     rawDataRange: getRawDataRange(state),
     densityRange: getDensityRange(state),
     modelMeta: getModelMeta(state),
-    metric: getDisplayMetric(state),
+    metric: getMetric(state),
     segmentGroups: getSegmentGroups(state),
     colorScale: scaleOrdinal(colorScheme).domain(modelIds),
     selectedModels: getSelectedModels(state),
@@ -130,7 +133,7 @@ export class PerformanceComparisonContainer extends PureComponent {
             data={data}
             metaData={modelMeta}
             ordering={segmentOrdering}
-            xLabel={metric}
+            xLabel={metric.name}
             getXScale={scaleLinear}
             xDomain={rawDataRange}
             getYScale={GET_YSCALE}

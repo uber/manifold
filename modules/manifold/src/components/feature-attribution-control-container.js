@@ -1,16 +1,9 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from '../custom-connect';
-import {
-  StyledControl,
-  StyledSlider,
-  StyledSelect,
-  SelectArrow,
-} from './ui/styled-components';
-import {SegmentFilterPanel, SegmentGroupPanel} from './ui/segment-panels';
-import {dotRange} from '@mlvis/mlvis-common/utils';
-import {FILTER_TYPE, FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
-import {CONTROL_MARGIN, COLORS} from '../constants';
+import {StyledControl, StyledSlider} from './ui/styled-components';
+import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
+import {CONTROL_MARGIN} from '../constants';
 
 import {
   fetchFeatures,
@@ -18,14 +11,7 @@ import {
   updateSegmentFilters,
   updateSegmentGroups,
 } from '../actions';
-import {
-  getDivergenceThreshold,
-  getModelsComparisonParams,
-  getFeatureDistributionParams,
-  getIsManualSegmentation,
-  getSegmentFilters,
-} from '../selectors/base';
-import {getFeaturesMeta} from '../selectors/compute';
+import {getDivergenceThreshold, getSegmentFilters} from '../selectors/base';
 import {computeWidthLadder} from '../utils';
 
 const mapDispatchToProps = {
@@ -36,11 +22,7 @@ const mapDispatchToProps = {
 };
 const mapStateToProps = (state, props) => {
   return {
-    featuresMeta: getFeaturesMeta(state),
     divergenceThreshold: getDivergenceThreshold(state),
-    modelComparisonParams: getModelsComparisonParams(state),
-    featureDistributionParams: getFeatureDistributionParams(state),
-    isManualSegmentation: getIsManualSegmentation(state),
     segmentFilters: getSegmentFilters(state),
   };
 };
@@ -76,23 +58,6 @@ class FeatureAttributionControlContainer extends PureComponent {
     divergenceThreshold: PropTypes.number,
     isManualSegmentation: PropTypes.bool,
     hasBackend: PropTypes.bool,
-    /** input segment filters, each of shape key, value, and type */
-    segmentFilters: PropTypes.arrayOf(
-      PropTypes.arrayOf(
-        PropTypes.shape({
-          key: PropTypes.string.isRequired,
-          value: PropTypes.oneOfType([
-            PropTypes.number,
-            PropTypes.string,
-            PropTypes.func,
-            PropTypes.arrayOf(PropTypes.number),
-            PropTypes.arrayOf(PropTypes.string),
-            PropTypes.arrayOf(PropTypes.bool),
-          ]).isRequired,
-          type: PropTypes.oneOf(Object.values(FILTER_TYPE)),
-        })
-      )
-    ),
     fetchFeatures: PropTypes.func,
     updateSegmentFilters: PropTypes.func,
     updateSegmentGroups: PropTypes.func,
@@ -120,89 +85,19 @@ class FeatureAttributionControlContainer extends PureComponent {
     segmentationFeatureId: 0,
   };
 
-  _updateSegmentGroups = segmentGroups => {
-    const {hasBackend, featureDistributionParams} = this.props;
-
-    // TODO constraints each group should have at least one segment
-    this.props.updateSegmentGroups(segmentGroups);
-    // TODO do we still need the hasBackend logic?
-    if (hasBackend) {
-      this.props.fetchFeatures({
-        ...featureDistributionParams,
-        segmentGroups,
-      });
-    }
-  };
-
-  _updateSegmentFeature = e => {
-    const {value} = e.target;
-    this.setState({
-      segmentationFeatureId: value,
-    });
-  };
-
   render() {
     const {
       className,
       width,
       flexDirection,
-      modelComparisonParams: {nClusters},
-      featuresMeta,
-      featureDistributionParams: {segmentGroups},
       divergenceThreshold,
-      isManualSegmentation,
-      segmentFilters,
       updateDivergenceThreshold,
     } = this.props;
-    const {segmentationFeatureId} = this.state;
 
     // TODO not super heavy for dotRange we should not remove it from render
-    const candidateSegments = dotRange(nClusters);
     const isHorizontal = flexDirection === 'row';
     return (
       <div className={className}>
-        {isManualSegmentation && (
-          <StyledControl
-            name="Segmentation Metric"
-            stackDirection={flexDirection}
-            isHidden={isHorizontal && width < WIDTH_LADDER[1]}
-          >
-            <StyledSelect>
-              <select
-                value={segmentationFeatureId || 0}
-                onChange={this._updateSegmentFeature}
-              >
-                {featuresMeta.map((feature, i) => (
-                  <option value={i} key={i}>
-                    {feature.name}
-                  </option>
-                ))}
-              </select>
-              <SelectArrow height="16" />
-            </StyledSelect>
-          </StyledControl>
-        )}
-
-        <StyledControl
-          name="Comparison"
-          stackDirection={flexDirection}
-          isHidden={isHorizontal && width < WIDTH_LADDER[0]}
-        >
-          {isManualSegmentation ? (
-            <SegmentFilterPanel
-              segmentationFeatureMeta={featuresMeta[segmentationFeatureId]}
-              segmentFilters={segmentFilters}
-              onUpdateSegmentFilters={this.props.updateSegmentFilters}
-            />
-          ) : (
-            <SegmentGroupPanel
-              candidates={candidateSegments}
-              selected={segmentGroups}
-              onUpdateSegmentGroups={this._updateSegmentGroups}
-              colors={[COLORS.PINK, COLORS.BLUE]}
-            />
-          )}
-        </StyledControl>
         <StyledControl
           name="Difference filter"
           stackDirection={flexDirection}

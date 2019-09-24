@@ -1,67 +1,104 @@
 import React, {PureComponent} from 'react';
+import {createSelector} from 'reselect';
 import PropTypes from 'prop-types';
 import {connect} from '../custom-connect';
-import {CONTROL_MARGIN} from '../constants';
 import {
-  StyledControl,
-  StyledSelect,
-  StyledInput,
-  InputButtons,
-  SelectArrow,
-} from './ui/styled-components';
-import {Select, SIZE} from 'baseui/select';
+  COLORS,
+  CONTROL_MARGIN,
+  METRIC_OPTIONS,
+  MODEL_TYPE,
+  SEGMENTATION_METHOD,
+} from '../constants';
+import {FILTER_TYPE} from '@mlvis/mlvis-common/constants';
+import {StyledControl, InputButtons} from './ui/styled-components';
+import {Select} from 'baseui/select';
+import {Input, SIZE} from 'baseui/input';
 import {computeWidthLadder} from '../utils';
+import {SegmentFilterPanel} from './ui/segment-filter-panel';
+import {SegmentGroupPanel} from './ui/segment-group-panel';
 
 import {
-  fetchModels,
-  fetchFeatures,
   updateMetric,
-  updateNClusters,
   updateSegmentationMethod,
+  updateBaseCols,
+  updateNClusters,
+  updateSegmentFilters,
   updateSegmentGroups,
 } from '../actions';
 import {
   getHasBackend,
-  getIsModelsComparisonLoading,
-  getModelsComparisonParams,
   getIsManualSegmentation,
   getMetric,
+  getIsModelsComparisonLoading,
+  getBaseCols,
+  getNClusters,
+  getSegmentGroups,
+  getSegmentFilters,
 } from '../selectors/base';
-import {getModelsMeta} from '../selectors/compute';
+import {getModelsMeta, getColumnDefs} from '../selectors/compute';
+import {getSegmentIds} from '../selectors/adaptors';
 
 const CONTROL_WIDTH = [130, 120, 100];
 // remove some elements based on parent width
 const WIDTH_LADDER = computeWidthLadder(CONTROL_WIDTH, CONTROL_MARGIN);
 
 const mapDispatchToProps = {
-  fetchFeatures,
-  fetchModels,
   updateMetric,
-  updateNClusters,
   updateSegmentationMethod,
+  updateBaseCols,
+  updateNClusters,
+  updateSegmentFilters,
   updateSegmentGroups,
 };
 const mapStateToProps = (state, props) => {
   return {
     hasBackend: getHasBackend(state),
-    metric: getMetric(state),
     modelsMeta: getModelsMeta(state),
-    modelComparisonParams: getModelsComparisonParams(state),
-    isModelsComparisonLoading: getIsModelsComparisonLoading(state),
+    columnDefs: getColumnDefs(state),
+    metric: getMetric(state),
     isManualSegmentation: getIsManualSegmentation(state),
+    baseCols: getBaseCols(state),
+    nClusters: getNClusters(state),
+    segmentFilters: getSegmentFilters(state),
+    segmentGroups: getSegmentGroups(state),
+
+    segmentIds: getSegmentIds(state),
+    isModelsComparisonLoading: getIsModelsComparisonLoading(state),
   };
 };
 
-class PerfroamnceComparisonControlContainer extends PureComponent {
+class PerformanceComparisonControlContainer extends PureComponent {
   static propTypes = {
     className: PropTypes.string,
     width: PropTypes.number,
     flexDirection: PropTypes.string,
-    modelComparisonParams: PropTypes.shape({
-      nClusters: PropTypes.number,
-    }),
     isModelsComparisonLoading: PropTypes.bool,
     isManualSegmentation: PropTypes.bool,
+    metric: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      description: PropTypes.string,
+      func: PropTypes.func.isRequired,
+    }),
+    baseCols: PropTypes.arrayOf(PropTypes.number),
+    nClusters: PropTypes.number,
+    /** input segment filters, each of shape key, value, and type */
+    segmentFilters: PropTypes.arrayOf(
+      PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string.isRequired,
+          key: PropTypes.number.isRequired,
+          value: PropTypes.oneOfType([
+            PropTypes.number,
+            PropTypes.string,
+            PropTypes.func,
+            PropTypes.arrayOf(PropTypes.number),
+            PropTypes.arrayOf(PropTypes.string),
+            PropTypes.arrayOf(PropTypes.bool),
+          ]).isRequired,
+          type: PropTypes.oneOf(Object.values(FILTER_TYPE)),
+        })
+      )
+    ),
     hasBackend: PropTypes.bool,
     modelsMeta: PropTypes.shape({
       nClasses: PropTypes.number,
@@ -79,32 +116,72 @@ class PerfroamnceComparisonControlContainer extends PureComponent {
     modelsMeta: {},
   };
 
+  _getMetricOptions = createSelector(
+    [state => state.metricOptions, state => state.nClasses],
+    (metricOptions, nClasses) => {
+      const modelType =
+        nClasses === 1
+          ? MODEL_TYPE.REGRESSION
+          : nClasses === 2
+          ? MODEL_TYPE.BIN_CLASS
+          : MODEL_TYPE.MULT_CLASS;
+
+      return metricOptions[modelType].map((metric, i) => ({
+        id: i,
+        label: metric.name,
+      }));
+    }
+  );
+
+  _renderInputButtons = () => {
+    const {isModelsComparisonLoading, isManualSegmentation} = this.props;
+    return (
+      <InputButtons>
+        <button
+          disabled={isModelsComparisonLoading || isManualSegmentation}
+          onClick={() => this._onUpdateNClusters({isInc: false})}
+        >
+          -
+        </button>
+        <button
+          disabled={isModelsComparisonLoading || isManualSegmentation}
+          onClick={() => this._onUpdateNClusters({isInc: true})}
+        >
+          +
+        </button>
+      </InputButtons>
+    );
+  };
+
+  _onUpdateMetric = ({value}) => {
+    this.props.updateMetric(value[0]);
+  };
+
+  _onUpdateSegmentationMethod = ({value}) => {
+    this.props.updateSegmentationMethod(value[0].id);
+  };
+
+  _onUpdateBaseCols = ({value}) => {
+    const colIds = value.map(col => col.tableFieldIndex - 1).sort();
+    this.props.updateBaseCols(colIds);
+  };
+
   _onUpdateNClusters = ({isInc}) => {
-    const {modelComparisonParams, hasBackend} = this.props;
-    const {nClusters} = modelComparisonParams;
-
     this.props.updateNClusters(isInc ? 'INC' : 'DEC');
-    if (hasBackend) {
-      this.props.fetchModels({
-        ...modelComparisonParams,
-        nClusters: nClusters + (isInc ? 1 : -1),
-      });
-    }
   };
 
-  _onUpdateMetric = metric => {
-    const {modelComparisonParams, hasBackend} = this.props;
-    this.props.updateMetric(metric);
+  _updateSegmentGroups = segmentGroups => {
+    const {hasBackend, featureDistributionParams} = this.props;
+
+    // TODO constraints each group should have at least one segment
+    this.props.updateSegmentGroups(segmentGroups);
+    // TODO do we still need the hasBackend logic?
     if (hasBackend) {
-      this.props.fetchModels({
-        ...modelComparisonParams,
-        metric,
+      this.props.fetchFeatures({
+        ...featureDistributionParams,
+        segmentGroups,
       });
     }
-  };
-
-  _onUpdateSegmentationMethod = e => {
-    this.props.updateSegmentationMethod(e.target.value);
   };
 
   render() {
@@ -113,99 +190,122 @@ class PerfroamnceComparisonControlContainer extends PureComponent {
       className,
       width,
       flexDirection,
-      metric,
-      modelComparisonParams,
       isModelsComparisonLoading,
+      modelsMeta: {nClasses},
+      columnDefs,
+      metric,
       isManualSegmentation,
-      modelsMeta: {nClasses = 1} = {},
+      baseCols,
+      nClusters,
+      segmentFilters,
+      segmentIds,
+      segmentGroups,
     } = this.props;
-    const {nClusters} = modelComparisonParams;
     const isHorizontal = flexDirection === 'row';
+    const modelType =
+      nClasses === 1
+        ? MODEL_TYPE.REGRESSION
+        : nClasses === 2
+        ? MODEL_TYPE.BIN_CLASS
+        : MODEL_TYPE.MULT_CLASS;
     return (
       <div className={className}>
         <StyledControl
-          name="Segmentation Method"
-          isHidden={isHorizontal && width < WIDTH_LADDER[0]}
-        >
-          <StyledSelect>
-            <select
-              defaultValue="auto"
-              disabled={isModelsComparisonLoading}
-              onChange={this._onUpdateSegmentationMethod}
-            >
-              <option value="auto">Auto</option>
-              <option value="manual">Manual</option>
-            </select>
-            <SelectArrow height="16" />
-          </StyledSelect>
-        </StyledControl>
-        {!isManualSegmentation && (
-          <StyledControl
-            name="Comparison Metric"
-            stackDirection={flexDirection}
-            isHidden={isHorizontal && width < WIDTH_LADDER[1]}
-          >
-            <StyledSelect>
-              <select
-                defaultValue="performance"
-                disabled={isModelsComparisonLoading}
-                onChange={this._onUpdateMetric}
-              >
-                <option value="actual" disabled={nClasses > 2}>
-                  Ground Truth
-                </option>
-                <option value="performance">Performance</option>
-              </select>
-              <SelectArrow height="16" />
-            </StyledSelect>
-          </StyledControl>
-        )}
-        {!isManualSegmentation && (
-          <StyledControl
-            name="N_Segments"
-            stackDirection={flexDirection}
-            isHidden={isHorizontal && width < WIDTH_LADDER[2]}
-          >
-            <StyledInput>
-              <input value={nClusters} size="small" readOnly />
-              <InputButtons>
-                <button
-                  disabled={isModelsComparisonLoading || isManualSegmentation}
-                  onClick={() => this._onUpdateNClusters({isInc: false})}
-                >
-                  -
-                </button>
-                <button
-                  disabled={isModelsComparisonLoading || isManualSegmentation}
-                  onClick={() => this._onUpdateNClusters({isInc: true})}
-                >
-                  +
-                </button>
-              </InputButtons>
-            </StyledInput>
-          </StyledControl>
-        )}
-
-        {/* <StyledControl
-          name="N_Segments"
+          name="Performance Metric"
           stackDirection={flexDirection}
           isHidden={isHorizontal && width < WIDTH_LADDER[2]}
         >
-          <ItemSelector
-            selectedItems={metric}
-            options={['actual', 'performance']}
-            multiSelect={false}
+          <Select
+            options={METRIC_OPTIONS[modelType]}
+            labelKey="name"
+            size={SIZE.compact}
+            searchable={false}
             onChange={this._onUpdateMetric}
+            value={metric}
           />
-        </StyledControl> */}
-        <Select
-          options={['actual', 'performance']}
-          size={SIZE.compact}
-          // labelKey="id"
-          // valueKey="color"
-          onChange={this._onUpdateMetric}
-          value={metric}
-        />
+        </StyledControl>
+        <StyledControl
+          name="Segmentation method"
+          isHidden={isHorizontal && width < WIDTH_LADDER[0]}
+        >
+          <Select
+            disabled={isModelsComparisonLoading}
+            options={[
+              {id: SEGMENTATION_METHOD.AUTO},
+              {id: SEGMENTATION_METHOD.MANUAL},
+            ]}
+            labelKey="id"
+            size={SIZE.compact}
+            searchable={false}
+            onChange={this._onUpdateSegmentationMethod}
+            value={
+              isManualSegmentation
+                ? {id: SEGMENTATION_METHOD.MANUAL}
+                : {id: SEGMENTATION_METHOD.AUTO}
+            }
+          />
+        </StyledControl>
+        <StyledControl
+          name="Base columns"
+          stackDirection={flexDirection}
+          isHidden={isHorizontal && width < WIDTH_LADDER[1]}
+        >
+          <Select
+            size={SIZE.compact}
+            options={columnDefs}
+            value={baseCols.map(colId => columnDefs[colId])}
+            labelKey="name"
+            valueKey="name"
+            onChange={this._onUpdateBaseCols}
+            searchable={true}
+            multi={true}
+          />
+        </StyledControl>
+        {!isManualSegmentation && (
+          <StyledControl
+            name="Number of clusters"
+            stackDirection={flexDirection}
+            isHidden={isHorizontal && width < WIDTH_LADDER[2]}
+          >
+            <Input
+              overrides={{
+                After: this._renderInputButtons,
+              }}
+              value={nClusters}
+              size={SIZE.compact}
+            />
+          </StyledControl>
+        )}
+        {isManualSegmentation && (
+          <StyledControl
+            name="Segments"
+            stackDirection={flexDirection}
+            isHidden={isHorizontal && width < WIDTH_LADDER[0]}
+          >
+            {baseCols.slice(0, 1).map(colId => (
+              <SegmentFilterPanel
+                key={colId}
+                segmentationFeatureMeta={columnDefs[colId]}
+                segmentFilters={segmentFilters}
+                onUpdateSegmentFilters={this.props.updateSegmentFilters}
+              />
+            ))}
+          </StyledControl>
+        )}
+        {/* {!isManualSegmentation && ( */}
+        <StyledControl
+          name="Segment grouping"
+          stackDirection={flexDirection}
+          isHidden={isHorizontal && width < WIDTH_LADDER[0]}
+        >
+          <SegmentGroupPanel
+            candidates={segmentIds}
+            selected={segmentGroups}
+            onUpdateSegmentGroups={this._updateSegmentGroups}
+            colors={[COLORS.PINK, COLORS.BLUE]}
+          />
+        </StyledControl>
+        {/* )} */}
       </div>
     );
   }
@@ -214,4 +314,4 @@ class PerfroamnceComparisonControlContainer extends PureComponent {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PerfroamnceComparisonControlContainer);
+)(PerformanceComparisonControlContainer);

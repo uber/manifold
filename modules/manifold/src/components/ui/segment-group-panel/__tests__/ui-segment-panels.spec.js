@@ -3,7 +3,7 @@ import {
   isValidFilterVals,
   getSegmentFiltersFromValues,
   getFilterValsFromProps,
-} from '../components/ui/segment-panels/utils';
+} from '../utils';
 import {FEATURE_TYPE, FILTER_TYPE} from '@mlvis/mlvis-common/constants';
 
 test('utils: updateSegmentGroups', () => {
@@ -15,6 +15,10 @@ test('utils: updateSegmentGroups', () => {
   expect(updateSegmentGroups([[0, 1, 2], [3]], 0, 3)).toEqual([[0, 1, 2], [3]]);
   // no action if segment 3 is the only segment in group 1 when deselecting from segment 1
   expect(updateSegmentGroups([[0, 1, 2], [3]], 1, 3)).toEqual([[0, 1, 2], [3]]);
+  // add a segment that originally belonged to neither group
+  expect(updateSegmentGroups([[0, 1], [3]], 0, 2)).toEqual([[0, 1, 2], [3]]);
+  // no action if updating will cause one of the groups to become empty
+  expect(updateSegmentGroups([[0, 1], [2]], 0, 2)).toEqual([[0, 1], [2]]);
   // sanity check
   expect(updateSegmentGroups([[0, 1], [2, 3]])).toEqual([[0, 1], [2, 3]]);
 });

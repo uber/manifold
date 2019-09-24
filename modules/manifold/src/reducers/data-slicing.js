@@ -1,12 +1,5 @@
-import {validateAndSetDefaultStatesConfigurator} from '../utils';
-import {setDefaultFuncs, isValidFuncs} from '../utils/default-states';
+import {validateAndSetDefaultStates} from './utils';
 import {SEGMENTATION_METHOD} from '../constants';
-
-const validateAndSetDefaultStates = validateAndSetDefaultStatesConfigurator(
-  ['baseCols', 'nClusters', 'segmentFilters', 'segmentGroups'],
-  isValidFuncs,
-  setDefaultFuncs
-);
 
 export const handleUpdateSegmentationMethod = (state, {payload}) => {
   const isManualSegmentation = payload === SEGMENTATION_METHOD.MANUAL;

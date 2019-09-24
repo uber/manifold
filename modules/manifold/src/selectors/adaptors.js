@@ -137,25 +137,3 @@ export const getFeatures = createSelector(
     return rawFeatures.filter(feature => feature.divergence >= threshold);
   }
 );
-
-export const getDisplayMetric = createSelector(
-  [getMetric, getModelsMeta],
-  (metric, meta) => {
-    if (!meta) {
-      return null;
-    }
-    const {nClasses} = meta;
-    switch (metric) {
-      case 'actual':
-        return 'actual';
-      case 'performance':
-        return isNaN(nClasses)
-          ? 'unknown'
-          : nClasses >= 2
-          ? 'log_loss'
-          : 'squared_error';
-      default:
-        return 'unknown';
-    }
-  }
-);

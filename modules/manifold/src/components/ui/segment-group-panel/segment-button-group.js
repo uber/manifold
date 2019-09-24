@@ -1,7 +1,6 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {Cancel} from '@mlvis/mlvis-common/icons';
 
 const Container = styled.div`
   display: flex;
@@ -38,14 +37,6 @@ const ColorLegend = styled.div`
   margin-right: 6px;
   width: 12px;
   height: 12px;
-`;
-
-const DeleteButton = styled(Cancel)`
-  color: #7a7a7a;
-  height: 10px;
-  :hover {
-    cursor: pointer;
-  }
 `;
 
 const CircleButton = styled.button`
@@ -91,34 +82,29 @@ export default class SegmentButtonGroup extends PureComponent {
   };
 
   render() {
-    const {id, color, candidates, selected, onSelect, children} = this.props;
+    const {id, color, candidates, selected, onSelect} = this.props;
 
     return (
       <Container>
         <SegmentButtonGroupPanel key={id}>
           <GroupTitle>
-            <ColorLegend color={color} /> Segments
+            <ColorLegend color={color} /> {`Group ${id}`}
           </GroupTitle>
           <div>
-            {!children &&
-              candidates.map(candidate => {
-                const isSelected = selected.includes(candidate);
-                return (
-                  <CircleButton
-                    key={candidate}
-                    selected={isSelected}
-                    onClick={() =>
-                      onSelect({groupId: id, segmentId: candidate})
-                    }
-                  >
-                    {candidate}
-                  </CircleButton>
-                );
-              })}
+            {candidates.map(candidate => {
+              const isSelected = selected.includes(candidate);
+              return (
+                <CircleButton
+                  key={candidate}
+                  selected={isSelected}
+                  onClick={() => onSelect({groupId: id, segmentId: candidate})}
+                >
+                  {candidate}
+                </CircleButton>
+              );
+            })}
           </div>
-          <DeleteButton />
         </SegmentButtonGroupPanel>
-        {children}
       </Container>
     );
   }

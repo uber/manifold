@@ -1,4 +1,5 @@
 import assert from 'assert';
+import {METRIC, METRIC_OPTIONS, MODEL_TYPE} from '../constants';
 import {
   FEATURE_TYPE,
   FILTER_TYPE,
@@ -6,6 +7,31 @@ import {
 } from '@mlvis/mlvis-common/constants';
 import {dotRange} from '@mlvis/mlvis-common/utils';
 import {product} from './utils';
+
+//---------Metric----------//
+
+export const defaultMetric = state => {
+  const {
+    modelsMeta: {nClasses},
+  } = state;
+  assert(nClasses > 0, '`nClasses` must be larger than 0');
+  return nClasses >= 2 ? METRIC.LOG_LOSS : METRIC.ABSOLUTE_ERROR;
+};
+
+export const isValidMetric = state => {
+  const {
+    metric,
+    modelsMeta: {nClasses},
+  } = state;
+  assert(nClasses > 0, '`nClasses` must be larger than 0');
+  const modelType =
+    nClasses === 1
+      ? MODEL_TYPE.REGRESSION
+      : nClasses === 2
+      ? MODEL_TYPE.BIN_CLASS
+      : MODEL_TYPE.MULT_CLASS;
+  return METRIC_OPTIONS[modelType].includes(metric);
+};
 
 //---------BaseCols----------//
 
@@ -261,6 +287,7 @@ export const isValidSegmentGroups = state => {
 };
 
 export const setDefaultFuncs = {
+  metric: defaultMetric,
   baseCols: defaultBaseCols,
   nClusters: defaultNClusters,
   segmentFilters: defaultSegmentFilters,
@@ -268,6 +295,7 @@ export const setDefaultFuncs = {
 };
 
 export const isValidFuncs = {
+  metric: isValidMetric,
   baseCols: isValidBaseCols,
   nClusters: isValidNClusters,
   segmentFilters: isValidSegmentFilters,

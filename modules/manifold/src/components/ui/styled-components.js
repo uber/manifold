@@ -61,8 +61,6 @@ export const StyledInput = styled.div`
 `;
 
 export const InputButtons = styled.div`
-  position: absolute;
-  right: 0;
   align-self: center;
   display: flex;
   justify-content: stretch;

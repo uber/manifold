@@ -5,25 +5,30 @@ export const COLORS = {
   BLUE: '#818c81',
 };
 
-// "performance": log-loss for classification models, squared-log-error for regression
-// "actual": raw prediction value
+export const MODEL_TYPE = {
+  REGRESSION: 'REGRESSION',
+  BIN_CLASS: 'BIN_CLASS',
+  MULT_CLASS: 'MULT_CLASS',
+};
+
 export const METRIC = {
-  REGRESSION: {
-    ABSOLUTE_ERROR: {
-      name: 'absolute error',
-      description:
-        'the absolute value of difference between predicted value and ground truth',
-      func: absoluteError,
-    },
+  ABSOLUTE_ERROR: {
+    name: 'absolute error',
+    description:
+      'the absolute value of difference between predicted value and ground truth',
+    func: absoluteError,
   },
-  BINARY_CLASSIFICATION: {
-    LOG_LOSS: {
-      name: 'log loss',
-      description: 'the logarithmic loss for predicted probability values',
-      func: logLoss,
-    },
+  LOG_LOSS: {
+    name: 'log loss',
+    description: 'the logarithmic loss for predicted probability values',
+    func: logLoss,
   },
-  ACTUAL: 'actual',
+};
+
+export const METRIC_OPTIONS = {
+  REGRESSION: [METRIC.ABSOLUTE_ERROR],
+  BIN_CLASS: [METRIC.LOG_LOSS],
+  MULT_CLASS: [METRIC.LOG_LOSS],
 };
 
 export const SEGMENTATION_METHOD = {

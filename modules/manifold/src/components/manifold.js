@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {Client as Styletron} from 'styletron-engine-atomic';
 import {Provider as StyletronProvider} from 'styletron-react';
-import {LightTheme, BaseProvider} from 'baseui';
+import {BaseProvider} from 'baseui';
 // import {theme} from '../styles';
 import {connect} from '../custom-connect';
 import {
+  THEME,
   THEME_COLOR,
   VIEW_MODE,
   VIEW_TAB,
@@ -16,9 +17,8 @@ import {
 } from '../constants';
 import {StyledControlContainer} from './ui/styled-components';
 import {Headline, HelpDialog} from './ui';
-import PerfroamnceComparisonControlContainer from './performance-comparison-control-container';
+import PerformanceComparisonControlContainer from './performance-comparison-control-container';
 import FeatureAttributionControlContainer from './feature-attribution-control-container';
-import FiltersContainer from './filters-container';
 import PerformanceComparisonContainer from './performance-comparison-container';
 import FeatureAttributionContainer from './feature-attribution-container';
 import GeoFeatureContainer from './geo-feature-container';
@@ -172,153 +172,154 @@ class Manifold extends PureComponent {
     }
     return (
       <StyletronProvider value={engine}>
-        <Container width={width} height={height}>
-          <Content viewMode={viewMode}>
-            <Panel
-              key="headline"
-              gridArea="headline"
-              isShown={!showBoth}
-              borderBottom
-              flexDirection="row"
-            >
-              <Headline
-                headers={[VIEW_NAME.PERF, VIEW_NAME.FEATURE]}
-                onTabChange={this._toggleViewTab}
-                isCoordinated={showBoth}
-                showHelp={helpType === HELP_TYPE.PERF}
-                onClickSplit={this._toggleViewMode}
-                onClickHelp={() =>
-                  this._toggleHelpType(
-                    showView1 ? HELP_TYPE.PERF : HELP_TYPE.FEATURE
-                  )
-                }
-                themeColor={THEME_COLOR}
-              />
-            </Panel>
-            <Panel
-              key="headline1"
-              gridArea="headline1"
-              isShown={showBoth}
-              borderBottom
-              borderRight
-              flexDirection="row"
-            >
-              <Headline
-                headers={[VIEW_NAME.PERF]}
-                themeColor={THEME_COLOR}
-                isCoordinated={showBoth}
-                showHelp={helpType === HELP_TYPE.PERF}
-                onClickSplit={this._toggleViewMode}
-                onClickHelp={() => this._toggleHelpType(HELP_TYPE.PERF)}
-              />
-            </Panel>
-            <Panel
-              key="headline2"
-              gridArea="headline2"
-              isShown={showBoth}
-              borderBottom
-              flexDirection="row"
-            >
-              <Headline
-                headers={[VIEW_NAME.FEATURE]}
-                themeColor={THEME_COLOR}
-                isCoordinated={showBoth}
-                showHelp={helpType === HELP_TYPE.FEATURE}
-                onClickSplit={this._toggleViewMode}
-                onClickHelp={() => this._toggleHelpType(HELP_TYPE.FEATURE)}
-              />
-            </Panel>
+        <BaseProvider theme={THEME}>
+          <Container width={width} height={height}>
+            <Content viewMode={viewMode}>
+              <Panel
+                key="headline"
+                gridArea="headline"
+                isShown={!showBoth}
+                borderBottom
+                flexDirection="row"
+              >
+                <Headline
+                  headers={[VIEW_NAME.PERF, VIEW_NAME.FEATURE]}
+                  onTabChange={this._toggleViewTab}
+                  isCoordinated={showBoth}
+                  showHelp={helpType === HELP_TYPE.PERF}
+                  onClickSplit={this._toggleViewMode}
+                  onClickHelp={() =>
+                    this._toggleHelpType(
+                      showView1 ? HELP_TYPE.PERF : HELP_TYPE.FEATURE
+                    )
+                  }
+                  themeColor={THEME_COLOR}
+                />
+              </Panel>
+              <Panel
+                key="headline1"
+                gridArea="headline1"
+                isShown={showBoth}
+                borderBottom
+                borderRight
+                flexDirection="row"
+              >
+                <Headline
+                  headers={[VIEW_NAME.PERF]}
+                  themeColor={THEME_COLOR}
+                  isCoordinated={showBoth}
+                  showHelp={helpType === HELP_TYPE.PERF}
+                  onClickSplit={this._toggleViewMode}
+                  onClickHelp={() => this._toggleHelpType(HELP_TYPE.PERF)}
+                />
+              </Panel>
+              <Panel
+                key="headline2"
+                gridArea="headline2"
+                isShown={showBoth}
+                borderBottom
+                flexDirection="row"
+              >
+                <Headline
+                  headers={[VIEW_NAME.FEATURE]}
+                  themeColor={THEME_COLOR}
+                  isCoordinated={showBoth}
+                  showHelp={helpType === HELP_TYPE.FEATURE}
+                  onClickSplit={this._toggleViewMode}
+                  onClickHelp={() => this._toggleHelpType(HELP_TYPE.FEATURE)}
+                />
+              </Panel>
 
-            <Panel
-              key="control1"
-              gridArea="control1"
-              isShown={showBoth}
-              borderRight
-            >
-              <StyledControlContainer
-                as={PerfroamnceComparisonControlContainer}
-                flexDirection={showBoth ? 'row' : 'column'}
-                selector={selector}
-              />
-              <FiltersContainer selector={selector} />
-            </Panel>
-            <Panel key="control2" gridArea="control2" isShown={showBoth}>
-              <StyledControlContainer
-                as={FeatureAttributionControlContainer}
-                flexDirection={showBoth ? 'row' : 'column'}
-                selector={selector}
-              />
-            </Panel>
+              <Panel
+                key="control1"
+                gridArea="control1"
+                isShown={showBoth}
+                borderRight
+              >
+                <StyledControlContainer
+                  as={PerformanceComparisonControlContainer}
+                  flexDirection={showBoth ? 'row' : 'column'}
+                  selector={selector}
+                />
+              </Panel>
+              <Panel key="control2" gridArea="control2" isShown={showBoth}>
+                <StyledControlContainer
+                  as={FeatureAttributionControlContainer}
+                  flexDirection={showBoth ? 'row' : 'column'}
+                  selector={selector}
+                />
+              </Panel>
 
-            <Panel
-              key="control-both"
-              gridArea="control"
-              isShown={!showBoth}
-              borderRight
-            >
-              <SidePanel>
-                <div>
-                  <StyledControlContainer
-                    as={PerfroamnceComparisonControlContainer}
-                    flexDirection="column"
-                    width={sidePanelWidth}
-                    selector={selector}
-                  />
-                  <StyledControlContainer
-                    as={FeatureAttributionControlContainer}
-                    flexDirection="column"
-                    width={sidePanelWidth}
-                    selector={selector}
-                  />
-                </div>
-                {showView2 && (
-                  <Thumbnail>
-                    <PerformanceComparisonContainer
-                      selector={selector}
-                      isThumbnail
+              <Panel
+                key="control-both"
+                gridArea="control"
+                isShown={!showBoth}
+                borderRight
+              >
+                <SidePanel>
+                  <div>
+                    <StyledControlContainer
+                      as={PerformanceComparisonControlContainer}
+                      flexDirection="column"
                       width={sidePanelWidth}
-                      height={THUMBNAIL_HEIGHT}
+                      selector={selector}
                     />
-                  </Thumbnail>
-                )}
-              </SidePanel>
-            </Panel>
+                    <StyledControlContainer
+                      as={FeatureAttributionControlContainer}
+                      flexDirection="column"
+                      width={sidePanelWidth}
+                      selector={selector}
+                    />
+                  </div>
+                  {showView2 && (
+                    <Thumbnail>
+                      <PerformanceComparisonContainer
+                        selector={selector}
+                        isThumbnail
+                        width={sidePanelWidth}
+                        height={THUMBNAIL_HEIGHT}
+                      />
+                    </Thumbnail>
+                  )}
+                </SidePanel>
+              </Panel>
 
-            <Panel
-              key="chart1"
-              gridArea={showBoth ? 'chart1' : 'chart'}
-              isShown={showView1}
-              borderRight={showBoth}
-            >
-              <PerformanceComparisonContainer
-                selector={selector}
-                width={mainPanelWidth}
-                height={mainPanelHeight}
-              />
-            </Panel>
-            <Panel
-              key="chart2"
-              gridArea={showBoth ? 'chart2' : 'chart'}
-              isShown={showView2}
-            >
-              <GeoFeatureContainer
-                selector={selector}
-                width={mainPanelWidth}
-                mapboxToken={mapboxToken}
-              />
-              <FeatureAttributionContainer
-                selector={selector}
-                width={mainPanelWidth}
-              />
-            </Panel>
-          </Content>
-          <HelpDialog
-            pages={HELP_PAGES[helpType]}
-            isOpen={isHelpMessageModalOpen}
-            onToggleOpen={this._toggleModal}
-            themeColor={THEME_COLOR}
-          />
-        </Container>
+              <Panel
+                key="chart1"
+                gridArea={showBoth ? 'chart1' : 'chart'}
+                isShown={showView1}
+                borderRight={showBoth}
+              >
+                <PerformanceComparisonContainer
+                  selector={selector}
+                  width={mainPanelWidth}
+                  height={mainPanelHeight}
+                />
+              </Panel>
+              <Panel
+                key="chart2"
+                gridArea={showBoth ? 'chart2' : 'chart'}
+                isShown={showView2}
+              >
+                <GeoFeatureContainer
+                  selector={selector}
+                  width={mainPanelWidth}
+                  mapboxToken={mapboxToken}
+                />
+                <FeatureAttributionContainer
+                  selector={selector}
+                  width={mainPanelWidth}
+                />
+              </Panel>
+            </Content>
+            <HelpDialog
+              pages={HELP_PAGES[helpType]}
+              isOpen={isHelpMessageModalOpen}
+              onToggleOpen={this._toggleModal}
+              themeColor={THEME_COLOR}
+            />
+          </Container>
+        </BaseProvider>
       </StyletronProvider>
     );
   }
