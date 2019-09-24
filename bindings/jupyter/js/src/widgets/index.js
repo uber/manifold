@@ -1,5 +1,6 @@
 const widgetBuilder = require('./react-widget-builder').default;
 
+// TODO: Implement dynamic import of components
 for (const name of [
   'StackedCalendar',
   'GraphBuilder',
