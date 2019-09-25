@@ -7,7 +7,7 @@ import os, subprocess, json
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-EXTENTION_DIR = os.path.join(os.path.dirname(__file__), "mlvis", "static")
+EXTENSION_DIR = os.path.join(os.path.dirname(__file__), "mlvis", "static")
 
 
 INSTALL_REQUIRES = [
@@ -42,7 +42,7 @@ def read(*parts):
 
 def init_jrequirements():
     try:
-        file = open(os.path.join(BASE_DIR, 'jrequirements.json'), mode='w')
+        file = open(os.path.join(BASE_DIR, 'mlvis', 'jrequirements.json'), mode='w')
         json.dump(DEFAULT_JREQUIREMENTS, file, indent=2)
     finally:
         if file:
@@ -53,11 +53,8 @@ class init_jrequirements_command(Command):
     description = 'customize jrequirements.json'
     user_options = []
 
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
+    def initialize_options(self): pass
+    def finalize_options(self): pass
 
     def run(self):
         init_jrequirements()
@@ -70,7 +67,7 @@ class develop(_develop):
 
         _develop.run(self)
 
-        install_nbextension(EXTENTION_DIR, symlink=True,
+        install_nbextension(EXTENSION_DIR, symlink=True,
                             overwrite=True, user=False, destination="mlvis")
         cm = ConfigManager()
         cm.update('notebook', {"load_extensions":
@@ -94,7 +91,7 @@ class install(_install):
 setup(name='mlvis',
       cmdclass={'develop': develop,
                 'init_jrequirements': init_jrequirements_command},
-      version='0.0.8',
+      version='0.0.8a6.dev10',
       description='A wrapper around react components for use in jupyter notebooks',
       long_description='{}'.format(read(os.path.join('docs', 'introduction.md'))),
       long_description_content_type='text/markdown',
@@ -106,14 +103,13 @@ setup(name='mlvis',
       include_package_data=True,
       packages=find_packages(),
       zip_safe=False,
+      package_data={'': ['mlvis/jrequirements.json']},
       data_files=[
         ('share/jupyter/nbextensions/mlvis', [
             'mlvis/static/extension.js',
             'mlvis/static/index.js',
             'mlvis/static/index.js.map'
-         ],
-         '': ['mlvis/jrequirements.json']
-        ),
+        ])
       ],
       scripts=['bin/jpip'],
       install_requires=INSTALL_REQUIRES,
