@@ -1,1 +1,1 @@
-export {default as SegmentFilterPanel} from './segment-filter-panel';
+export {default as SegmentFiltersPanel} from './segment-panel-list';

@@ -72,7 +72,7 @@ export const DEFAULT_STATE = {
   // {Array<Number>} use which columns to slice. An array of column ids
   baseCols: [],
   // {Array<Array<Object>>} filter logic corresponding to data segment (only applicable to manual slicing)
-  segmentFilters: [],
+  segmentFilters: [[], []],
   // {Number} number of clusters to use in automatic slicing (only applicable to automatic slicing)
   nClusters: 4,
   // {Array<Array<Number>>} which segments to group together for comparing against each other. An array of array of segment IDs
@@ -153,6 +153,7 @@ export const handleLoadLocalDataSuccess = (state, {payload}) => {
     modelsMeta,
     columnTypeRanges,
     isLocalDataLoading: false,
+    baseCols: [15, 18],
   });
 };
 

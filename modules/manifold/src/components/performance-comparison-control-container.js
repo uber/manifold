@@ -3,18 +3,18 @@ import {createSelector} from 'reselect';
 import PropTypes from 'prop-types';
 import {connect} from '../custom-connect';
 import {
+  STATE_DATA_TYPES,
   COLORS,
   CONTROL_MARGIN,
   METRIC_OPTIONS,
   MODEL_TYPE,
   SEGMENTATION_METHOD,
 } from '../constants';
-import {FILTER_TYPE} from '@mlvis/mlvis-common/constants';
 import {StyledControl, InputButtons} from './ui/styled-components';
 import {Select} from 'baseui/select';
 import {Input, SIZE} from 'baseui/input';
 import {computeWidthLadder} from '../utils';
-import {SegmentFilterPanel} from './ui/segment-filter-panel';
+import {SegmentFiltersPanel} from './ui/segment-filter-panel';
 import {SegmentGroupPanel} from './ui/segment-group-panel';
 
 import {
@@ -73,36 +73,15 @@ class PerformanceComparisonControlContainer extends PureComponent {
     width: PropTypes.number,
     flexDirection: PropTypes.string,
     isModelsComparisonLoading: PropTypes.bool,
-    isManualSegmentation: PropTypes.bool,
-    metric: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string,
-      func: PropTypes.func.isRequired,
-    }),
-    baseCols: PropTypes.arrayOf(PropTypes.number),
-    nClusters: PropTypes.number,
-    /** input segment filters, each of shape key, value, and type */
-    segmentFilters: PropTypes.arrayOf(
-      PropTypes.arrayOf(
-        PropTypes.shape({
-          name: PropTypes.string.isRequired,
-          key: PropTypes.number.isRequired,
-          value: PropTypes.oneOfType([
-            PropTypes.number,
-            PropTypes.string,
-            PropTypes.func,
-            PropTypes.arrayOf(PropTypes.number),
-            PropTypes.arrayOf(PropTypes.string),
-            PropTypes.arrayOf(PropTypes.bool),
-          ]).isRequired,
-          type: PropTypes.oneOf(Object.values(FILTER_TYPE)),
-        })
-      )
-    ),
     hasBackend: PropTypes.bool,
-    modelsMeta: PropTypes.shape({
-      nClasses: PropTypes.number,
-    }),
+
+    modelsMeta: STATE_DATA_TYPES.modelsMeta.isRequired,
+    metric: STATE_DATA_TYPES.metric.isRequired,
+    isManualSegmentation: STATE_DATA_TYPES.isManualSegmentation.isRequired,
+    baseCols: STATE_DATA_TYPES.baseCols.isRequired,
+    nClusters: STATE_DATA_TYPES.nClusters.isRequired,
+    segmentFilters: STATE_DATA_TYPES.segmentFilters.isRequired,
+    segmentGroups: STATE_DATA_TYPES.segmentGroups.isRequired,
   };
 
   static defaultProps = {
@@ -246,7 +225,7 @@ class PerformanceComparisonControlContainer extends PureComponent {
           />
         </StyledControl>
         <StyledControl
-          name="Base columns"
+          name={isManualSegmentation ? 'Filter by' : 'Cluster by'}
           stackDirection={flexDirection}
           isHidden={isHorizontal && width < WIDTH_LADDER[1]}
         >
@@ -278,23 +257,21 @@ class PerformanceComparisonControlContainer extends PureComponent {
         )}
         {isManualSegmentation && (
           <StyledControl
-            name="Segments"
+            name="Filters"
             stackDirection={flexDirection}
             isHidden={isHorizontal && width < WIDTH_LADDER[0]}
           >
-            {baseCols.slice(0, 1).map(colId => (
-              <SegmentFilterPanel
-                key={colId}
-                segmentationFeatureMeta={columnDefs[colId]}
-                segmentFilters={segmentFilters}
-                onUpdateSegmentFilters={this.props.updateSegmentFilters}
-              />
-            ))}
+            <SegmentFiltersPanel
+              baseCols={baseCols}
+              columnDefs={columnDefs}
+              segmentFilters={segmentFilters}
+              onUpdateSegmentFilters={this.props.updateSegmentFilters}
+            />
           </StyledControl>
         )}
         {/* {!isManualSegmentation && ( */}
         <StyledControl
-          name="Segment grouping"
+          name="Grouping segments"
           stackDirection={flexDirection}
           isHidden={isHorizontal && width < WIDTH_LADDER[0]}
         >

@@ -37,7 +37,7 @@ const engine = new Styletron();
 
 const HEADLINE_HEIGHT = 48;
 const CONTROL_HEIGHT = 100;
-const CONTROL_WIDTH = 280;
+const CONTROL_WIDTH = 300;
 const MIN_CHART_WIDTH = 400;
 const MIN_CHART_HEIGHT = 300;
 const PANEL_PADDING = 20;
@@ -78,7 +78,7 @@ const Content = styled.div`
 `;
 
 const Panel = styled.div`
-  padding: 0 ${PANEL_PADDING}px;
+  padding: ${props => (props.padded ? '0 ' + PANEL_PADDING + 'px' : '0')};
   display: ${props => (props.isShown ? 'flex' : 'none')};
   flex-direction: ${props => props.flexDirection || 'column'};
   grid-area: ${props => props.gridArea};
@@ -92,8 +92,12 @@ const SidePanel = styled.div`
   flex-direction: column;
   justify-content: space-between;
   flex: 1;
-  padding-bottom: 20px;
+  background-color: #fafafa;
+  height: 100%;
+  overflow-y: scroll;
 `;
+
+const SidePanelControlSection = styled.div``;
 
 const Thumbnail = styled.div`
   display: flex;
@@ -180,6 +184,7 @@ class Manifold extends PureComponent {
                 gridArea="headline"
                 isShown={!showBoth}
                 borderBottom
+                padded
                 flexDirection="row"
               >
                 <Headline
@@ -202,6 +207,7 @@ class Manifold extends PureComponent {
                 isShown={showBoth}
                 borderBottom
                 borderRight
+                padded
                 flexDirection="row"
               >
                 <Headline
@@ -235,6 +241,7 @@ class Manifold extends PureComponent {
                 gridArea="control1"
                 isShown={showBoth}
                 borderRight
+                padded
               >
                 <StyledControlContainer
                   as={PerformanceComparisonControlContainer}
@@ -242,7 +249,12 @@ class Manifold extends PureComponent {
                   selector={selector}
                 />
               </Panel>
-              <Panel key="control2" gridArea="control2" isShown={showBoth}>
+              <Panel
+                key="control2"
+                gridArea="control2"
+                isShown={showBoth}
+                padded
+              >
                 <StyledControlContainer
                   as={FeatureAttributionControlContainer}
                   flexDirection={showBoth ? 'row' : 'column'}
@@ -250,14 +262,9 @@ class Manifold extends PureComponent {
                 />
               </Panel>
 
-              <Panel
-                key="control-both"
-                gridArea="control"
-                isShown={!showBoth}
-                borderRight
-              >
+              <Panel key="control-both" gridArea="control" isShown={!showBoth}>
                 <SidePanel>
-                  <div>
+                  <SidePanelControlSection>
                     <StyledControlContainer
                       as={PerformanceComparisonControlContainer}
                       flexDirection="column"
@@ -270,7 +277,7 @@ class Manifold extends PureComponent {
                       width={sidePanelWidth}
                       selector={selector}
                     />
-                  </div>
+                  </SidePanelControlSection>
                   {showView2 && (
                     <Thumbnail>
                       <PerformanceComparisonContainer
@@ -289,6 +296,7 @@ class Manifold extends PureComponent {
                 gridArea={showBoth ? 'chart1' : 'chart'}
                 isShown={showView1}
                 borderRight={showBoth}
+                padded
               >
                 <PerformanceComparisonContainer
                   selector={selector}
@@ -300,6 +308,7 @@ class Manifold extends PureComponent {
                 key="chart2"
                 gridArea={showBoth ? 'chart2' : 'chart'}
                 isShown={showView2}
+                padded
               >
                 <GeoFeatureContainer
                   selector={selector}

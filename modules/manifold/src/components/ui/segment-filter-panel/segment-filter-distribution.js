@@ -1,4 +1,4 @@
-// @noflow
+// not used for now, draws distribution histogram of features
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 

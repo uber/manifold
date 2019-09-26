@@ -5,10 +5,9 @@ import {
   getSegmentGroups,
   getSegmentFilters,
   getDivergenceThreshold,
-  getMetric,
   getIsManualSegmentation,
 } from './base';
-import {getModelsMeta, getFeaturesMeta} from './compute';
+import {getFeaturesMeta} from './compute';
 import {getModelsPerformance, getFeaturesDistribution} from './data';
 // ------------------------------------------------------------------------------------------- //
 // -- THE ADAPTOR SELECTORS DO NECESSARY TRANSFORMATION TO THE OUTPUTS OF THE DATA SELECTOR -- //

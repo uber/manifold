@@ -4,6 +4,7 @@ import {ArrowDown} from '@mlvis/mlvis-common/icons';
 
 const CONTROL_MARGIN = 20;
 export const StyledControlContainer = styled.div`
+  padding: 0 20px;
   display: flex;
   flex-direction: ${props => props.flexDirection};
 `;

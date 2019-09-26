@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {FILTER_TYPE, FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
 
+import {STATE_DATA_TYPES, FIELD} from '../../../constants';
 import SegmentButtonGroup from '../segment-group-panel/segment-button-group';
 import {SegmentPanel, StyledSelect, SelectArrow} from '../styled-components';
 import {
@@ -60,44 +61,11 @@ export default class SegmentFilterPanel extends PureComponent {
   };
 
   static propTypes = {
-    /** meta data of the feature to filter on, each of shape name, type, and domain */
-    segmentationFeatureMeta: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(Object.values(FEATURE_TYPE)),
-      tableFieldIndex: PropTypes.number,
-      domain: PropTypes.arrayOf(
-        PropTypes.oneOfType([
-          PropTypes.string,
-          PropTypes.number,
-          PropTypes.bool,
-        ])
-      ),
-    }),
-    /** input segment filters, each of shape key, value, and type */
-    segmentFilters: PropTypes.arrayOf(
-      PropTypes.arrayOf(
-        PropTypes.shape({
-          key: PropTypes.number,
-          value: PropTypes.oneOfType([
-            PropTypes.number,
-            PropTypes.string,
-            PropTypes.func,
-            PropTypes.arrayOf(PropTypes.number),
-            PropTypes.arrayOf(PropTypes.string),
-            PropTypes.arrayOf(PropTypes.bool),
-          ]),
-          type: PropTypes.oneOf(Object.values(FILTER_TYPE)),
-        })
-      )
-    ),
+    baseCols: STATE_DATA_TYPES.baseCols.isRequired,
+    columnDefs: PropTypes.arrayOf(FIELD).isRequired,
+    segmentFilters: STATE_DATA_TYPES.segmentFilters.isRequired,
     /** callback function to surface the updated segment grouping */
-    onUpdateSegmentFilters: PropTypes.func,
-  };
-
-  static defaultProps = {
-    segmentationFeatureMeta: DEFAULT_SEGMENTATION_FEATURE,
-    segmentFilters: DEFAULT_SEGMENT_FILTERS,
-    onUpdateSegmentFilters: () => {},
+    onUpdateSegmentFilters: PropTypes.func.isRequired,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
