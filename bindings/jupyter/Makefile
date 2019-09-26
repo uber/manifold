@@ -1,4 +1,4 @@
-.PHONY: develop install clean build publish-test
+.PHONY: develop install clean build publish publish-test
 
 develop:
 	python setup.py develop
@@ -13,7 +13,11 @@ build:
 	rm -rf dist
 	python setup.py sdist bdist_wheel
 
+publish:
+	twine upload dist/*
+
 publish-test:
 	# install the test publish via:
 	# pip install --index-url https://test.pypi.org/simple/ mlvis==x.x.x
 	twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+	
