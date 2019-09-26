@@ -21,7 +21,8 @@ class Manifold(CommonComponent):
             else:
                 raise exception
 
-        # make a shallow copy of the props so that the original props dict remain unchanged
+        # make a shallow copy of the props,
+        # props are shared with the manifold instance, clone to prevent unexpected changes
         processed_props = props.copy()
         processed_props['data']['x'] = self.process_x(data['x'])
         processed_props['data']['yPred'] = self.process_y_pred(data['yPred'])
