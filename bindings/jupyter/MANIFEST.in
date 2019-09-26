@@ -1,7 +1,7 @@
 include LICENSE
 include README.md
 include .coverage.rc
-include jrequirements.json
+include mlvis/jrequirements.json
 graft docs
 
 # Javascript files

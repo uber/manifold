@@ -1,6 +1,6 @@
 const Jupyter = require('base/js/namespace');
 const widgetBuilder = require('./react-widget-builder').default;
-const req = require('../../../jrequirements.json');
+const req = require('../../../mlvis/jrequirements.json');
 
 // Specify the widget customization of the corresponding components,
 // Currently it only specifies the renderCallback function.

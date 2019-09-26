@@ -16,7 +16,6 @@ const externals = [
 
 module.exports = [
   {
-    mode: 'development',
     entry: {
       app: [resolve('./src/index.js')],
     },
@@ -58,7 +57,6 @@ module.exports = [
     externals,
   },
   {
-    mode: 'development',
     entry: {
       app: [resolve('./src/extension.js')],
     },

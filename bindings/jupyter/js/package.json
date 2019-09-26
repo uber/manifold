@@ -1,10 +1,12 @@
 {
   "name": "jupyter-binding",
   "version": "0.0.1",
+  "license": "Apache-2.0",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
-    "watch": "node --max_old_space_size=8192 node_modules/.bin/webpack --progress --watch"
+    "watch": "node --max_old_space_size=8192 node_modules/.bin/webpack --mode development --progress --watch",
+    "clean": "rm -rf ../mlvis/static",
+    "build": "yarn clean && webpack --mode production"
   },
   "dependencies": {
     "global": "^4.4.0",
