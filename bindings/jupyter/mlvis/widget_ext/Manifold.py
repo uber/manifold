@@ -5,8 +5,6 @@ import pandas as pd
 import numpy as np
 
 class Manifold(CommonComponent):
-    _model_name = Unicode('ManifoldWidgetModel').tag(sync=True)
-    _view_name = Unicode('ManifoldWidgetView').tag(sync=True)
     segments = Unicode('[]').tag(sync=True)
 
 
@@ -23,10 +21,11 @@ class Manifold(CommonComponent):
             else:
                 raise exception
 
-        props['data']['x'] = self.process_x(props['data']['x'])
-        props['data']['yPred'] = self.process_y_pred(props['data']['yPred'])
-        props['data']['yTrue'] = self.process_y_true(props['data']['yTrue'])
-        super(Manifold, self).__init__(props)
+        processed_props = props.copy()
+        processed_props['data']['x'] = self.process_x(data['x'])
+        processed_props['data']['yPred'] = self.process_y_pred(data['yPred'])
+        processed_props['data']['yTrue'] = self.process_y_true(data['yTrue'])
+        super(Manifold, self).__init__(processed_props)
 
 
     @observe('segments')

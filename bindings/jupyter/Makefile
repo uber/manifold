@@ -1,4 +1,10 @@
-.PHONY: clean build publish-test
+.PHONY: develop install clean build publish-test
+
+develop:
+	python setup.py develop
+
+install:
+	python setup.py install
 
 clean:
 	rm -rf dist
