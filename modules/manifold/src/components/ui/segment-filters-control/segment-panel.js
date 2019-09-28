@@ -2,7 +2,6 @@ import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import {Button, KIND, SIZE, SHAPE} from 'baseui/button';
 import Delete from 'baseui/icon/delete';
 import ChevronRight from 'baseui/icon/chevron-right';
 import ChevronDown from 'baseui/icon/chevron-down';
@@ -19,14 +18,17 @@ const FEATURE_TYPE_TO_FILTER_TYPE_MAP = {
 const Container = styled.div`
   background: #fff;
   box-shadow: ${props =>
-    props.isOpen ? 'rgba(0, 0, 0, 0.1) 0 0 2px' : 'none'};
-  margin-bottom: 6px;
+    props.isOpen ? 'rgba(0, 0, 0, 0.1) 0 0 4px' : 'none'};
+  margin-bottom: 4px;
 `;
 
 const Header = styled.div`
   border-bottom: ${props => (props.isOpen ? '1px solid #f0f0f0' : 'none')};
   background-color: ${props =>
     props.isOpen ? '#fff' : THEME.colors.inputFill};
+  font-size: 13px;
+  font-weight: normal;
+  color: #000;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -38,6 +40,7 @@ const HeaderTextGroup = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+  padding-right: 8px;
 `;
 
 const IconButton = styled.div`
@@ -55,17 +58,18 @@ const IconButton = styled.div`
 export default class SegmentPanel extends PureComponent {
   static propTypes = {
     segmentId: PropTypes.number.isRequired,
+    nSegments: PropTypes.number.isRequired,
     filters: PropTypes.arrayOf(FILTER),
     columnDefs: PropTypes.arrayOf(FIELD),
-    removeSegment: PropTypes.func,
-    updateFilters: PropTypes.func,
+    onRemoveSegment: PropTypes.func,
+    onUpdateFilterValue: PropTypes.func,
   };
 
   static defaultProps = {
     filters: [],
     columnDefs: [],
-    removeSegment: () => {},
-    updateFilters: () => {},
+    onRemoveSegment: () => {},
+    onUpdateFilterValue: () => {},
   };
 
   constructor(props) {
@@ -77,6 +81,12 @@ export default class SegmentPanel extends PureComponent {
     this.setState({
       isOpen: !this.state.isOpen,
     });
+  };
+
+  _onRemoveSegment = segmentId => {
+    if (this.props.nSegments > 2) {
+      this.props.removeSegment(segmentId);
+    }
   };
 
   _handleAddRemoveFilters = newKeys => {
@@ -108,11 +118,12 @@ export default class SegmentPanel extends PureComponent {
 
   render() {
     const {
+      nSegments,
       segmentId,
       filters,
       columnDefs,
-      updateFilters,
-      removeSegment,
+      onRemoveSegment,
+      onUpdateFilterValue,
     } = this.props;
     const {isOpen} = this.state;
 
@@ -120,14 +131,14 @@ export default class SegmentPanel extends PureComponent {
       <Container isOpen={isOpen}>
         <Header isOpen={isOpen}>
           <HeaderTextGroup onClick={this._onToggleOpen}>
-            <IconButton onClick={() => removeSegment(segmentId)}>
+            <IconButton>
               {isOpen ? <ChevronDown size={22} /> : <ChevronRight size={22} />}
             </IconButton>
             {`segment ${segmentId}`}
           </HeaderTextGroup>
           <IconButton
-            disabled={segmentId < 1}
-            onClick={() => removeSegment(segmentId)}
+            disabled={nSegments < 2}
+            onClick={() => onRemoveSegment(segmentId)}
           >
             <Delete size={18} />
           </IconButton>
@@ -136,9 +147,12 @@ export default class SegmentPanel extends PureComponent {
           <div>
             {filters.map((filter, i) => (
               <SegmentFilter
-                key={i}
+                key={filter.key}
+                segmentId={segmentId}
+                filterId={i}
                 filter={filter}
                 columnDef={columnDefs[filter.key]}
+                onUpdateFilterValue={onUpdateFilterValue}
               />
             ))}
           </div>

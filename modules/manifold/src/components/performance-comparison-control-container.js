@@ -14,8 +14,8 @@ import {StyledControl, InputButtons} from './ui/styled-components';
 import {Select} from 'baseui/select';
 import {Input, SIZE} from 'baseui/input';
 import {computeWidthLadder} from '../utils';
-import {SegmentFiltersPanel} from './ui/segment-filter-panel';
-import {SegmentGroupPanel} from './ui/segment-group-panel';
+import {SegmentFiltersControl} from './ui/segment-filters-control';
+import {SegmentGroupsControl} from './ui/segment-groups-control';
 
 import {
   updateMetric,
@@ -187,6 +187,14 @@ class PerformanceComparisonControlContainer extends PureComponent {
         : nClasses === 2
         ? MODEL_TYPE.BIN_CLASS
         : MODEL_TYPE.MULT_CLASS;
+
+    // reset SegmentFiltersControl to default state whenever baseCols change
+    // https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#recommendation-fully-uncontrolled-component-with-a-key
+    const segmentFilterControlKey = baseCols
+      .slice()
+      .sort()
+      .join(',');
+
     return (
       <div className={className}>
         <StyledControl
@@ -261,28 +269,26 @@ class PerformanceComparisonControlContainer extends PureComponent {
             stackDirection={flexDirection}
             isHidden={isHorizontal && width < WIDTH_LADDER[0]}
           >
-            <SegmentFiltersPanel
-              baseCols={baseCols}
+            <SegmentFiltersControl
+              key={segmentFilterControlKey}
               columnDefs={columnDefs}
               segmentFilters={segmentFilters}
               onUpdateSegmentFilters={this.props.updateSegmentFilters}
             />
           </StyledControl>
         )}
-        {/* {!isManualSegmentation && ( */}
         <StyledControl
           name="Grouping segments"
           stackDirection={flexDirection}
           isHidden={isHorizontal && width < WIDTH_LADDER[0]}
         >
-          <SegmentGroupPanel
+          <SegmentGroupsControl
             candidates={segmentIds}
             selected={segmentGroups}
             onUpdateSegmentGroups={this._updateSegmentGroups}
             colors={[COLORS.PINK, COLORS.BLUE]}
           />
         </StyledControl>
-        {/* )} */}
       </div>
     );
   }

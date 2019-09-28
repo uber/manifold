@@ -3,7 +3,7 @@ import {
   isValidFilterVals,
   getSegmentFiltersFromValues,
   getFilterValsFromProps,
-} from '../utils';
+} from '../../segment-filters-control/utils';
 import {FEATURE_TYPE, FILTER_TYPE} from '@mlvis/mlvis-common/constants';
 
 test('utils: updateSegmentGroups', () => {

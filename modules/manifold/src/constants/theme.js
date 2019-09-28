@@ -1,7 +1,7 @@
 import {LightTheme} from 'baseui';
 
 export const THEME_COLOR = '#276ef1';
-const CONTROL_BG_COLOR = 'rgba(235, 235, 235, 0.7)';
+const CONTROL_BG_COLOR = 'rgba(230, 230, 230, 0.7)';
 
 // refer to default theme at https://baseweb.design/guides/theming/#the-shape-of-the-theme-file
 // and style implementation at https://github.com/uber-web/baseui/blob/master/src/some-component/styled-components.js to override

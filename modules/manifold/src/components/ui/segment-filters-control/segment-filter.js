@@ -49,11 +49,11 @@ export default class SegmentFilter extends PureComponent {
   static propTypes = {
     filter: FILTER.isRequired,
     columnDef: FIELD.isRequired,
-    updateFilter: PropTypes.func,
+    onUpdateFilterValue: PropTypes.func,
   };
 
   static defaultProps = {
-    updateFilter: () => {},
+    onUpdateFilterValue: () => {},
   };
 
   state = {
@@ -69,9 +69,13 @@ export default class SegmentFilter extends PureComponent {
     columnDef => columnDef.tableFieldIndex
   );
 
-  _handleUpdateFilterValue = value => {
-    const {filter, updateFilter} = this.props;
-    this.setState({selectedDomain: value}, updateFilter({...filter, value}));
+  _getValuesFromOptions = options => options.map(o => o.id);
+
+  _onUpdateFilterValue = ({value, type}) => {
+    const {segmentId, filterId, onUpdateFilterValue} = this.props;
+    const _value =
+      type === 'select' ? this._getValuesFromOptions(value) : value;
+    onUpdateFilterValue(segmentId, filterId, _value);
   };
 
   _renderFilterControl = () => {
@@ -90,7 +94,7 @@ export default class SegmentFilter extends PureComponent {
             min={min}
             max={max}
             value={filter.value}
-            onChange={this._handleUpdateFilterValue}
+            onChange={this._onUpdateFilterValue}
             overrides={{
               Tick: {
                 component: TickOverrides,
@@ -123,7 +127,7 @@ export default class SegmentFilter extends PureComponent {
             valueKey="id"
             searchable={true}
             multi={true}
-            onChange={this._handleUpdateFilterValue}
+            onChange={this._onUpdateFilterValue}
             overrides={{
               Root: {style: {paddingBottom: '10px'}},
               MultiValue: {

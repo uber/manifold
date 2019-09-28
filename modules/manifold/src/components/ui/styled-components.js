@@ -43,24 +43,6 @@ export const SelectArrow = styled(ArrowDown)`
   margin-right: 10px;
 `;
 
-// div is to wrap the input and the InputButtons below
-export const StyledInput = styled.div`
-  height: 36px;
-  min-width: 120px;
-  background-color: rgba(240, 240, 240, 0.7);
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  input {
-    appearance: none;
-    border: 0;
-    background-color: transparent;
-    width: 100%;
-    height: 100%;
-    padding: 6px 10px;
-  }
-`;
-
 export const InputButtons = styled.div`
   align-self: center;
   display: flex;

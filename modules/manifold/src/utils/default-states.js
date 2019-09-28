@@ -222,7 +222,7 @@ export const isValidSegmentFilterFromFieldDef = (filter, field) => {
     return (
       filterType === FILTER_TYPE.INCLUDE &&
       // filter must contain a subset of column domain
-      value.length < domain.length &&
+      value.length <= domain.length &&
       value.every(val => domain.includes(val))
     );
   } else if (featureType === FEATURE_TYPE.NUMERICAL) {
@@ -233,7 +233,7 @@ export const isValidSegmentFilterFromFieldDef = (filter, field) => {
       value.length === 2 &&
       value[0] < value[1] &&
       // filter must contain a subset of column domain
-      (domain[0] > value[0] || domain[domain.length - 1] < value[1]) &&
+      (domain[0] >= value[0] || domain[domain.length - 1] <= value[1]) &&
       // filter must be non-empty
       (domain[0] <= value[1] && domain[domain.length - 1] >= value[0])
     );

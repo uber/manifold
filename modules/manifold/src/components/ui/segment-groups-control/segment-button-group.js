@@ -1,6 +1,7 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import {THEME} from '../../../constants';
 
 const Container = styled.div`
   display: flex;
@@ -13,7 +14,7 @@ const Container = styled.div`
 `;
 
 const SegmentButtonGroupPanel = styled.div`
-  background: #f5f5f5;
+  background: ${THEME.colors.inputFill};
   display: flex;
   flex-direction: row;
   align-items: center;

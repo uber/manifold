@@ -1,4 +1,3 @@
-// @noflow
 import random from 'random';
 
 /**
