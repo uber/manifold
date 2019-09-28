@@ -8,7 +8,7 @@ import Manifold from '@mlvis/manifold';
 // todo: temp
 import {loadUserData} from '@mlvis/manifold/actions';
 // import {FEATURE_TYPE} from '@mlvis/mlvis-common/constants';
-import {loadMAData} from './actions';
+// import {loadMAData} from './actions';
 
 const getManifoldState = state => state.demo.manifold;
 
@@ -26,12 +26,12 @@ class App extends Component {
   };
 
   componentDidMount = () => {
-    this.props.dispatch(
-      loadMAData([
-        '../data/ma_geo_partition.csv',
-        // '../data/ma_geo_nopartition.csv',
-      ])
-    );
+    // this.props.dispatch(
+    //   loadMAData([
+    //     '../data/ma_geo_partition.csv',
+    //     '../data/ma_geo_nopartition.csv',
+    //   ])
+    // );
     // setTimeout(
     //   () =>
     //     this.props.dispatch(
@@ -44,7 +44,7 @@ class App extends Component {
     //     ),
     //   0
     // );
-    // this._toggleDataUploadModal(true);
+    this._toggleDataUploadModal(true);
   };
 
   _handleUpload = userData => {

@@ -68,7 +68,7 @@ export const DEFAULT_STATE = {
   metric: undefined,
 
   /** data slicing states */
-  isManualSegmentation: true,
+  isManualSegmentation: false,
   // {Array<Number>} use which columns to slice. An array of column ids
   baseCols: [],
   // {Array<Array<Object>>} filter logic corresponding to data segment (only applicable to manual slicing)
@@ -153,7 +153,6 @@ export const handleLoadLocalDataSuccess = (state, {payload}) => {
     modelsMeta,
     columnTypeRanges,
     isLocalDataLoading: false,
-    baseCols: [15, 18],
   });
 };
 

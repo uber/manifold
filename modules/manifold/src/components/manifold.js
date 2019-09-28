@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import {Client as Styletron} from 'styletron-engine-atomic';
 import {Provider as StyletronProvider} from 'styletron-react';
 import {BaseProvider} from 'baseui';
-// import {theme} from '../styles';
 import {connect} from '../custom-connect';
 import {
   THEME,
