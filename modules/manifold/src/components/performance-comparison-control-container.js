@@ -75,13 +75,13 @@ class PerformanceComparisonControlContainer extends PureComponent {
     isModelsComparisonLoading: PropTypes.bool,
     hasBackend: PropTypes.bool,
 
-    modelsMeta: STATE_DATA_TYPES.modelsMeta.isRequired,
-    metric: STATE_DATA_TYPES.metric.isRequired,
-    isManualSegmentation: STATE_DATA_TYPES.isManualSegmentation.isRequired,
-    baseCols: STATE_DATA_TYPES.baseCols.isRequired,
-    nClusters: STATE_DATA_TYPES.nClusters.isRequired,
-    segmentFilters: STATE_DATA_TYPES.segmentFilters.isRequired,
-    segmentGroups: STATE_DATA_TYPES.segmentGroups.isRequired,
+    modelsMeta: STATE_DATA_TYPES.modelsMeta,
+    metric: STATE_DATA_TYPES.metric,
+    isManualSegmentation: STATE_DATA_TYPES.isManualSegmentation,
+    baseCols: STATE_DATA_TYPES.baseCols,
+    nClusters: STATE_DATA_TYPES.nClusters,
+    segmentFilters: STATE_DATA_TYPES.segmentFilters,
+    segmentGroups: STATE_DATA_TYPES.segmentGroups,
   };
 
   static defaultProps = {
@@ -90,9 +90,10 @@ class PerformanceComparisonControlContainer extends PureComponent {
     flexDirection: 'row',
     modelComparisonParams: {nClusters: 4},
     isModelsComparisonLoading: false,
-    isManualSegmentation: false,
     hasBackend: false,
     modelsMeta: {},
+    metric: {},
+    isManualSegmentation: false,
   };
 
   _getMetricOptions = createSelector(
