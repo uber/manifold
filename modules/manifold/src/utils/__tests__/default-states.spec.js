@@ -218,12 +218,12 @@ test('utils: default-states/isValidSegmentFilterFromFieldDef', () => {
     value: d => d > 1,
   };
   expect(isValidSegmentFilterFromFieldDef(filterCat1, fieldCat)).toBeFalsy();
-  // filter must contain a subset of column domain
-  expect(isValidSegmentFilterFromFieldDef(filterCat2, fieldCat)).toBeFalsy();
+  // todo: whether it's necessary that filter must contain a subset of column domain
+  expect(isValidSegmentFilterFromFieldDef(filterCat2, fieldCat)).toBeTruthy();
   expect(isValidSegmentFilterFromFieldDef(filterCat3, fieldCat)).toBeTruthy();
   expect(isValidSegmentFilterFromFieldDef(filterNum1, fieldNum)).toBeFalsy();
-  // filter must contain a subset of column domain
-  expect(isValidSegmentFilterFromFieldDef(filterNum2, fieldNum)).toBeFalsy();
+  // todo: whether it's necessary that filter must contain a subset of column domain
+  expect(isValidSegmentFilterFromFieldDef(filterNum2, fieldNum)).toBeTruthy();
   // filter must be non-empty
   expect(isValidSegmentFilterFromFieldDef(filterNum3, fieldNum)).toBeFalsy();
   expect(isValidSegmentFilterFromFieldDef(filterNum4, fieldNum)).toBeTruthy();

@@ -507,11 +507,13 @@ export function validateAndSetDefaultStateSingle(
   if (validateFunc(state)) {
     return state;
   }
+  // otherwise, create new state
   const defaultField = setDefaultFunc(state);
+  /* elint-disable no-console */
   if (process.ENV !== 'production') {
     console.warn(`${field} is not valid, resetting to ${defaultField}`);
   }
-  // otherwise, create new state
+  /* elint-enable no-console */
   return {
     ...state,
     [field]: defaultField,

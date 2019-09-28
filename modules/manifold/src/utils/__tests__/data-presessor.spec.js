@@ -4,8 +4,8 @@ import {
   columnsAndFieldsFromYPred,
   columnsAndFieldsFromYTrue,
   columnsAndFieldsFromScore,
-} from '../utils/data-processor';
-import {predColName, scoreColName, GROUND_TRUTH_NAME} from '../constants';
+} from '../data-processor';
+import {predColName, scoreColName, GROUND_TRUTH_NAME} from '../../constants';
 import {
   FEATURE_TYPE,
   UUID_NAME,
