@@ -6,7 +6,7 @@
   "scripts": {
     "watch": "node --max_old_space_size=8192 node_modules/.bin/webpack --mode development --progress --watch",
     "clean": "rm -rf ../mlvis/static",
-    "build": "yarn clean && webpack --mode production"
+    "build": "yarn clean && webpack --mode production --progress"
   },
   "dependencies": {
     "global": "^4.4.0",
