@@ -12,15 +12,11 @@ clean:
 build-js:
 	cd js && yarn build
 
-build-py:
-	rm -rf dist
+build-py: clean
 	python setup.py sdist bdist_wheel
 
-build:
-	cd js && yarn build
-	rm -rf dist
-	python setup.py sdist bdist_wheel
-	
+build: build-js build-py
+
 publish:
 	twine upload dist/*
 
