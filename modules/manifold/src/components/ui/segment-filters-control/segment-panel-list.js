@@ -23,17 +23,18 @@ export default class SegmentPanelList extends PureComponent {
     columnDefs: PropTypes.arrayOf(FIELD),
     segmentFilters: PropTypes.arrayOf(
       PropTypes.shape({
-        _key: PropTypes.string,
-        _content: PropTypes.arrayOf(FILTER),
+        key: PropTypes.string.isRequired,
+        filters: PropTypes.arrayOf(FILTER),
       })
     ),
     onUpdateFilterValue: PropTypes.func,
+    onRemoveSegment: PropTypes.func,
   };
 
   static defaultProps = {
     baseCols: [],
     columnDefs: [],
-    segmentFilters: [[], []],
+    segmentFilters: [{key: '0', filters: []}, {key: '1', filters: []}],
     onUpdateFilterValue: () => {},
   };
 
@@ -49,10 +50,10 @@ export default class SegmentPanelList extends PureComponent {
       <SegmentPanelListContainer>
         {segmentFilters.map((singleSegmentFilters, i) => (
           <SegmentPanel
-            key={singleSegmentFilters._key}
+            key={singleSegmentFilters.key}
             segmentId={i}
             nSegments={segmentFilters.length}
-            filters={singleSegmentFilters._content}
+            filters={singleSegmentFilters.filters}
             columnDefs={columnDefs}
             onRemoveSegment={onRemoveSegment}
             onUpdateFilterValue={onUpdateFilterValue}

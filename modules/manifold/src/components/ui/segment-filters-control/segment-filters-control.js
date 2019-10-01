@@ -44,13 +44,13 @@ const IconButton = styled.div`
 
 const _getSegmentFiltersStateFromProps = segmentFilters =>
   segmentFilters.map((filters, segmentId) => ({
-    // _key is only use as keys to segment panels
-    _key: generateRandomId(),
-    _content: filters,
+    // key is only use as keys to segment panels
+    key: generateRandomId(),
+    filters,
   }));
 
 const _getSegmentFiltersPropsFromState = segmentFilters =>
-  segmentFilters.map(filters => filters._content);
+  segmentFilters.map(filters => filters.filters);
 
 export default class SegmentFiltersControl extends PureComponent {
   static propTypes = {
@@ -68,6 +68,7 @@ export default class SegmentFiltersControl extends PureComponent {
   // SegmentFiltersControl is reset to default state, controlled by a key, whenever baseCols change
   state = {
     segmentFilters: _getSegmentFiltersStateFromProps(this.props.segmentFilters),
+    hasChanged: false,
   };
 
   _onUpdateSegmentFilters = () => {
@@ -82,7 +83,7 @@ export default class SegmentFiltersControl extends PureComponent {
     const {segmentFilters} = this.state;
     const updatedSegmentFilters = dotSet(
       segmentFilters,
-      [segmentId, '_content', filterId, 'value'],
+      [segmentId, 'filters', filterId, 'value'],
       filterValue
     );
     this.setState({
@@ -94,7 +95,7 @@ export default class SegmentFiltersControl extends PureComponent {
   _onAppendSegment = () => {
     const {segmentFilters} = this.state;
     // just duplicate the last segment
-    const newSegment = segmentFilters[segmentFilters.length - 1]._content.map(
+    const newSegment = segmentFilters[segmentFilters.length - 1].filters.map(
       filter => ({
         ...filter,
         value: clone(filter.value),
@@ -102,14 +103,16 @@ export default class SegmentFiltersControl extends PureComponent {
     );
     this.setState({
       segmentFilters: segmentFilters.concat({
-        _key: generateRandomId(),
-        _content: newSegment,
+        key: generateRandomId(),
+        filters: newSegment,
       }),
+      hasChanged: true,
     });
   };
 
   _onRemoveSegment = segmentId => {
     const {segmentFilters} = this.state;
+    // todo: possibily add error message when length <= 2
     if (segmentFilters.length > 2) {
       this.setState({
         segmentFilters: segmentFilters.filter((_, id) => id !== segmentId),

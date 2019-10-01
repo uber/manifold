@@ -7,13 +7,6 @@ import ChevronRight from 'baseui/icon/chevron-right';
 import ChevronDown from 'baseui/icon/chevron-down';
 import {FILTER, FIELD, THEME} from '../../../constants';
 import SegmentFilter from './segment-filter';
-import {FEATURE_TYPE, FILTER_TYPE} from '@mlvis/mlvis-common/constants';
-
-const FEATURE_TYPE_TO_FILTER_TYPE_MAP = {
-  [FEATURE_TYPE.BOOLEAN]: FILTER_TYPE.INCLUDE,
-  [FEATURE_TYPE.CATEGORICAL]: FILTER_TYPE.INCLUDE,
-  [FEATURE_TYPE.NUMERICAL]: FILTER_TYPE.RANGE,
-};
 
 const Container = styled.div`
   background: #fff;
@@ -72,48 +65,14 @@ export default class SegmentPanel extends PureComponent {
     onUpdateFilterValue: () => {},
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {isOpen: props.segmentId === 0};
-  }
+  state = {
+    isOpen: this.props.segmentId === 0,
+  };
 
   _onToggleOpen = () => {
     this.setState({
       isOpen: !this.state.isOpen,
     });
-  };
-
-  _onRemoveSegment = segmentId => {
-    if (this.props.nSegments > 2) {
-      this.props.removeSegment(segmentId);
-    }
-  };
-
-  _handleAddRemoveFilters = newKeys => {
-    const {
-      attributes,
-      segment: {filters = []},
-    } = this.props;
-
-    const oldKeys = filters.map(f => f.key);
-    const keysToAppend = newKeys.filter(key => !oldKeys.includes(key));
-    const keysToRemove = oldKeys.filter(key => !newKeys.includes(key));
-
-    const filtersToAppend = keysToAppend.map(key => {
-      const {type: attributeType} = attributes.find(attr => attr.key === key);
-      return {
-        key,
-        keyIndex: 0,
-        type: FEATURE_TYPE_TO_FILTER_TYPE_MAP[attributeType],
-      };
-    });
-
-    const updatedFilters = filters
-      .filter(f => !keysToRemove.includes(f.key))
-      .concat(filtersToAppend)
-      .sort((a, b) => a.key.localeCompare(b.key));
-
-    this.props.updateFilters(updatedFilters);
   };
 
   render() {
@@ -137,7 +96,7 @@ export default class SegmentPanel extends PureComponent {
             {`segment ${segmentId}`}
           </HeaderTextGroup>
           <IconButton
-            disabled={nSegments < 2}
+            disabled={nSegments <= 2}
             onClick={() => onRemoveSegment(segmentId)}
           >
             <Delete size={18} />

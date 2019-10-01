@@ -160,8 +160,8 @@ class Manifold extends PureComponent {
     const {selector, dataLoadingError, mapboxToken, width, height} = this.props;
     const {isHelpMessageModalOpen, viewMode, viewTab, helpType} = this.state;
     const showBoth = viewMode === VIEW_MODE.COORDINATED;
-    const showView1 = showBoth || viewTab === VIEW_TAB.PERF;
-    const showView2 = showBoth || viewTab === VIEW_TAB.FEATURE;
+    const showLeftView = showBoth || viewTab === VIEW_TAB.PERF;
+    const showRightView = showBoth || viewTab === VIEW_TAB.FEATURE;
     const mainPanelWidth = showBoth
       ? width / 2 - 2 * PANEL_PADDING
       : width - CONTROL_WIDTH - 2 * PANEL_PADDING;
@@ -194,7 +194,7 @@ class Manifold extends PureComponent {
                   onClickSplit={this._toggleViewMode}
                   onClickHelp={() =>
                     this._toggleHelpType(
-                      showView1 ? HELP_TYPE.PERF : HELP_TYPE.FEATURE
+                      showLeftView ? HELP_TYPE.PERF : HELP_TYPE.FEATURE
                     )
                   }
                   themeColor={THEME_COLOR}
@@ -277,7 +277,7 @@ class Manifold extends PureComponent {
                       selector={selector}
                     />
                   </SidePanelControlSection>
-                  {showView2 && (
+                  {showRightView && (
                     <Thumbnail>
                       <PerformanceComparisonContainer
                         selector={selector}
@@ -293,7 +293,7 @@ class Manifold extends PureComponent {
               <Panel
                 key="chart1"
                 gridArea={showBoth ? 'chart1' : 'chart'}
-                isShown={showView1}
+                isShown={showLeftView}
                 borderRight={showBoth}
                 padded
               >
@@ -306,7 +306,7 @@ class Manifold extends PureComponent {
               <Panel
                 key="chart2"
                 gridArea={showBoth ? 'chart2' : 'chart'}
-                isShown={showView2}
+                isShown={showRightView}
                 padded
               >
                 <GeoFeatureContainer

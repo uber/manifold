@@ -1,5 +1,4 @@
 import React, {PureComponent} from 'react';
-import {createSelector} from 'reselect';
 import PropTypes from 'prop-types';
 import {connect} from '../custom-connect';
 import {
@@ -7,7 +6,7 @@ import {
   COLORS,
   CONTROL_MARGIN,
   METRIC_OPTIONS,
-  MODEL_TYPE,
+  MODEL_TYPE_FROM_N_CLASSES,
   SEGMENTATION_METHOD,
 } from '../constants';
 import {StyledControl, InputButtons} from './ui/styled-components';
@@ -37,6 +36,7 @@ import {
 } from '../selectors/base';
 import {getModelsMeta, getColumnDefs} from '../selectors/compute';
 import {getSegmentIds} from '../selectors/adaptors';
+import {assert} from '@tensorflow/tfjs-core/dist/util';
 
 const CONTROL_WIDTH = [130, 120, 100];
 // remove some elements based on parent width
@@ -96,23 +96,6 @@ class PerformanceComparisonControlContainer extends PureComponent {
     isManualSegmentation: false,
   };
 
-  _getMetricOptions = createSelector(
-    [state => state.metricOptions, state => state.nClasses],
-    (metricOptions, nClasses) => {
-      const modelType =
-        nClasses === 1
-          ? MODEL_TYPE.REGRESSION
-          : nClasses === 2
-          ? MODEL_TYPE.BIN_CLASS
-          : MODEL_TYPE.MULT_CLASS;
-
-      return metricOptions[modelType].map((metric, i) => ({
-        id: i,
-        label: metric.name,
-      }));
-    }
-  );
-
   _renderInputButtons = () => {
     const {isModelsComparisonLoading, isManualSegmentation} = this.props;
     return (
@@ -134,14 +117,17 @@ class PerformanceComparisonControlContainer extends PureComponent {
   };
 
   _onUpdateMetric = ({value}) => {
+    assert(value && value.length, '`value` must be a non-empty array');
     this.props.updateMetric(value[0]);
   };
 
   _onUpdateSegmentationMethod = ({value}) => {
+    assert(value && value.length, '`value` must be a non-empty array');
     this.props.updateSegmentationMethod(value[0].id);
   };
 
   _onUpdateBaseCols = ({value}) => {
+    assert(value && value.length, '`value` must be a non-empty array');
     const colIds = value.map(col => col.tableFieldIndex - 1).sort();
     this.props.updateBaseCols(colIds);
   };
@@ -182,12 +168,7 @@ class PerformanceComparisonControlContainer extends PureComponent {
       segmentGroups,
     } = this.props;
     const isHorizontal = flexDirection === 'row';
-    const modelType =
-      nClasses === 1
-        ? MODEL_TYPE.REGRESSION
-        : nClasses === 2
-        ? MODEL_TYPE.BIN_CLASS
-        : MODEL_TYPE.MULT_CLASS;
+    const modelType = MODEL_TYPE_FROM_N_CLASSES(nClasses);
 
     // reset SegmentFiltersControl to default state whenever baseCols change
     // https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#recommendation-fully-uncontrolled-component-with-a-key
@@ -223,6 +204,7 @@ class PerformanceComparisonControlContainer extends PureComponent {
               {id: SEGMENTATION_METHOD.MANUAL},
             ]}
             labelKey="id"
+            valueKey="id"
             size={SIZE.compact}
             searchable={false}
             onChange={this._onUpdateSegmentationMethod}

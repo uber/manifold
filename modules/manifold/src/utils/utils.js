@@ -511,7 +511,9 @@ export function validateAndSetDefaultStateSingle(
   const defaultField = setDefaultFunc(state);
   /* eslint-disable no-console */
   if (process.ENV !== 'production') {
-    console.warn(`${field} is not valid, resetting to ${defaultField}`);
+    console.warn(
+      `${field} is not valid, resetting to ${JSON.stringify(defaultField)}`
+    );
   }
   /* eslint-enable no-console */
   return {

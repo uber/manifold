@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {METRIC, METRIC_OPTIONS, MODEL_TYPE} from '../constants';
+import {METRIC, METRIC_OPTIONS, MODEL_TYPE_FROM_N_CLASSES} from '../constants';
 import {
   FEATURE_TYPE,
   FILTER_TYPE,
@@ -24,12 +24,7 @@ export const isValidMetric = state => {
     modelsMeta: {nClasses},
   } = state;
   assert(nClasses > 0, '`nClasses` must be larger than 0');
-  const modelType =
-    nClasses === 1
-      ? MODEL_TYPE.REGRESSION
-      : nClasses === 2
-      ? MODEL_TYPE.BIN_CLASS
-      : MODEL_TYPE.MULT_CLASS;
+  const modelType = MODEL_TYPE_FROM_N_CLASSES(nClasses);
   return METRIC_OPTIONS[modelType].includes(metric);
 };
 

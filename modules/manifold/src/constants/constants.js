@@ -11,6 +11,14 @@ export const MODEL_TYPE = {
   MULT_CLASS: 'MULT_CLASS',
 };
 
+export const MODEL_TYPE_FROM_N_CLASSES = nClasses => {
+  return nClasses === 1
+    ? MODEL_TYPE.REGRESSION
+    : nClasses === 2
+    ? MODEL_TYPE.BIN_CLASS
+    : MODEL_TYPE.MULT_CLASS;
+};
+
 export const METRIC = {
   ABSOLUTE_ERROR: {
     name: 'absolute error',

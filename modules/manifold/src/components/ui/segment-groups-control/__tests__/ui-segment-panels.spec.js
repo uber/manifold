@@ -7,6 +7,7 @@ import {
 import {FEATURE_TYPE, FILTER_TYPE} from '@mlvis/mlvis-common/constants';
 
 test('utils: updateSegmentGroups', () => {
+  // todo: use an object as the input to these functions
   // deselect segment 1 from group 0
   expect(updateSegmentGroups([[0, 1], [2, 3]], 0, 1)).toEqual([[0], [2, 3]]);
   // move segment 2 from group 1 to group 0
