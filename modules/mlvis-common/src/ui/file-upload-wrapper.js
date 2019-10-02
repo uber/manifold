@@ -1,10 +1,7 @@
-// @noflow
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-// TODO icons/upload does not render properly somehow
-// will remove dependecy on antd in the next diff
-import {Icon, Upload} from 'antd';
+import {Icon, Upload} from 'baseui';
 import {loadFromLocal} from '../utils/io';
 
 const Container = styled.div`

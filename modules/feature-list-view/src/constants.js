@@ -39,6 +39,7 @@ export const CHART_PROP_TYPES = {
           PropTypes.string,
           PropTypes.number,
           PropTypes.bool,
+          PropTypes.instanceOf(Date),
         ])
       )
     ),

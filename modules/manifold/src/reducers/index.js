@@ -10,6 +10,7 @@ import {
   handleUpdateSegmentFilters,
   handleUpdateSegmentGroups,
 } from './data-slicing';
+import {validateAndSetDefaultStates} from './utils';
 
 import {
   FETCH_MODELS_START,
@@ -34,7 +35,6 @@ import {
   UPDATE_COLOR_BY_FEATURE,
 } from '../actions';
 
-import {METRIC} from '../constants';
 import {registerExternalReducers} from '../utils';
 
 export const DEFAULT_STATE = {
@@ -65,14 +65,14 @@ export const DEFAULT_STATE = {
 
   /** data generation states */
   // {Object} metric configuration, contains {name, description, func}
-  metric: METRIC.REGRESSION.ABSOLUTE_ERROR,
+  metric: undefined,
 
   /** data slicing states */
   isManualSegmentation: false,
   // {Array<Number>} use which columns to slice. An array of column ids
   baseCols: [],
   // {Array<Array<Object>>} filter logic corresponding to data segment (only applicable to manual slicing)
-  segmentFilters: [],
+  segmentFilters: [[], []],
   // {Number} number of clusters to use in automatic slicing (only applicable to automatic slicing)
   nClusters: 4,
   // {Array<Array<Number>>} which segments to group together for comparing against each other. An array of array of segment IDs
@@ -147,13 +147,13 @@ export const handleLoadLocalDataStart = (state, {payload}) => ({
 
 export const handleLoadLocalDataSuccess = (state, {payload}) => {
   const {data, modelsMeta, columnTypeRanges} = payload;
-  return {
+  return validateAndSetDefaultStates({
     ...state,
     data,
     modelsMeta,
     columnTypeRanges,
     isLocalDataLoading: false,
-  };
+  });
 };
 
 export const handleLoadLocalDataFailure = (state, {payload}) => ({

@@ -36,7 +36,7 @@ test('reducers: data-generation/handleUpdateMetric', () => {
     modelsMeta: meta2,
   };
   const stateOut2 = handleUpdateMetric(state2, {
-    payload: METRIC.BINARY_CLASSIFICATION.LOG_LOSS,
+    payload: METRIC.LOG_LOSS,
   });
 
   expect(Array.from(stateOut2.data.columns[5])).toMatchObject([

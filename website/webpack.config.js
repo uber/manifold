@@ -23,7 +23,6 @@ const COMMON_CONFIG = {
     alias: {
       react: resolve(NODE_MODULES, 'react'),
       'styled-components': resolve(NODE_MODULES, 'styled-components'),
-      antd: resolve(NODE_MODULES, 'antd'),
       // Imports the manifold library from the src directory in this repo
       ...packageAliases(),
     },
@@ -35,7 +34,9 @@ const COMMON_CONFIG = {
         // Compile ES2015 using bable
         test: /\.js$/,
         loader: 'babel-loader',
-        // options: BABEL_CONFIG,
+        options: {
+          rootMode: 'upward',
+        },
         exclude: [/node_modules/],
       },
       {

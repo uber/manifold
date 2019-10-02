@@ -1,4 +1,6 @@
 import {Array} from 'global';
+import setWith from 'lodash.setwith';
+import clone from 'lodash.clone';
 import {
   FEATURE_TYPE,
   FILTER_TYPE,
@@ -382,6 +384,17 @@ export function product(collectionArr) {
   return result;
 }
 
+/**
+ * Immutable set function for plain JS Object. Makes a shallow clone of all objects affected in the path
+ * @param {Object|Array} obj - object to assign in
+ * @param {String|Array<String>} path - path to set th value i
+ * @param {Any} value - value to assign with
+ * @return {Object|Array}
+ */
+export function dotSet(obj, path, value) {
+  return setWith(clone(obj), path, value, clone);
+}
+
 // todo: to be consolidated with `computeNumericalFeatureDomain`
 export function getColumnMinMax(values) {
   let min = Infinity;
@@ -495,9 +508,17 @@ export function validateAndSetDefaultStateSingle(
     return state;
   }
   // otherwise, create new state
+  const defaultField = setDefaultFunc(state);
+  /* eslint-disable no-console */
+  if (process.ENV !== 'production') {
+    console.warn(
+      `${field} is not valid, resetting to ${JSON.stringify(defaultField)}`
+    );
+  }
+  /* eslint-enable no-console */
   return {
     ...state,
-    [field]: setDefaultFunc(state),
+    [field]: defaultField,
   };
 }
 

@@ -1,4 +1,6 @@
 import {
+  defaultMetric,
+  isValidMetric,
   defaultBaseCols,
   isValidBaseCols,
   defaultNClusters,
@@ -10,6 +12,7 @@ import {
   defaultSegmentGroups,
   isValidSegmentGroups,
 } from '../default-states';
+import {METRIC} from '../../constants';
 import {
   FILTER_TYPE,
   FIELD_ROLE,
@@ -68,6 +71,23 @@ const filters = [
     },
   ],
 ];
+
+test('utils: default-states/defaultMetric', () => {
+  expect(defaultMetric({modelsMeta: {nClasses: 1}})).toEqual(
+    METRIC.ABSOLUTE_ERROR
+  );
+  expect(defaultMetric({modelsMeta: {nClasses: 2}})).toEqual(METRIC.LOG_LOSS);
+  expect(defaultMetric({modelsMeta: {nClasses: 3}})).toEqual(METRIC.LOG_LOSS);
+});
+
+test('utils: default-states/isValidMetric', () => {
+  expect(
+    isValidMetric({metric: METRIC.LOG_LOSS, modelsMeta: {nClasses: 2}})
+  ).toBeTruthy();
+  expect(
+    isValidMetric({metric: METRIC.LOG_LOSS, modelsMeta: {nClasses: 1}})
+  ).toBeFalsy();
+});
 
 test('utils: default-states/defaultBaseCols', () => {
   const state = {columnTypeRanges: {score: [11, 13]}};
@@ -198,12 +218,12 @@ test('utils: default-states/isValidSegmentFilterFromFieldDef', () => {
     value: d => d > 1,
   };
   expect(isValidSegmentFilterFromFieldDef(filterCat1, fieldCat)).toBeFalsy();
-  // filter must contain a subset of column domain
-  expect(isValidSegmentFilterFromFieldDef(filterCat2, fieldCat)).toBeFalsy();
+  // todo: whether it's necessary that filter must contain a subset of column domain
+  expect(isValidSegmentFilterFromFieldDef(filterCat2, fieldCat)).toBeTruthy();
   expect(isValidSegmentFilterFromFieldDef(filterCat3, fieldCat)).toBeTruthy();
   expect(isValidSegmentFilterFromFieldDef(filterNum1, fieldNum)).toBeFalsy();
-  // filter must contain a subset of column domain
-  expect(isValidSegmentFilterFromFieldDef(filterNum2, fieldNum)).toBeFalsy();
+  // todo: whether it's necessary that filter must contain a subset of column domain
+  expect(isValidSegmentFilterFromFieldDef(filterNum2, fieldNum)).toBeTruthy();
   // filter must be non-empty
   expect(isValidSegmentFilterFromFieldDef(filterNum3, fieldNum)).toBeFalsy();
   expect(isValidSegmentFilterFromFieldDef(filterNum4, fieldNum)).toBeTruthy();

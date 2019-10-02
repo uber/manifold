@@ -1,4 +1,5 @@
 import assert from 'assert';
+import {METRIC, METRIC_OPTIONS, MODEL_TYPE_FROM_N_CLASSES} from '../constants';
 import {
   FEATURE_TYPE,
   FILTER_TYPE,
@@ -6,6 +7,26 @@ import {
 } from '@mlvis/mlvis-common/constants';
 import {dotRange} from '@mlvis/mlvis-common/utils';
 import {product} from './utils';
+
+//---------Metric----------//
+
+export const defaultMetric = state => {
+  const {
+    modelsMeta: {nClasses},
+  } = state;
+  assert(nClasses > 0, '`nClasses` must be larger than 0');
+  return nClasses >= 2 ? METRIC.LOG_LOSS : METRIC.ABSOLUTE_ERROR;
+};
+
+export const isValidMetric = state => {
+  const {
+    metric,
+    modelsMeta: {nClasses},
+  } = state;
+  assert(nClasses > 0, '`nClasses` must be larger than 0');
+  const modelType = MODEL_TYPE_FROM_N_CLASSES(nClasses);
+  return METRIC_OPTIONS[modelType].includes(metric);
+};
 
 //---------BaseCols----------//
 
@@ -196,7 +217,7 @@ export const isValidSegmentFilterFromFieldDef = (filter, field) => {
     return (
       filterType === FILTER_TYPE.INCLUDE &&
       // filter must contain a subset of column domain
-      value.length < domain.length &&
+      value.length <= domain.length &&
       value.every(val => domain.includes(val))
     );
   } else if (featureType === FEATURE_TYPE.NUMERICAL) {
@@ -207,7 +228,7 @@ export const isValidSegmentFilterFromFieldDef = (filter, field) => {
       value.length === 2 &&
       value[0] < value[1] &&
       // filter must contain a subset of column domain
-      (domain[0] > value[0] || domain[domain.length - 1] < value[1]) &&
+      (domain[0] >= value[0] || domain[domain.length - 1] <= value[1]) &&
       // filter must be non-empty
       (domain[0] <= value[1] && domain[domain.length - 1] >= value[0])
     );
@@ -261,6 +282,7 @@ export const isValidSegmentGroups = state => {
 };
 
 export const setDefaultFuncs = {
+  metric: defaultMetric,
   baseCols: defaultBaseCols,
   nClusters: defaultNClusters,
   segmentFilters: defaultSegmentFilters,
@@ -268,6 +290,7 @@ export const setDefaultFuncs = {
 };
 
 export const isValidFuncs = {
+  metric: isValidMetric,
   baseCols: isValidBaseCols,
   nClusters: isValidNClusters,
   segmentFilters: isValidSegmentFilters,

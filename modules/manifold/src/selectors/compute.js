@@ -94,6 +94,11 @@ export const getModelsMeta = createSelector(
   state => state.modelsMeta
 );
 
+export const getColumnDefs = createSelector(
+  getData,
+  data => data.fields
+);
+
 export const getFeaturesMeta = createSelector(
   getX,
   x => {
