@@ -18,5 +18,5 @@
 - [ ] I have made this PR atomic.
 - [ ] I have provided enough context for others to review.
 - [ ] I have added tests to cover my changes.
-- [ ] I have updated the documentation and changelogs accordinly.
+- [ ] I have updated the documentation and changelogs accordingly.
 - [ ] All new and existing tests passed.
