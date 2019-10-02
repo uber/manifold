@@ -78,9 +78,9 @@ This guide explains how to interpret Manifold visualizations.
 
 Manifold consists of:
 
-  - [Performance Comparison View](#performance_comparison_view) which compares
+  - [Performance Comparison View](#performance-comparison-view) which compares
     prediction performance across models, across data subsets
-  - [Feature Attribution View](#feature_distribution) which visualizes feature
+  - [Feature Attribution View](#feature-distribution) which visualizes feature
     distributions of data subsets with various performance levels
 
 ### Performance Comparison View
