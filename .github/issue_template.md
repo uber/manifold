@@ -15,6 +15,13 @@
 <!--- If describing a bug, tell us what happens instead of the expected behavior -->
 <!--- If suggesting a change/improvement, explain the difference from current behavior -->
 
+#### Context and Environment
+
+<!--- Include as many relevant details about the environment you experienced the bug in -->
+<!--- e.g. Browser/node/npm versions, OS, Babel, etc. -->
+
+- Module & version: [e.g. @mlvis/stacked-calendar, v1.0.0]
+
 #### Steps to Reproduce
 
 <!--- Provide a link to a live example, or an unambiguous set of steps to -->
