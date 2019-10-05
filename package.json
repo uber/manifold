@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "private": true,
   "author": "Firenze11 <lezhi.li@uber.com>",
-  "main": "dist/esm/index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uber/manifold.git"
