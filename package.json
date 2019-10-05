@@ -57,7 +57,7 @@
     "less-loader": "^5.0.0",
     "mini-css-extract-plugin": "^0.7.0",
     "node-sass": "^4.11.0",
-    "ocular-dev-tools": "0.0.27",
+    "ocular-dev-tools": "0.0.30",
     "postcss-loader": "^3.0.0",
     "prettier": "^1.18.0",
     "prettier-eslint-cli": "^4.7.1",
@@ -74,8 +74,8 @@
     "lint": "eslint modules",
     "cover": "jest --coverage --config=jest.config.js",
     "test": "jest",
-    "clean": "ocular-clean",
-    "build": "ocular-clean && ocular-build && lerna run build",
+    "clean": "ocular-clean all",
+    "build": "ocular-clean all && ocular-build --dist esm && lerna run build",
     "publish": "ocular-publish",
     "-------- LERNA --------": "",
     "bump": "npm run lerna:bump",
@@ -97,7 +97,7 @@
     "traverse": "python scripts/traverse.py"
   },
   "engines": {
-    "node": ">=8.9.4 <9.0.0",
+    "node": ">=8.9.4",
     "npm": ">=5.6.0",
     "yarn": ">=1.9.4"
   },
