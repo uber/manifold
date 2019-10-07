@@ -98,8 +98,8 @@
   },
   "engines": {
     "node": ">=10.15.0",
-    "npm": ">=5.6.0",
-    "yarn": ">=1.9.4"
+    "npm": ">=6.4.0",
+    "yarn": ">=1.17.0"
   },
   "bugs": {
     "url": "https://github.com/uber/manifold/issues"
