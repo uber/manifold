@@ -1,1 +1,1 @@
-module.exports = require('./dist/esm/ui');
+module.exports = require('./dist/ui');

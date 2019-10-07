@@ -1,1 +1,1 @@
-module.exports = require('./dist/esm/middleware');
+module.exports = require('./dist/middleware');

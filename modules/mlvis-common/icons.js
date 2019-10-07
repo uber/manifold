@@ -1,1 +1,1 @@
-module.exports = require('./dist/esm/icons');
+module.exports = require('./dist/icons');

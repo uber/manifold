@@ -1,1 +1,1 @@
-module.exports = require('./dist/esm/actions');
+module.exports = require('./dist/actions');

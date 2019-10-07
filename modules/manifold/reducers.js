@@ -1,1 +1,1 @@
-module.exports = require('./dist/esm/reducers');
+module.exports = require('./dist/reducers');

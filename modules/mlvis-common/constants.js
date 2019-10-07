@@ -1,1 +1,1 @@
-module.exports = require('./dist/esm/constants');
+module.exports = require('./dist/constants');
