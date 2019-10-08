@@ -10,7 +10,7 @@
     "Yang Wang <gnavvy@uber.com>",
     "Lezhi Li <lezhi.li@uber.com>"
   ],
-  "main": "dist/esm/index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uber/manifold.git"

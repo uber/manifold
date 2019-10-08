@@ -7,7 +7,7 @@
   "description": "Model-Agnostic Visual Debugging Tool for Machine Learning",
   "license": "Apache-2.0",
   "author": "Firenze11 <lezhi.li@uber.com>",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uber/manifold.git"
