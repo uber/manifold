@@ -24,6 +24,7 @@ module.exports = {
   resolve: {
     alias: {
       react: resolve(NODE_MODULES, 'react'),
+      'react-redux': resolve(NODE_MODULES, 'react-redux'),
       'styled-components': resolve(NODE_MODULES, 'styled-components'),
       ...packageAliases(),
     },

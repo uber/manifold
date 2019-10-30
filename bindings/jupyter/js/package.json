@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "global": "^4.4.0",
-    "react": "^16.8.0",
+    "react": "^16.9.0",
     "reselect": "^4.0.0"
   },
   "devDependencies": {

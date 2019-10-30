@@ -22,6 +22,7 @@ const COMMON_CONFIG = {
   resolve: {
     alias: {
       react: resolve(NODE_MODULES, 'react'),
+      'react-redux': resolve(NODE_MODULES, 'react-redux'),
       'styled-components': resolve(NODE_MODULES, 'styled-components'),
       // Imports the manifold library from the src directory in this repo
       ...packageAliases(),

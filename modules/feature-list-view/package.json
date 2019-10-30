@@ -31,6 +31,6 @@
     "reselect": "^3.0.1"
   },
   "peerDependencies": {
-    "react": "^16.7.0"
+    "react": "^16.9.0"
   }
 }
