@@ -194,7 +194,7 @@ class Manifold extends PureComponent {
                   onClickSplit={this._toggleViewMode}
                   onClickHelp={() =>
                     this._toggleHelpType(
-                      showLeftView ? HELP_TYPE.PERF : HELP_TYPE.FEATURE,
+                      showLeftView ? HELP_TYPE.PERF : HELP_TYPE.FEATURE
                     )
                   }
                   themeColor={THEME_COLOR}
