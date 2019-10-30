@@ -1,15 +1,14 @@
 {
   "name": "@mlvis/graph-builder",
   "description": "A thin wrapper over graph.gl for exploring a graph interactively.",
-  "license": "Apache-2.0",
+  "license": "UNLICENSED",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uber/manifold.git"
   },
-  "version": "1.0.0",
+  "version": "1.1.0-alpha.0",
   "author": "Javid Hsueh",
   "main": "dist/index.js",
-  "license": "UNLICENSED",
   "publishConfig": {
     "note": "lerna requires this to publish scoped packages",
     "access": "public"
