@@ -1,4 +1,3 @@
-// @noflow
 // generator function from kepler layers need it
 // https://github.com/GitbookIO/expect-firestore/issues/1#issuecomment-370590583
 import '@babel/polyfill';

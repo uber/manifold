@@ -44,7 +44,6 @@
     "prop-types": "^15.7.2",
     "random": "^2.1.1",
     "react-d3-axis": "^0.1.1",
-    "react-redux": "^5.0.7",
     "reduce-reducers": "^1.0.4",
     "redux": "^4.0.1",
     "redux-actions": "^2.6.5",
@@ -54,7 +53,7 @@
     "styletron-react": "^5.2.1"
   },
   "peerDependencies": {
-    "react": "^16.7.0",
+    "react": "^16.9.0",
     "styled-components": "^4.2.0"
   }
 }

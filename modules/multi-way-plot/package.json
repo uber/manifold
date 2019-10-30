@@ -32,7 +32,7 @@
     "reselect": "^4.0.0"
   },
   "peerDependencies": {
-    "react": "^16.7.0",
+    "react": "^16.9.0",
     "styled-components": "^4.2.0"
   }
 }
