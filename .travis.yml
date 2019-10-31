@@ -9,3 +9,12 @@ script:
   - npm run test
   - codecov
 cache: yarn
+
+deploy:
+  provider: npm
+  on:
+    tags: true
+    branch: master
+  email: 'lezhi.li@uber.com'
+  api_key:
+    secure: jsjx7nabBt/upBWmsp0z5Qlurm6QUF79oi/YryjhEU2ym2SNJ1mKLBqI0OXgQr3qAvqQ1Td9jggbU2aujeCVnXcJned2bXaB9NIz7mx0dvf9Ql/rQKmGkZzjxB8nk0+Uki+CT1MePwaQeyk5VGK/E+aSa0mANB2pEmoqN1xVFGqW96DrJvNHK2K+tDn4Ua+XTSq6RxjaUYBJYBWYOCjiaXiJWsV05I5zBB2+ONXLNX/udrtR+sjxwvrmHRyjkYdKELmZvs/M7goBfVjs6P8nPK6JDPaK6Vu4tMHrcswSnntLrdCB1KYGJdOrQA8n/Qgf3py28NvfQWDsC+bCspx17LACYx8GVlLpHLqk7l0dDENvfvKtftzb3rRobkNOKKVaWSXvhhHky64QD2vrPtbXfQM4ht5/GUuqRBUBGBn6JTirZvqtwLUPJe6WAY4zK92jCj7KVeh+x0SLDmitBEvunEDMBYFByQZaHzxbRZkltxt3WFayBpTCoQ32LqFbtfTPSOZsnjIyN4LtcvEhHKwvHH0FMMMH2YyqoSnzQTZiZ53poa2N0qVWtHa+grincEvid9Cc4+rfqvZCHVXzBgsCo0K5M5E8DlZ7rV8qHZCDe9AsN5A5q2IaEWqPhBQjDQ8apCJRxPIhVe1co27E6DgMA4OVlZq7m6b+pmD718MgdhE=
