@@ -1,6 +1,6 @@
 {
   "name": "@mlvis/mlvis-common",
-  "version": "1.0.0",
+  "version": "1.1.0-alpha.15",
   "license": "Apache-2.0",
   "publishConfig": {
     "access": "public"
@@ -10,7 +10,7 @@
     "Lezhi Li <lezhi.li@uber.com>",
     "Yang Wang <gnavvy@uber.com>"
   ],
-  "main": "dist/index.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uber/manifold.git"
