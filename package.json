@@ -77,7 +77,7 @@
     "test": "jest",
     "clean": "ocular-clean all",
     "build": "ocular-clean all && ocular-build --dist esm && lerna run build",
-    "publish": "ocular-publish",
+    "publish": "lerna publish",
     "-------- LERNA --------": "",
     "bump": "npm run lerna:bump",
     "lerna": "lerna",
