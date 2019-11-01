@@ -1,6 +1,6 @@
 {
   "name": "@mlvis/jupyter-manifold",
-  "version": "1.1.0-alpha.1",
+  "version": "1.1.0-alpha.2",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -15,7 +15,7 @@
     "transpile": "NODE_ENV=production babel src -d dist -s --config-file ../../../babel.config.js && yarn copy"
   },
   "dependencies": {
-    "@mlvis/manifold": "^1.1.0-alpha.1",
+    "@mlvis/manifold": "^1.1.0-alpha.2",
     "global": "^4.4.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
