@@ -10,7 +10,7 @@
     "Yang Wang <gnavvy@uber.com>",
     "Lezhi Li <lezhi.li@uber.com>"
   ],
-  "main": "dist/index.js",
+  "main": "dist",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uber/manifold.git"
@@ -32,6 +32,5 @@
   },
   "peerDependencies": {
     "react": "^16.9.0"
-  },
-  "gitHead": "365c5e2170347d66aa71b9548a27724336665173"
+  }
 }

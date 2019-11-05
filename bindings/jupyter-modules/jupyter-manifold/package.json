@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/uber/manifold.git"
   },
-  "main": "dist/index.js",
+  "main": "dist",
   "publishConfig": {
     "access": "public"
   },
@@ -27,6 +27,5 @@
     "redux": "^4.0.1",
     "redux-actions": "^2.6.5",
     "redux-thunk": "^2.3.0"
-  },
-  "gitHead": "365c5e2170347d66aa71b9548a27724336665173"
+  }
 }
