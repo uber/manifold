@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/uber/manifold.git"
   },
-  "version": "1.1.0-alpha.5",
+  "version": "1.1.0-alpha.6",
   "author": "Javid Hsueh",
   "main": "dist/index.js",
   "publishConfig": {
@@ -19,5 +19,6 @@
   "peerDependencies": {
     "prop-types": "^15.7.1",
     "react": "^16.9.0"
-  }
+  },
+  "gitHead": "e55abcf0744d8f6c601425acdb748cb997e1bda9"
 }
