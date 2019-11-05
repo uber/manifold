@@ -23,6 +23,5 @@
   "publishConfig": {
     "note": "lerna requires this to publish scoped packages",
     "access": "public"
-  },
-  "gitHead": "a3baa4ee6ead3796bdadf310e955217d9ee9866e"
+  }
 }

@@ -17,6 +17,5 @@
   "dependencies": {
     "@mlvis/graph-builder": "1.1.0-alpha.7",
     "react": "^16.9.0"
-  },
-  "gitHead": "a3baa4ee6ead3796bdadf310e955217d9ee9866e"
+  }
 }

@@ -38,6 +38,5 @@
   },
   "peerDependencies": {
     "styled-components": "^4.2.0"
-  },
-  "gitHead": "a3baa4ee6ead3796bdadf310e955217d9ee9866e"
+  }
 }

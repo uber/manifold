@@ -7,6 +7,9 @@
     "url": "git+https://github.com/uber/manifold.git"
   },
   "main": "dist/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "watch": "webpack --watch --progress",
     "clean": "rm -rf dist",
@@ -24,6 +27,5 @@
     "redux": "^4.0.1",
     "redux-actions": "^2.6.5",
     "redux-thunk": "^2.3.0"
-  },
-  "gitHead": "a3baa4ee6ead3796bdadf310e955217d9ee9866e"
+  }
 }
