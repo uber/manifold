@@ -1,6 +1,6 @@
 {
   "name": "@mlvis/mlvis-common",
-  "version": "1.1.0-alpha.11",
+  "version": "1.1.0-alpha.12",
   "license": "Apache-2.0",
   "publishConfig": {
     "access": "public"
@@ -38,5 +38,6 @@
   },
   "peerDependencies": {
     "styled-components": "^4.2.0"
-  }
+  },
+  "gitHead": "365c5e2170347d66aa71b9548a27724336665173"
 }

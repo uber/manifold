@@ -1,6 +1,6 @@
 {
   "name": "@mlvis/jupyter-manifold",
-  "version": "1.1.0-alpha.11",
+  "version": "1.1.0-alpha.12",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -27,5 +27,6 @@
     "redux": "^4.0.1",
     "redux-actions": "^2.6.5",
     "redux-thunk": "^2.3.0"
-  }
+  },
+  "gitHead": "365c5e2170347d66aa71b9548a27724336665173"
 }

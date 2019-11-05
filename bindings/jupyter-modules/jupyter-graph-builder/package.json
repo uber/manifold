@@ -1,6 +1,6 @@
 {
   "name": "@mlvis/jupyter-graph-builder",
-  "version": "1.1.0-alpha.11",
+  "version": "1.1.0-alpha.12",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -18,7 +18,8 @@
     "transpile": "NODE_ENV=production babel src -d dist -s --config-file ../../../babel.config.js && yarn copy"
   },
   "dependencies": {
-    "@mlvis/graph-builder": "^1.1.0-alpha.11",
+    "@mlvis/graph-builder": "1.1.0-alpha.12",
     "react": "^16.9.0"
-  }
+  },
+  "gitHead": "365c5e2170347d66aa71b9548a27724336665173"
 }
