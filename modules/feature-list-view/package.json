@@ -28,7 +28,7 @@
     "numeral": "^2.0.6",
     "prop-types": "^15.7.2",
     "react-d3-axis": "^0.1.1",
-    "reselect": "^3.0.1"
+    "reselect": "^4.0.0"
   },
   "peerDependencies": {
     "react": "^16.9.0"

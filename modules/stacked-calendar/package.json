@@ -18,7 +18,7 @@
   "peerDependencies": {
     "prop-types": "^15.7.1",
     "react": "^16.9.0",
-    "reselect": "^3.0.1"
+    "reselect": "^4.0.0"
   },
   "publishConfig": {
     "note": "lerna requires this to publish scoped packages",
