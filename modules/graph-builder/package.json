@@ -8,7 +8,7 @@
   },
   "version": "1.1.0-alpha.16",
   "author": "Javid Hsueh",
-  "main": "dist/index.js",
+  "main": "index.js",
   "publishConfig": {
     "note": "lerna requires this to publish scoped packages",
     "access": "public"

@@ -8,7 +8,7 @@
     "url": "git+https://github.com/uber/manifold.git"
   },
   "author": "Yang Wang",
-  "main": "dist/index.js",
+  "main": "index.js",
   "dependencies": {
     "@mlvis/mlvis-common": "^1.1.0-alpha.16",
     "d3-array": "^2.0.3",
