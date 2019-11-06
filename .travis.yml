@@ -3,9 +3,9 @@ install:
   - npm install -g codecov
   - yarn --ignore-engines
 node_js:
-  - 10
-script:
-  - yarn lint
-  - yarn test
+  - 8
+script:	script:
+  - npm run lint
+  - npm run test
   - codecov
 cache: yarn
