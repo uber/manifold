@@ -5,7 +5,6 @@
   "license": "Apache-2.0",
   "private": true,
   "author": "Firenze11 <lezhi.li@uber.com>",
-  "main": "dist",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uber/manifold.git"
