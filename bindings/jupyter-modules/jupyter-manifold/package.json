@@ -1,12 +1,15 @@
 {
   "name": "@mlvis/jupyter-manifold",
-  "version": "1.0.0",
+  "version": "1.1.0-alpha.18",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uber/manifold.git"
   },
-  "main": "dist/index.js",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "watch": "webpack --watch --progress",
     "clean": "rm -rf dist",
@@ -15,13 +18,13 @@
     "transpile": "NODE_ENV=production babel src -d dist -s --config-file ../../../babel.config.js && yarn copy"
   },
   "dependencies": {
-    "@mlvis/manifold": "^1.0.0",
+    "@mlvis/manifold": "^1.1.0-alpha.18",
     "global": "^4.4.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-redux": "^7.1.1",
     "reduce-reducers": "^1.0.4",
-    "redux": "^4.0.1",
+    "redux": "^4.0.0",
     "redux-actions": "^2.6.5",
     "redux-thunk": "^2.3.0"
   }
