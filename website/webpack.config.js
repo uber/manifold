@@ -6,6 +6,7 @@ const resolve = require('path').resolve;
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HtmlWebpackPartialsPlugin = require('html-webpack-partials-plugin');
 
 const ROOT = resolve(__dirname, '..');
 const NODE_MODULES = resolve(ROOT, 'node_modules');
@@ -92,6 +93,11 @@ const COMMON_CONFIG = {
     new MiniCssExtractPlugin(),
     new webpack.EnvironmentPlugin(['MAPBOX_ACCESS_TOKEN']),
     new HtmlWebpackPlugin({title: 'manifold demo'}),
+    new HtmlWebpackPartialsPlugin({
+      path: 'header.html',
+      location: 'head',
+      priority: 'high',
+    }),
   ],
 };
 
