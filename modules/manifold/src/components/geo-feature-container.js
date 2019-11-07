@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import KeplerGl from 'kepler.gl';
 import {addDataToMap} from 'kepler.gl/actions';
+import {ReactReduxContext} from 'react-redux';
 
 import GeoFeatureControl from './geo-feature-control';
 import {connect} from '../custom-connect';
@@ -104,14 +105,21 @@ export class GeoFeatureContainer extends PureComponent {
     }
     return (
       <Container>
-        <KeplerGl
-          mapboxApiAccessToken={process.env.MAPBOX_ACCESS_TOKEN || mapboxToken}
-          getState={state => selector(state).keplerGl}
-          mint={false}
-          id="map"
-          width={width}
-          height={height}
-        />
+        <ReactReduxContext.Consumer>
+          {({store}) => (
+            <KeplerGl
+              mapboxApiAccessToken={
+                process.env.MAPBOX_ACCESS_TOKEN || mapboxToken
+              }
+              getState={state => selector(state).keplerGl}
+              store={store}
+              mint={false}
+              id="map"
+              width={width}
+              height={height}
+            />
+          )}
+        </ReactReduxContext.Consumer>
         <GeoFeatureControl
           geoFeatures={geoFeatures}
           displayGeoFeatures={displayGeoFeatures}
