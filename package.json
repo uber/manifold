@@ -68,6 +68,8 @@
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
     "styled-components": "^4.3.2",
+    "styletron-engine-atomic": "^1.4.1",
+    "styletron-react": "^5.2.1",
     "webpack-bundle-analyzer": "^3.4.1"
   },
   "scripts": {
