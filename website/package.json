@@ -21,6 +21,8 @@
   "dependencies": {
     "antd": "^3.10.1",
     "global": "^4.3.2",
+    "html-webpack-partials-plugin": "^0.5.3",
+    "html-webpack-plugin": "^4.0.0-beta.8",
     "prop-types": "^15.6.2",
     "react": "^16.9.0",
     "react-dom": "^16.5.2",
