@@ -12,6 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/uber/manifold.git"
   },
+  "homepage": "https://github.com/uber/manifold#readme",
   "keywords": [
     "ml",
     "visualization",
