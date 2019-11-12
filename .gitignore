@@ -14,6 +14,7 @@ jsconfig.json
 dist
 data/
 .DS_Store
+.prettierrc.js
 
 # Python
 
