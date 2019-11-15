@@ -49,10 +49,7 @@ export const getIsFeaturesDistributionLoading = createSelector(
   state => state.isFeaturesDistributionLoading
 );
 
-export const getMetric = createSelector(
-  rootSelector,
-  state => state.metric
-);
+export const getMetric = createSelector(rootSelector, state => state.metric);
 export const getBaseCols = createSelector(
   rootSelector,
   state => state.baseCols

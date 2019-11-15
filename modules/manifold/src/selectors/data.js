@@ -12,18 +12,9 @@ import {createSelector} from 'reselect';
 // ----------------------------------------------------------------------------------------------------------- //
 
 // -- computed data from API -- //
-const getApiMetaData = createSelector(
-  rootSelector,
-  state => state.metaData
-);
-const getApiModels = createSelector(
-  rootSelector,
-  state => state.models
-);
-const getApiFeatures = createSelector(
-  rootSelector,
-  state => state.features
-);
+const getApiMetaData = createSelector(rootSelector, state => state.metaData);
+const getApiModels = createSelector(rootSelector, state => state.models);
+const getApiFeatures = createSelector(rootSelector, state => state.features);
 
 // -- computed data. Either came directly from BE API, or computed in FE -- //
 export const getMetaData = createSelector(
