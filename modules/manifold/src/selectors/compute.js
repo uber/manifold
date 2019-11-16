@@ -35,10 +35,7 @@ const PERCENTILE_LIST = [0.01, 0.1, 0.25, 0.5, 0.75, 0.9, 0.99];
 // --------------------------- DATA FROM REDUX STATE ----------------------- //
 // ------------------------------------------------------------------------- //
 
-export const getData = createSelector(
-  rootSelector,
-  state => state.data
-);
+export const getData = createSelector(rootSelector, state => state.data);
 
 export const getColumnTypeRanges = createSelector(
   rootSelector,
@@ -94,20 +91,14 @@ export const getModelsMeta = createSelector(
   state => state.modelsMeta
 );
 
-export const getColumnDefs = createSelector(
-  getData,
-  data => data.fields
-);
+export const getColumnDefs = createSelector(getData, data => data.fields);
 
-export const getFeaturesMeta = createSelector(
-  getX,
-  x => {
-    if (!x) {
-      return null;
-    }
-    return x.fields;
+export const getFeaturesMeta = createSelector(getX, x => {
+  if (!x) {
+    return null;
   }
-);
+  return x.fields;
+});
 
 export const getMetaDataFromRaw = createSelector(
   [getModelsMeta, getFeaturesMeta],

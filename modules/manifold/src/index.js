@@ -5,7 +5,7 @@ export {default as manifoldReducer} from './reducers';
 export * from './actions';
 
 // Constants
-export * from './constants';
+export {THEME} from './constants';
 
 // Containers
 export * from './components';

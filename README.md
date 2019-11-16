@@ -3,7 +3,7 @@
 
 # Manifold
 
-*This project is stable and being incubated for long-term support*
+_This project is stable and being incubated for long-term support_
 
 [<img alt="Manifold" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/Manifold_Header.jpg" width="600">](https://uber.github.io/manifold/)
 
@@ -14,6 +14,7 @@ Understanding ML model performance and behavior is a non-trivial process, given 
 As a visual analytics tool, Manifold allows ML practitioners to look beyond overall summary metrics to detect which subset of data a model is inaccurately predicting. Manifold also explains the potential cause of poor model performance by surfacing the feature distribution difference between better and worse-performing subsets of data.
 
 ## Table of content
+
 - [Prepare your data](#prepare-your-data)
 - [Interpret visualizations](#interpret-visualizations)
 - [Using Demo App](#using-demo-app)
@@ -23,6 +24,7 @@ As a visual analytics tool, Manifold allows ML practitioners to look beyond over
 - [License](#license)
 
 ## Prepare Your Data
+
 There are 2 ways to input the data into Manifold:
 
 - [csv upload](#upload-csv-to-demo-app) if you are using the Manifold demo app, or
@@ -42,34 +44,31 @@ Each element in these arrays represents one data point in your evaluation datase
 Recommended instance count for each of these datasets is 10000 - 15000. If you have a larger dataset that you want to analyze, a random subset of your data generally suffices to reveal the important patterns in it.
 
 ##### `x`: {Object[]}
+
 A list of instances with features. Example (2 data instances):
 
 ```js
-[
-  {feature_0: 21, feature_1: 'B'},
-  {feature_0: 36, feature_1: 'A'}
-]
+[{feature_0: 21, feature_1: 'B'}, {feature_0: 36, feature_1: 'A'}];
 ```
 
 ##### `yPred`: {Object[][]}
+
 A list of list, each child list is a prediction array from one model for each data instance. Example (3 models, 2 data instances, 2 classes `['false', 'true']`):
 
 ```js
 [
   [{false: 0.1, true: 0.9}, {false: 0.8, true: 0.2}],
   [{false: 0.3, true: 0.7}, {false: 0.9, true: 0.1}],
-  [{false: 0.6, true: 0.4}, {false: 0.4, true: 0.6}]
-]
+  [{false: 0.6, true: 0.4}, {false: 0.4, true: 0.6}],
+];
 ```
 
 ##### `yTrue`: {Number[] | String[]}
+
 A list, ground truth for each data instance. Values must be numbers for regression model, must be strings that match object keys in `yPred` for classification models. Example (2 data instances, 2 classes ['false', 'true']):
 
 ```js
-[
-  'true',
-  'false'
-]
+['true', 'false'];
 ```
 
 ## Interpret visualizations
@@ -78,10 +77,10 @@ This guide explains how to interpret Manifold visualizations.
 
 Manifold consists of:
 
-  - [Performance Comparison View](#performance-comparison-view) which compares
-    prediction performance across models, across data subsets
-  - [Feature Attribution View](#feature-distribution) which visualizes feature
-    distributions of data subsets with various performance levels
+- [Performance Comparison View](#performance-comparison-view) which compares
+  prediction performance across models, across data subsets
+- [Feature Attribution View](#feature-distribution) which visualizes feature
+  distributions of data subsets with various performance levels
 
 ### Performance Comparison View
 
@@ -92,17 +91,18 @@ different segments of your data. It helps you identify under-performing data sub
 
 <img alt="performance comparison view" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/performance_comparison_1.png" width="600">
 
-  1. **X axis:** performance metric. Could be log-loss, squared-error or raw prediction.
-  2. **Segments:** your dataset is automatically divided into segments based on performance similarity between instances, across models.
-  3. **Colors:** represent different models.
+1. **X axis:** performance metric. Could be log-loss, squared-error or raw prediction.
+2. **Segments:** your dataset is automatically divided into segments based on performance similarity between instances, across models.
+3. **Colors:** represent different models.
 
 <img alt="performance comparison view unit" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/performance_comparison_2.png" width="600">
 
-  1. **Curve:** performance distribution (of one model, for one segment).
-  2. **Y axis:** Data count/density.
-  3. **Cross:** left end, center line, and right end are 25, 50 and 75th percentile of the distribution.
+1. **Curve:** performance distribution (of one model, for one segment).
+2. **Y axis:** Data count/density.
+3. **Cross:** left end, center line, and right end are 25, 50 and 75th percentile of the distribution.
 
 #### Explaination
+
 Manifold uses a clustering algorithm (k-Means) to break prediction data into N segments
 based on performance similarity.
 
@@ -112,11 +112,11 @@ If you're analyzing multiple models, all models' performance metrics will be inc
 
 #### Usage
 
-  - Look for segments of data where error is higher (plotted to the right). These are areas you should analyze and try to improve.
+- Look for segments of data where error is higher (plotted to the right). These are areas you should analyze and try to improve.
 
-  - If you're comparing models, look for segments where the log-loss is different for each model. If two models perform differently on the same set of data, consider using the better-performing model for that part of the data to boost performance.
+- If you're comparing models, look for segments where the log-loss is different for each model. If two models perform differently on the same set of data, consider using the better-performing model for that part of the data to boost performance.
 
-  - After you notice any performance patterns/issues in the segments, slice the data to compare feature distribution for the data subset(s) of interest. You can create two segment groups to compare (colored pink and blue), and each group can have 1 or more segments.
+- After you notice any performance patterns/issues in the segments, slice the data to compare feature distribution for the data subset(s) of interest. You can create two segment groups to compare (colored pink and blue), and each group can have 1 or more segments.
 
 **Example**
 
@@ -152,11 +152,11 @@ After you slice the data to create segment groups, feature distribution histogra
 
 Depending on the feature type, features can be shown as heatmaps on map for geo features, distribution curve for numerical features, or distribution bar chart for categorical features (In bar charts, categories on x-axis are sorted by instance count differenceLook for differences between the two distributions in each feature.)
 
-Features are ranked by their KL-Divergence - a measure of *difference* between the two contrasting distributions. The higher the divergence is, the more likely this feature is correlated with the factor that differentiates the two Segment Groups.
+Features are ranked by their KL-Divergence - a measure of _difference_ between the two contrasting distributions. The higher the divergence is, the more likely this feature is correlated with the factor that differentiates the two Segment Groups.
 
 #### Usage
 
-  - Look for the differences between the two distributions (pink and blue) in each feature. They represent the difference in data from the two segment groups you selected in the Performance Comparison View.
+- Look for the differences between the two distributions (pink and blue) in each feature. They represent the difference in data from the two segment groups you selected in the Performance Comparison View.
 
 **Example**
 
@@ -164,7 +164,7 @@ Features are ranked by their KL-Divergence - a measure of *difference* between t
 
 Data in Groups 0 and 1 have obvious difference in Features 0, 1, 2 and 3; but they are not so different in features 4 and 5.
 
-Suppose Data Groups 0 and 1 correspond to data instances with low and high prediction error respectively, this means that data with higher errors tend to have *lower* feature values in Features 0 and 1, since peak of pink curve is to the left side of the blue curve.
+Suppose Data Groups 0 and 1 correspond to data instances with low and high prediction error respectively, this means that data with higher errors tend to have _lower_ feature values in Features 0 and 1, since peak of pink curve is to the left side of the blue curve.
 
 <br/>
 
@@ -188,7 +188,7 @@ If there are geospatial features in your dataset, they will be displayed on a ma
 
 #### Usage
 
-  - Look for the differences in geo location between the two segment groups (pink and grey). They represent the spation distribution difference between the two subsets you previously selected.
+- Look for the differences in geo location between the two segment groups (pink and grey). They represent the spation distribution difference between the two subsets you previously selected.
 
 **Example**
 
@@ -196,12 +196,13 @@ In the first map above, Group 0 has a more obvious tendency to be concentrated i
 
 <!-- images in this doc are created from https://docs.google.com/presentation/d/1EqvjMyBLNX7wfEQPFKAoaE39bW0pXbBa8WIznQN49vE/edit?usp=sharing -->
 
-
 ## Using Demo App
+
 To do a one-off evaluation using static outputs of your ML models, using the demo app is an easier way for you.
 Otherwise, if you have a system that programmatically generates ML model outputs, you might consider [using the Manifold component](#using-the-component) directly.
 
 ### Running Demo App Locally
+
 Run the following commands to set up env and run the demo:
 
 ```bash
@@ -215,33 +216,38 @@ yarn
 npm run start
 
 ```
+
 Now you should see the demo app running at `localhost:8080`.
 
 ### Upload CSV to Demo App
+
 <img alt="csv upload interface" src="https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/file_upload.png" width="500">
 
 Once the app starts running, you will see the interface above asking for uploading **"feature"**, **"prediction"** and **"ground truth"** datasets to Manifold.
 They correspond to `x`, `yPred`, `yTrue` in "[prepare your data](#prepare-your-data)" section, and you should prepare your CSV files accordingly, illustrated below:
 
-| Field                      | **`x`** (feature)      |  **`yPred`** (prediction) | **`yTrue`** (ground truth)  |
-|:-:                         |:-:                     |:-:                        |:-:                          |
-| Number of CSV's            | 1                      | multiple                  | 1                           |
+|           Field            |   **`x`** (feature)    | **`yPred`** (prediction)  | **`yTrue`** (ground truth)  |
+| :------------------------: | :--------------------: | :-----------------------: | :-------------------------: |
+|      Number of CSV's       |           1            |         multiple          |              1              |
 | Illustration of CSV format | ![][feature csv image] | ![][prediction csv image] | ![][ground truth csv image] |
 
 Once the datasets are uploaded, you will see visualizations generated by these datasets.
 
 ## Using the Component
+
 Embedding the Manifold component in your app allows you to programmatically generate ML model data and visualize.
 Ohterwise, if you have some static output from some models and want to do a one-off evaluation, you might consider [using the demo app](#using-demo-app) directly.
 
 Here are the basic steps to import manifold into your app and load data for visualizing. You also take a look at the examples folder.
 
 ### Install Manifold
+
 ```bash
-$ npm install @mlvis/manifold styled-components
+$ npm install @mlvis/manifold styled-components styletron-engine-atomic styletron-react
 ```
 
 ### Load and Convert Data
+
 In order to load your data files to Manifold, use `loadLocalData` action. You could also reshape your data into the required Manifold format using `dataTransformer`.
 
 ```js
@@ -252,25 +258,26 @@ loadLocalData({
   fileList,
   dataTransformer,
 });
-
 ```
 
 ##### `fileList`: {Object[]}
+
 One or more datasets, in CSV format. Could be ones that your backend returns.
 
 ##### `dataTransformer`: {Function}
+
 A function that transforms `fileList` into the [Manifold input data format](#prepare-your-data). Default:
 
 ```js
 const defaultDataTransformer = fileList => ({
   x: [],
   yPred: [],
-  yTrue: []
+  yTrue: [],
 });
-
 ```
 
 ### Mount reducer
+
 Manifold uses Redux to manage its internal state. You need to register manifold reducer to the main reducer of your app:
 
 ```js
@@ -283,15 +290,15 @@ const reducers = combineReducers({
   manifold: manifoldReducer,
 
   // Your other reducers here
-  app: appReducer
+  app: appReducer,
 });
 
 // using createStore
 export default createStore(reducer, initialState);
-
 ```
 
 ### Mount Component
+
 If you mount manifold reducer in another address instead of `manifold` in the step above, you will need to specify the path to it when you mount the component with the `getState` prop. `width` and `height` are both needed explicitly. If you have geo-spatial features and need to see them on a map, you will also need a [mapbox token](https://docs.mapbox.com/help/how-mapbox-works/access-tokens/).
 
 ```js
@@ -300,9 +307,43 @@ const manifoldGetState = state => state.pathTo.manifold;
 const yourMapboxToken = ...;
 
 const Main = props => (
-  <Manifold getState={manifoldGetState} width={width} height={height} mapboxToken={yourMapboxToken}/>
+  <Manifold
+    getState={manifoldGetState}
+    width={width}
+    height={height}
+    mapboxToken={yourMapboxToken}
+  />
 );
 ```
+
+### Styling
+
+Manifold uses baseui, which uses styletron as styling engine. If you don't already use styletron in other parts of your app, make sure to wrap Manifold with [styletron provider](https://baseweb.design/getting-started/setup/#adding-base-web-to-your-application).
+
+Manifold uses baseui [theming API](https://baseweb.design/guides/theming/). The default theme used by Manifold is exported as `THEME`. You can customize the styling by extending `THEME` and pass it as `theme` prop of `Manifold` component.
+
+```js
+import Manifold, {THEME} from '@mlvis/manifold';
+import {Client as Styletron} from 'styletron-engine-atomic';
+import {Provider as StyletronProvider} from 'styletron-react';
+
+const engine = new Styletron();
+const myTheme = {
+  ...THEME,
+  colors: {
+    ...THEME.colors,
+    primary: '#ff0000',
+  },
+}
+
+const Main = props => (
+  <StyletronProvider value={engine}>
+    <Manifold
+      getState={manifoldGetState}
+      theme={myTheme}
+    />
+  </StyletronProvider>
+);
 
 ## Built With
 - [TensorFlow.js](https://js.tensorflow.org/)
@@ -321,3 +362,4 @@ Apache 2.0 License
 [feature csv image]: https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/x.png
 [prediction csv image]: https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/yPred.png
 [ground truth csv image]: https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/yTrue.png
+```

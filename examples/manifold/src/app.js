@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
 import ContainerDimensions from 'react-container-dimensions';
+import {Client as Styletron} from 'styletron-engine-atomic';
+import {Provider as StyletronProvider} from 'styletron-react';
 
 import FileUploader from './file-uploader';
 import Manifold from '@mlvis/manifold';
@@ -18,6 +20,8 @@ const Container = styled.div`
   height: 100vh;
   background: #eee;
 `;
+
+const engine = new Styletron();
 
 class App extends Component {
   state = {
@@ -59,23 +63,25 @@ class App extends Component {
   render() {
     const {showUploadModal} = this.state;
     return (
-      <Container>
-        <ContainerDimensions>
-          {({width, height}) => (
-            <Manifold
-              // Specify path to Manifold state, because it is not mount at the root
-              getState={getManifoldState}
-              width={width}
-              height={height}
-            />
-          )}
-        </ContainerDimensions>
-        <FileUploader
-          showUploadModal={showUploadModal}
-          toggleUploadModal={this._toggleDataUploadModal}
-          handleUpload={this._handleUpload}
-        />
-      </Container>
+      <StyletronProvider value={engine}>
+        <Container>
+          <ContainerDimensions>
+            {({width, height}) => (
+              <Manifold
+                // Specify path to Manifold state, because it is not mount at the root
+                getState={getManifoldState}
+                width={width}
+                height={height}
+              />
+            )}
+          </ContainerDimensions>
+          <FileUploader
+            showUploadModal={showUploadModal}
+            toggleUploadModal={this._toggleDataUploadModal}
+            handleUpload={this._handleUpload}
+          />
+        </Container>
+      </StyletronProvider>
     );
   }
 }

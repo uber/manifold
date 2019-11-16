@@ -344,17 +344,15 @@ export function zipObjects(arrays, joinField, rename) {
     return [];
   }
   return arrays[0].map((sampleObj, i) => {
-    const renamedObjs = arrays
-      .map(arr => arr[i])
-      .map((obj, j) => {
-        // make sure joinField is matched for each object in each sub-array
-        assert(sampleObj[joinField] === obj[joinField]);
-        return Object.keys(obj).reduce((acc, key) => {
-          const renamedKey = rename[j][key] || key;
-          acc[renamedKey] = obj[key];
-          return acc;
-        }, {});
-      });
+    const renamedObjs = arrays.map(arr => arr[i]).map((obj, j) => {
+      // make sure joinField is matched for each object in each sub-array
+      assert(sampleObj[joinField] === obj[joinField]);
+      return Object.keys(obj).reduce((acc, key) => {
+        const renamedKey = rename[j][key] || key;
+        acc[renamedKey] = obj[key];
+        return acc;
+      }, {});
+    });
     // todo: assert there are no duplicated keys
     return Object.assign.apply(null, renamedObjs);
   });

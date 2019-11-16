@@ -60,10 +60,10 @@ export const xScaleSelectorFactory = memoize(selectorId =>
       xScale
         ? xScale
         : getXScale
-        ? getXScale()
-            .domain(xDomain)
-            .range(xRange)
-        : undefined
+          ? getXScale()
+              .domain(xDomain)
+              .range(xRange)
+          : undefined
   )
 );
 export const yScaleSelectorFactory = memoize(selectorId =>
@@ -76,9 +76,9 @@ export const yScaleSelectorFactory = memoize(selectorId =>
       yScale
         ? yScale
         : getYScale
-        ? getYScale()
-            .domain(yDomain)
-            .range(yRange)
-        : undefined
+          ? getYScale()
+              .domain(yDomain)
+              .range(yRange)
+          : undefined
   )
 );

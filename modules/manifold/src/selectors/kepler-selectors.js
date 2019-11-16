@@ -17,19 +17,14 @@ import {
 } from '../utils/kepler-utils';
 import {KEPLER_DATASET_NAME} from '../constants/kepler-constants';
 
-export const getGroupedGeoFeatures = createSelector(
-  getX,
-  x => {
-    if (!x) {
-      return null;
-    }
-    const {fields} = x;
-    const geoFields = fields.filter(
-      feature => feature.type === FEATURE_TYPE.GEO
-    );
-    return groupLatLngPairs(geoFields);
+export const getGroupedGeoFeatures = createSelector(getX, x => {
+  if (!x) {
+    return null;
   }
-);
+  const {fields} = x;
+  const geoFields = fields.filter(feature => feature.type === FEATURE_TYPE.GEO);
+  return groupLatLngPairs(geoFields);
+});
 
 export const getHasGeoFeatures = createSelector(
   getGroupedGeoFeatures,
@@ -42,8 +37,8 @@ export const getLayerVisibility = createSelector(
     if (!hasGeoFeatures) {
       return null;
     }
-    return geoFeatures.map((f, i) =>
-      displayGeoFeatures.includes(i) ? true : false
+    return geoFeatures.map(
+      (f, i) => (displayGeoFeatures.includes(i) ? true : false)
     );
   }
 );
