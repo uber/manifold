@@ -297,8 +297,8 @@ export function columnsAndFieldsFromScore(
     scoreFunc && typeof scoreFunc === 'function'
       ? scoreFunc
       : nClasses === 1
-      ? absoluteError
-      : logLoss;
+        ? absoluteError
+        : logLoss;
 
   // performance columns by model
   const columns = dotRange(nModels).map(modelId => {

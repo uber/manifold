@@ -244,7 +244,7 @@ Here are the basic steps to import manifold into your app and load data for visu
 ### Install Manifold
 
 ```bash
-$ npm install @mlvis/manifold styled-components
+$ npm install @mlvis/manifold styled-components styletron-engine-atomic styletron-react
 ```
 
 ### Load and Convert Data
@@ -308,9 +308,43 @@ const manifoldGetState = state => state.pathTo.manifold;
 const yourMapboxToken = ...;
 
 const Main = props => (
-  <Manifold getState={manifoldGetState} width={width} height={height} mapboxToken={yourMapboxToken}/>
+  <Manifold
+    getState={manifoldGetState}
+    width={width}
+    height={height}
+    mapboxToken={yourMapboxToken}
+  />
 );
 ```
+
+### Styling
+
+Manifold uses baseui, which uses styletron as styling engine. If you don't already use styletron in other parts of your app, make sure to wrap Manifold with [styletron provider](https://baseweb.design/getting-started/setup/#adding-base-web-to-your-application).
+
+Manifold uses baseui [theming API](https://baseweb.design/guides/theming/). The default theme used by Manifold is exported as `THEME`. You can customize the styling by extending `THEME` and pass it as `theme` prop of `Manifold` component.
+
+```js
+import Manifold, {THEME} from '@mlvis/manifold';
+import {Client as Styletron} from 'styletron-engine-atomic';
+import {Provider as StyletronProvider} from 'styletron-react';
+
+const engine = new Styletron();
+const myTheme = {
+  ...THEME,
+  colors: {
+    ...THEME.colors,
+    primary: '#ff0000',
+  },
+}
+
+const Main = props => (
+  <StyletronProvider value={engine}>
+    <Manifold
+      getState={manifoldGetState}
+      theme={myTheme}
+    />
+  </StyletronProvider>
+);
 
 ## Built With
 
@@ -337,3 +371,4 @@ Apache 2.0 License
 [feature csv image]: https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/x.png
 [prediction csv image]: https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/yPred.png
 [ground truth csv image]: https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/yTrue.png
+```

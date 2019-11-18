@@ -191,8 +191,8 @@ export const computeFeatureType = (
   return isLatLngByName || isHexByName
     ? FEATURE_TYPE.GEO
     : isCategorical
-    ? FEATURE_TYPE.CATEGORICAL
-    : FEATURE_TYPE.NUMERICAL;
+      ? FEATURE_TYPE.CATEGORICAL
+      : FEATURE_TYPE.NUMERICAL;
 };
 
 /**

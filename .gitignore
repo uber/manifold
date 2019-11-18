@@ -1,5 +1,4 @@
 node_modules
-yarn.lock
 package-lock.json
 examples/**/*-lock.json
 examples/**/data
@@ -14,6 +13,7 @@ jsconfig.json
 dist
 data/
 .DS_Store
+.prettierrc.js
 
 # Python
 
