@@ -76,7 +76,7 @@
     "test": "jest",
     "clean": "ocular-clean all",
     "build": "ocular-clean all && ocular-build --dist esm && lerna run build",
-    "publish": "if [ $(npm show @mlvis/manifold version) == $(cat lerna.json | jq .version -r) ]; then echo 'version is not updated, quit publish'; else npm run lerna:publish; fi",
+    "publish": "if [[ $(npm show @mlvis/manifold version) == $(cat lerna.json | jq .version -r) ]]; then echo 'version is not updated, quit publish'; else npm run lerna:publish; fi",
     "-------- LERNA --------": "",
     "bump": "npm run lerna:bump",
     "lerna": "lerna",
