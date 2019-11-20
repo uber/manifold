@@ -1,22 +1,21 @@
 language: node_js
 install:
-  - npm install -g codecov
-  - yarn --ignore-engines
+- npm install -g codecov
+- yarn --ignore-engines
 node_js:
-  - 10
+- 10
 script:
-  - yarn lint
-  - yarn test
-  - codecov
-  - yarn build
+- yarn lint
+- yarn test
+- codecov
+- yarn build
 cache: yarn
-
 deploy:
   provider: script
   skip_cleanup: true
   script: npm run publish
   on:
     branch: auto-deploy
-  email: 'im.lezhi@gmail.com'
+  email: im.lezhi@gmail.com
   api_key:
-    secure: jsjx7nabBt/upBWmsp0z5Qlurm6QUF79oi/YryjhEU2ym2SNJ1mKLBqI0OXgQr3qAvqQ1Td9jggbU2aujeCVnXcJned2bXaB9NIz7mx0dvf9Ql/rQKmGkZzjxB8nk0+Uki+CT1MePwaQeyk5VGK/E+aSa0mANB2pEmoqN1xVFGqW96DrJvNHK2K+tDn4Ua+XTSq6RxjaUYBJYBWYOCjiaXiJWsV05I5zBB2+ONXLNX/udrtR+sjxwvrmHRyjkYdKELmZvs/M7goBfVjs6P8nPK6JDPaK6Vu4tMHrcswSnntLrdCB1KYGJdOrQA8n/Qgf3py28NvfQWDsC+bCspx17LACYx8GVlLpHLqk7l0dDENvfvKtftzb3rRobkNOKKVaWSXvhhHky64QD2vrPtbXfQM4ht5/GUuqRBUBGBn6JTirZvqtwLUPJe6WAY4zK92jCj7KVeh+x0SLDmitBEvunEDMBYFByQZaHzxbRZkltxt3WFayBpTCoQ32LqFbtfTPSOZsnjIyN4LtcvEhHKwvHH0FMMMH2YyqoSnzQTZiZ53poa2N0qVWtHa+grincEvid9Cc4+rfqvZCHVXzBgsCo0K5M5E8DlZ7rV8qHZCDe9AsN5A5q2IaEWqPhBQjDQ8apCJRxPIhVe1co27E6DgMA4OVlZq7m6b+pmD718MgdhE=
+    secure: KaNpt0GEMkNt/dfvehBeni9pJD8TRWTmMVr3ZyWJ+WI0r1LN0u1kUuimxWiSM+8ZVDqJu/10/6H7OlslvhzXcKblMDpXXme+2w3inN0RePizciK0hYiqa6hrC2cQmhlJYGjJQiIj3B6tjMCRdmOlbDTdOXcLqOvFGf8eukwLWihq5hBswTO9875+wySqeaUHr9Bdcpq9wC/FqfzzmDFEY36JQtx91H2vefun4i3FpzAxK63YB7C08bioWN6+ht+oG3k3JVQNLNFEZ094bNE8GJc8xX5TuYpJ1L3TLystaE9mvwtUPKb4PlA//EFxD2B3P0J9WhofBbepW69YDu3jwqMIJUAcOkfnA7wPD/jVSZq4BOVftdG5k+H9ZIrceRvz0kKTeoexyXifmifHx/lhgiwTYACPi277Fm95AbmP2RxbG3bYdYUDqwzYjv9oqi0Yl0BXmHpxmow8NVw6DgOrhR6RoKIDPXwGIk0GQ2W8RxNMA7NI2xdfTn3CNQS9uJjybpq59Is0/LmCXBXsZr7boofaHAKClOdvlcpM0OznifUpQieQXyHyRnfclfInUt70vEtGxf67z1EXr+SyOJb2Xb4iglLkUr21REYuK8p91m8qydMOFROxCNZO29S6h5w0lvynXzNKbcfrQAqvwRf8g21yiX2tbzxKNGzoAFZH97c=
