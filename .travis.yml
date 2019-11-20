@@ -16,7 +16,6 @@ deploy:
   skip_cleanup: true
   script: npm run publish
   on:
-    tags: true
     branch: auto-deploy
   email: 'lezhi.li@uber.com'
   api_key:
