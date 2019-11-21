@@ -1,4 +1,5 @@
 import {createSelector} from 'reselect';
+import {CONTAINER_PADDING} from '../constants';
 
 export const rootSelector = state => state;
 
@@ -13,3 +14,10 @@ export const getContainerHeight = createSelector(
 );
 
 export const getData = createSelector(rootSelector, state => state.data);
+
+export const getColumnWidth = createSelector(rootSelector, () => 200);
+
+export const getColumnHeight = createSelector(
+  getContainerHeight,
+  height => height - CONTAINER_PADDING.TOP - CONTAINER_PADDING.BOTTOM
+);
