@@ -200,13 +200,38 @@ export default class Chart extends Component {
       );
     });
   }
+  _renderDots() {
+    const {data} = this.props;
+    if (!data || !data.lines) {
+      return null;
+    }
+    const {width, height} = this.props;
+    const xScale = getXScale(width);
+    const yScale = getYScale(height);
 
+    return data.lines.map(({name, line}, idx) => {
+      return (
+        <g key={name}>
+          {line.map((d, i) => (
+            <circle
+              key={i}
+              cx={xScale(d.x)}
+              cy={yScale(d.y)}
+              r={3}
+              fill={colorScale(idx)}
+            />
+          ))}
+        </g>
+      );
+    });
+  }
   render() {
     const {width, height} = this.props;
     return (
       <svg width={width} height={height}>
         {this._renderGrids()}
         {this._renderLines()}
+        {this._renderDots()}
         {this._renderXAxies()}
         {this._renderYAxis()}
         {this._renderLegends()}
