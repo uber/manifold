@@ -21,7 +21,7 @@ const handleUpdateData = (state, {payload}) => {
   // temporary hack to scale the data until the actual scale method is implemented
   payload.forEach(d => {
     d.lines.forEach(({name, line}) => {
-      if (name === 'ivpu') {
+      if (name === 'ipvu') {
         const extent = d3Extent(line, d => d.y);
         const scale = scaleLinear()
           .domain(extent)

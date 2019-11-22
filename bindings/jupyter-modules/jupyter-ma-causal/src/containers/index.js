@@ -15,6 +15,7 @@ const mapStateToProps = (state, props) => ({
   containerHeight: getContainerHeight(state),
   columnWidth: getColumnWidth(state),
   columnHeight: getColumnHeight(state),
+  data: getData(state),
   params: props,
 });
 
@@ -44,13 +45,13 @@ class App extends Component {
     const {data} = this.props;
     if (!data) return null;
     const {columnWidth, columnHeight} = this.props;
-    return data.map(d => {
+    return data.map((d, i) => {
       return (
-        <div style={this.columnStyle}>
+        <div key={i} style={this.columnStyle}>
           <MultiLineChart
             data={d}
             width={columnWidth - 20}
-            height={(columnHeight - 30) / 2}
+            height={Math.min(260, (columnHeight - 50) / 2)}
           />
         </div>
       );

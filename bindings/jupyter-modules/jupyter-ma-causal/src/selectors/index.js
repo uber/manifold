@@ -15,7 +15,7 @@ export const getContainerHeight = createSelector(
 
 export const getData = createSelector(rootSelector, state => state.data);
 
-export const getColumnWidth = createSelector(rootSelector, () => 200);
+export const getColumnWidth = createSelector(rootSelector, () => 300);
 
 export const getColumnHeight = createSelector(
   getContainerHeight,
