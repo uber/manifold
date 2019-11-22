@@ -27,7 +27,9 @@ export default class Chart extends Component {
     height: PropTypes.number.isRequired,
   };
 
-  _renderLegends() {}
+  _renderLegends() {
+    const {width, height} = this.props;
+  }
   _renderXAxies() {
     const {width, height} = this.props;
     const xScale = getXScale(width);
@@ -112,7 +114,43 @@ export default class Chart extends Component {
       </React.Fragment>
     );
   }
-  _renderGrids() {}
+  _renderGrids() {
+    const {width, height} = this.props;
+    const xScale = getXScale(width);
+    const yScale = getYScale(height);
+    return (
+      <React.Fragment>
+        {yScale.ticks(10).map(t => {
+          const y = yScale(t);
+          return (
+            <line
+              key={`y-${t}`}
+              x1={PADDING.LEFT}
+              y1={y}
+              x2={width - PADDING.RIGHT}
+              y2={y}
+              stroke="lightgray"
+              strokeWidth={1}
+            />
+          );
+        })}
+        {xScale.ticks(10).map(t => {
+          const x = xScale(t);
+          return (
+            <line
+              key={`x-${t}`}
+              x1={x}
+              y1={PADDING.TOP}
+              x2={x}
+              y2={height - PADDING.TOP}
+              stroke="lightgray"
+              strokeWidth={1}
+            />
+          );
+        })}
+      </React.Fragment>
+    );
+  }
   _renderLines() {
     const {data} = this.props;
     if (!data || !data.lines) {
@@ -133,7 +171,7 @@ export default class Chart extends Component {
           d={getSVGLine(line)}
           fill="none"
           stroke={colorScale(idx)}
-          strokeWidth={1}
+          strokeWidth={2}
         />
       );
     });
@@ -143,6 +181,7 @@ export default class Chart extends Component {
     const {width, height} = this.props;
     return (
       <svg width={width} height={height}>
+        {this._renderGrids()}
         {this._renderLines()}
         {this._renderXAxies()}
         {this._renderYAxis()}
