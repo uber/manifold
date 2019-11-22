@@ -28,7 +28,31 @@ export default class Chart extends Component {
   };
 
   _renderLegends() {
-    const {width, height} = this.props;
+    const {data, width, height} = this.props;
+    if (!data || !data.lines) {
+      return null;
+    }
+    return data.lines.map((d, i) => (
+      <React.Fragment key={i}>
+        <text
+          x={width - PADDING.RIGHT - 23}
+          y={PADDING.TOP + 5 + 15 * i}
+          dominantBaseline="middle"
+          textAnchor="end"
+          fontSize={10}
+        >
+          {d.name}
+        </text>
+        <line
+          x1={width - PADDING.RIGHT - 20}
+          y1={PADDING.TOP + 5 + 15 * i}
+          x2={width - PADDING.RIGHT - 5}
+          y2={PADDING.TOP + 5 + 15 * i}
+          stroke={colorScale(i)}
+          strokeWidth={2}
+        />
+      </React.Fragment>
+    ));
   }
   _renderXAxies() {
     const {width, height} = this.props;
@@ -185,6 +209,7 @@ export default class Chart extends Component {
         {this._renderLines()}
         {this._renderXAxies()}
         {this._renderYAxis()}
+        {this._renderLegends()}
       </svg>
     );
   }
