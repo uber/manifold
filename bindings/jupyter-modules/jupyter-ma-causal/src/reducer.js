@@ -2,22 +2,16 @@ import {handleActions} from 'redux-actions';
 import {scaleLinear} from 'd3-scale';
 import {extent as d3Extent} from 'd3-array';
 
-import {UPDATE_DATA} from './actions';
+import {UPDATE_DATA, UPDATE_SLIDER_VALUES} from './actions';
 
 const DEFAULT_STATE = {
   containerWidth: 800,
   containerHeight: 800,
-  data: null,
+  data: [],
+  sliderValues: [],
 };
 
 const handleUpdateData = (state, {payload}) => {
-  if (!payload) {
-    return {
-      ...state,
-      data: payload,
-    };
-  }
-
   // temporary hack to scale the data until the actual scale method is implemented
   payload.forEach(d => {
     d.lines.forEach(({name, line}) => {
@@ -39,9 +33,22 @@ const handleUpdateData = (state, {payload}) => {
   };
 };
 
+/**
+ * @params payload - {[idx]: value, ...}
+ */
+const handleUpdateSliderValues = (state, {payload}) => {
+  return {
+    ...state,
+    sliderValues: state.sliderValues.map(
+      (d, i) => (payload.hasOwnProperty(i) ? payload[i] : d)
+    ),
+  };
+};
+
 export default handleActions(
   {
     [UPDATE_DATA]: handleUpdateData,
+    [UPDATE_SLIDER_VALUES]: handleUpdateSliderValues,
   },
   DEFAULT_STATE
 );

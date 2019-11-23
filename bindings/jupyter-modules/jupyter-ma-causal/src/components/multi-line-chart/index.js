@@ -185,7 +185,7 @@ export default class Chart extends Component {
     const xScale = getXScale(width);
     const yScale = getYScale(height);
 
-    return data.lines.map(({name, line}, idx) => {
+    return data.lines.map(({name, line}, index) => {
       const getSVGLine = d3Line()
         .x(d => xScale(d.x))
         .y(d => yScale(d.y));
@@ -194,7 +194,7 @@ export default class Chart extends Component {
           key={name}
           d={getSVGLine(line)}
           fill="none"
-          stroke={colorScale(idx)}
+          stroke={colorScale(index)}
           strokeWidth={2}
         />
       );
@@ -209,7 +209,7 @@ export default class Chart extends Component {
     const xScale = getXScale(width);
     const yScale = getYScale(height);
 
-    return data.lines.map(({name, line}, idx) => {
+    return data.lines.map(({name, line}, index) => {
       return (
         <g key={name}>
           {line.map((d, i) => (
@@ -218,7 +218,7 @@ export default class Chart extends Component {
               cx={xScale(d.x)}
               cy={yScale(d.y)}
               r={3}
-              fill={colorScale(idx)}
+              fill={colorScale(index)}
             />
           ))}
         </g>

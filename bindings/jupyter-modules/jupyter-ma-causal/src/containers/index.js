@@ -6,9 +6,9 @@ import {
   getColumnWidth,
   getColumnHeight,
   getData,
-} from '../selectors';
+} from '../selectors/base-selectors';
 import {updateData} from '../actions';
-import MultiLineChart from '../components/multi-line-chart';
+import MultiLineChartContainer from '../containers/multi-line-chart-container';
 
 const mapStateToProps = (state, props) => ({
   containerWidth: getContainerWidth(state),
@@ -42,17 +42,11 @@ class App extends Component {
     this.props.updateData(data);
   }
   _renderColumns() {
-    const {data} = this.props;
-    if (!data) return null;
-    const {columnWidth, columnHeight} = this.props;
+    const {data, columnWidth, columnHeight} = this.props;
     return data.map((d, i) => {
       return (
         <div key={i} style={this.columnStyle}>
-          <MultiLineChart
-            data={d}
-            width={columnWidth - 20}
-            height={Math.min(260, (columnHeight - 50) / 2)}
-          />
+          <MultiLineChartContainer index={i} />
         </div>
       );
     });

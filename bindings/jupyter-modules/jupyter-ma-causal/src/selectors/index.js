@@ -1,23 +1,5 @@
-import {createSelector} from 'reselect';
-import {CONTAINER_PADDING} from '../constants';
+import * as factories from './factories';
+import * as baseSelectors from './base-selectors';
+import * as multiLineChartSelectors from './multi-line-chart-selectors';
 
-export const rootSelector = state => state;
-
-export const getContainerWidth = createSelector(
-  rootSelector,
-  state => state.containerWidth
-);
-
-export const getContainerHeight = createSelector(
-  rootSelector,
-  state => state.containerHeight
-);
-
-export const getData = createSelector(rootSelector, state => state.data);
-
-export const getColumnWidth = createSelector(rootSelector, () => 300);
-
-export const getColumnHeight = createSelector(
-  getContainerHeight,
-  height => height - CONTAINER_PADDING.TOP - CONTAINER_PADDING.BOTTOM
-);
+export {factories, baseSelectors, multiLineChartSelectors};
