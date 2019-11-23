@@ -21,7 +21,7 @@ export default class Chart extends Component {
 
   static getDerivedStateFromProps = (props, state) => ({
     ...state,
-    value: props.x === undefined ? state.x : props.x,
+    x: props.x === undefined ? state.x : props.x,
   });
 
   constructor(props) {
@@ -32,10 +32,11 @@ export default class Chart extends Component {
     this.move = null;
   }
 
-  _getX() {
-    const {x} = this.props;
+  _getX = () => {
+    const {extent} = this.props;
+    const {x} = this.state;
     return x === null ? extent[1][0] : x;
-  }
+  };
 
   _renderLeftBar() {
     const {
@@ -88,7 +89,7 @@ export default class Chart extends Component {
             this.setState({x: mx});
             this.props.onDrag({
               target: this,
-              type: 'brush',
+              type: 'drag',
               x: mx,
               sourceEvent: event,
             });
@@ -96,7 +97,7 @@ export default class Chart extends Component {
         }}
         onPointerUp={event => {
           this.move = null;
-          this.props.onBrushEnd({
+          this.props.onDragEnd({
             target: this,
             type: 'end',
             x: this.state.x,

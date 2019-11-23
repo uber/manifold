@@ -8,15 +8,14 @@ export default class Chart extends Component {
     height: PropTypes.number.isRequired,
     extent: PropTypes.array.isRequired,
     x: PropTypes.number,
-    getEventMouse: PropTypes.func.isRequired,
     onDragStart: PropTypes.func.isRequired,
     onDrag: PropTypes.func.isRequired,
     onDragEnd: PropTypes.func.isRequired,
+    style: PropTypes.object,
   };
 
   static defaultProps = {
     extent: [[0, 0], [1, 1]],
-    getEventMouse: event => [event.clientX, event.clientY],
     onDragStart: () => {},
     onDrag: () => {},
     onDragEnd: () => {},
@@ -25,8 +24,21 @@ export default class Chart extends Component {
   render() {
     const {width, height, style, ...rest} = this.props;
     return (
-      <svg width={width} height={height} style={style}>
-        <Slidebar {...rest} />;
+      <svg
+        ref={input => (this.svg = input)}
+        width={width}
+        height={height}
+        style={style}
+      >
+        <Slidebar
+          {...rest}
+          getEventMouse={event => {
+            const {clientX, clientY} = event;
+            const {left, top} = this.svg.getBoundingClientRect();
+            return [clientX - left, clientY - top];
+          }}
+        />
+        ;
       </svg>
     );
   }

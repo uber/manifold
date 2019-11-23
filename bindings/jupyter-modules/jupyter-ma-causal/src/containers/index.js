@@ -9,6 +9,7 @@ import {
 } from '../selectors/base-selectors';
 import {updateData} from '../actions';
 import MultiLineChartContainer from '../containers/multi-line-chart-container';
+import SlidebarContainer from '../containers/slidebar-svg-container';
 
 const mapStateToProps = (state, props) => ({
   containerWidth: getContainerWidth(state),
@@ -46,7 +47,12 @@ class App extends Component {
     return data.map((d, i) => {
       return (
         <div key={i} style={this.columnStyle}>
-          <MultiLineChartContainer index={i} />
+          <div>
+            <MultiLineChartContainer index={i} />
+          </div>
+          <div>
+            <SlidebarContainer index={i} />
+          </div>
         </div>
       );
     });
