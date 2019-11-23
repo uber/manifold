@@ -8,7 +8,7 @@ const DEFAULT_STATE = {
   containerWidth: 800,
   containerHeight: 800,
   data: [],
-  sliderValues: [],
+  sliderValues: [], // associative array
 };
 
 const handleUpdateData = (state, {payload}) => {

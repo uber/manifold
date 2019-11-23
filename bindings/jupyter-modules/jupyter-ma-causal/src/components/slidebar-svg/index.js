@@ -38,7 +38,6 @@ export default class Chart extends Component {
             return [clientX - left, clientY - top];
           }}
         />
-        ;
       </svg>
     );
   }
