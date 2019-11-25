@@ -13,6 +13,7 @@ export const getContainerHeight = createSelector(
   state => state.containerHeight
 );
 
+// TODO: move this to a constant or implement adjustable width logic depending on the needs
 export const getColumnWidth = createSelector(rootSelector, () => 300);
 
 export const getColumnHeight = createSelector(

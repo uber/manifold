@@ -6,4 +6,5 @@ export const getChartWidth = createSelector(
   width => width - 20
 );
 
+// TODO: move this to a constant or implement adjustable width logic depending on the needs
 export const getChartHeight = createSelector(getColumnHeight, height => 50);
