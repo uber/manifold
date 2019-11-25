@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "version": "0.0.1",
   "engines": {
-    "node": ">=8.9.4 <9.0.0",
+    "node": ">=8.9.4",
     "npm": ">=5.6.0",
     "yarn": ">=1.9.4"
   },
