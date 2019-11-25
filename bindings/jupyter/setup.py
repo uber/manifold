@@ -33,6 +33,9 @@ DEFAULT_JREQUIREMENTS = {
     "StackedCalendar": {
         "module": {"@mlvis/stacked-calendar": "external"}
     },
+    "MACausal": {
+        "module": {"@mlvis/jupyter-ma-causal": "external"}
+    }
 }
 
 
