@@ -1,11 +1,21 @@
 language: node_js
 install:
-  - npm install -g codecov
-  - yarn --ignore-engines
+- npm install -g codecov
+- yarn --ignore-engines
 node_js:
-  - 10
+- 10
 script:
-  - npm run lint
-  - npm run test
-  - codecov
+- yarn lint
+- yarn test
+- codecov
+- yarn build
 cache: yarn
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: npm run publish
+  on:
+    branch: auto-deploy
+  email: im.lezhi@gmail.com
+  api_key:
+    secure: Gt7og4woJ77kdeVmM5ECq1YpjkkROwYU1iYIc22PkB5QUZgGJhBo+EVmlxhAGTXW0RZ0J2sGguGYdnycTHZNPL9fyO+PsnoKDWnaAMH8RgvBSxR0DsKm/0YIdNx/kDNgrNQ1AlKm/+P42mZgGkWNsBQar+Z7sJ/CCsCLOnaeLs3YEneX1MUGOi5FtpnIUQXevjtHFcDH+UM60570whNXFjea6jgFDjaSI19TrqMeMGPDMtqx6yqMLwLxFNb0uYX/CmpA9Cl7v7vZRXbuInyqhFq9FjZq3ey7/FfXcqGKi1brdKlSNhceEIAcbHdx8lZ/QD1kT6gxQEsKRQJXgDAGDKUnmHPGU8LiSAb3FFnMQ951bfHMsmOcMM+CbDh0rv9fG4uumf8oVUG+kIJy5z9epNYJVH2YteBHEyv7XE52pWi6sl46OYioDv9FKuqCloXuZkV7Op82fXjhtL9Tlel036H+52IMtcUalekOQucPoVNlladwvypPIfPEu8JmaQCv3O8yn3WkKQpbS6e7+b4Njo1EdnIFbfCHqUQNgkPnw4pcwnXYH9nyU2FZJCoKjGVeRKGDZhioD1bqjPf/hGyKP2LCpCOb/2a37LOO5A5sTT1v+EiTZcFWMIfzy4KD/8FmYnTciClQZg1A7W0KlBvW1VUOX6JMx8hIS+PDnKhWi5w=

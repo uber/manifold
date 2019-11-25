@@ -20,6 +20,7 @@ As a visual analytics tool, Manifold allows ML practitioners to look beyond over
 - [Using Demo App](#using-demo-app)
 - [Using the Component](#using-the-component)
 - [Contributing](#contributing)
+- [Development](#development)
 - [Versioning](#versioning)
 - [License](#license)
 
@@ -346,17 +347,25 @@ const Main = props => (
 );
 
 ## Built With
+
 - [TensorFlow.js](https://js.tensorflow.org/)
 - [React](https://reactjs.org/)
 - [Redux](https://redux.js.org/)
 
 ## Contributing
+
 Please read our [code of conduct](CODE_OF_CONDUCT.md) before you contribute! You can find details for submitting pull requests in the [CONTRIBUTING.md](CONTRIBUTING.md) file. Issue [template](https://help.github.com/articles/about-issue-and-pull-request-templates/).
 
+## Development
+
+See this [guide](./DEVELOPMENT.md#developing-website) for development.
+
 ## Versioning
+
 We document versions and changes in our changelog - see the [CHANGELOG.md](CHANGELOG.md) file for details.
 
 ## License
+
 Apache 2.0 License
 
 [feature csv image]: https://d1a3f4spazzrp4.cloudfront.net/manifold/docs/x.png

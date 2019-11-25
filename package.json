@@ -1,6 +1,6 @@
 {
   "name": "manifold",
-  "version": "1.1.2-alpha.2",
+  "version": "1.1.2-alpha.4",
   "description": "A suite of machine learning visualization utilities",
   "license": "Apache-2.0",
   "private": true,
@@ -76,7 +76,7 @@
     "test": "jest",
     "clean": "ocular-clean all",
     "build": "ocular-clean all && ocular-build --dist esm && lerna run build",
-    "publish": "npm run lerna:publish",
+    "publish": "if [ $(npm show @mlvis/manifold version) == $(cat lerna.json | jq .version -r) ]; then echo 'version is not updated, quit publish'; else npm run lerna:publish; fi",
     "-------- LERNA --------": "",
     "bump": "npm run lerna:bump",
     "lerna": "lerna",
