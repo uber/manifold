@@ -6566,10 +6566,7 @@ a.ant-btn-sm {
 .ant-dropdown-menu-submenu-popup ul {
   margin-right: 0.3em;
   margin-left: 0.3em;
-<<<<<<< HEAD
-=======
   padding: 0;
->>>>>>> Update website
 }
 .ant-dropdown-menu-item,
 .ant-dropdown-menu-submenu-title {
@@ -6585,11 +6582,8 @@ a.ant-btn-sm {
   -webkit-transition: all 0.3s;
   transition: all 0.3s;
 }
-<<<<<<< HEAD
-=======
 .ant-dropdown-menu-item > .anticon:first-child,
 .ant-dropdown-menu-submenu-title > .anticon:first-child,
->>>>>>> Update website
 .ant-dropdown-menu-item > span > .anticon:first-child,
 .ant-dropdown-menu-submenu-title > span > .anticon:first-child {
   min-width: 12px;
@@ -19601,17 +19595,10 @@ textarea.ant-mentions {
   position: relative;
   padding: 16px 24px;
   background-color: #fff;
-<<<<<<< HEAD
 }
 .ant-page-header-ghost {
   background-color: inherit;
 }
-=======
-}
-.ant-page-header-ghost {
-  background-color: inherit;
-}
->>>>>>> Update website
 .ant-page-header.has-breadcrumb {
   padding-top: 12px;
 }
