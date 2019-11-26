@@ -36,14 +36,13 @@ const handleUpdateData = (state, {payload}) => {
 /**
  * @params payload - {[idx]: value, ...}
  */
-const handleUpdateSliderValues = (state, {payload}) => {
-  return {
-    ...state,
-    sliderValues: state.sliderValues.map(
-      (d, i) => (payload.hasOwnProperty(i) ? payload[i] : d)
-    ),
-  };
-};
+const handleUpdateSliderValues = (state, {payload}) => ({
+  ...state,
+  sliderValues: Object.entries(payload).reduce((values, [index, value]) => {
+    values[index] = value;
+    return values;
+  }, state.sliderValues.slice(0)),
+});
 
 export default handleActions(
   {
