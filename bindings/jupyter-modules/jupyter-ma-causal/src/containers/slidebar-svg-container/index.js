@@ -13,6 +13,7 @@ import {
 import {
   getChartWidth,
   getChartHeight,
+  getChartPadding,
 } from '../../selectors/slidebar-selectors';
 import {updateSliderValues} from '../../actions';
 
@@ -25,6 +26,7 @@ const mapStateToProps = (state, props) => {
     sliderValue: getSliderValue(state),
     width: getChartWidth(state),
     height: getChartHeight(state),
+    padding: getChartPadding(state),
   };
 };
 
@@ -32,11 +34,15 @@ const mapDispatchToProps = {updateSliderValues};
 
 class Chart extends Component {
   getScale() {
-    const {width} = this.props;
+    const {
+      width,
+      padding: {left, right},
+    } = this.props;
     return scaleLinear()
       .domain([0, 1])
-      .range([0, width]);
+      .range([left, width - right]);
   }
+
   getLeftLabel() {
     const {sliderValue, data, lineName} = this.props;
     if (sliderValue === null || sliderValue === undefined) {
@@ -52,13 +58,19 @@ class Chart extends Component {
     }
   }
   render() {
-    const {width, height, sliderValue, index} = this.props;
+    const {
+      width,
+      height,
+      sliderValue,
+      index,
+      padding: {left, right},
+    } = this.props;
     const scale = this.getScale();
     return (
       <Slidebar
         width={width}
         height={height}
-        extent={[[0, 0], [width, height]]}
+        extent={[[left, 0], [width - right, height]]}
         x={sliderValue === undefined ? null : scale(sliderValue)}
         renderLeftLabel
         leftLabel={this.getLeftLabel()}

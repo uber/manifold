@@ -5,6 +5,7 @@ import MultiLineChart from '../../components/multi-line-chart';
 import {
   getChartWidth,
   getChartHeight,
+  getChartPadding,
 } from '../../selectors/multi-line-chart-selectors';
 import {getColumnDataFactory} from '../../selectors/factories';
 
@@ -15,6 +16,7 @@ const mapStateToProps = (state, props) => {
     width: getChartWidth(state),
     height: getChartHeight(state),
     data: getColumnData(state),
+    padding: getChartPadding(state),
   };
 };
 
