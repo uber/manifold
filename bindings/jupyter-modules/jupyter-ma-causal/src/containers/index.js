@@ -10,6 +10,7 @@ import {
 import {updateData} from '../actions';
 import MultiLineChartContainer from '../containers/multi-line-chart-container';
 import SlidebarContainer from '../containers/slidebar-svg-container';
+import LineIndicatorContainer from '../containers/line-indicator-container';
 
 const mapStateToProps = (state, props) => ({
   containerWidth: getContainerWidth(state),
@@ -31,6 +32,7 @@ class App extends Component {
       display: 'flex',
     };
   }
+
   get columnStyle() {
     const {columnWidth, columnHeight} = this.props;
     return {
@@ -38,30 +40,36 @@ class App extends Component {
       height: columnHeight,
     };
   }
+
   componentDidMount() {
     const {data} = this.props.params;
     this.props.updateData(data);
   }
+
   _renderColumns() {
     const {data, columnWidth, columnHeight} = this.props;
     return data.map((d, i) => {
       return (
         <div key={i} style={this.columnStyle}>
-          <div>
-            <MultiLineChartContainer index={i} />
-          </div>
-          {(data[i].lines || []).map(d => (
-            <div key={d.name}>
-              <div>{d.name}</div>
-              <div>
-                <SlidebarContainer index={i} lineName={d.name} />
-              </div>
+          <div style={{position: 'relative'}}>
+            <div>
+              <MultiLineChartContainer index={i} />
             </div>
-          ))}
+            {(data[i].lines || []).map(d => (
+              <div key={d.name}>
+                <div>{d.name}</div>
+                <div>
+                  <SlidebarContainer index={i} lineName={d.name} />
+                </div>
+              </div>
+            ))}
+            <LineIndicatorContainer index={i} />
+          </div>
         </div>
       );
     });
   }
+
   render() {
     return <div style={this.containerStyle}>{this._renderColumns()}</div>;
   }

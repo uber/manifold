@@ -74,7 +74,9 @@ class Chart extends Component {
         x={sliderValue === undefined ? null : scale(sliderValue)}
         renderLeftLabel
         leftLabel={this.getLeftLabel()}
+        disableDrag
         onDrag={({x}) => {
+          // leave these code here in case the design requirement change and drag is needed again here
           const value = clamp(scale.invert(x));
           this.props.updateSliderValues({[index]: value});
         }}
