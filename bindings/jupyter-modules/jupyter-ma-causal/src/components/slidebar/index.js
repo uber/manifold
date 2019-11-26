@@ -1,11 +1,16 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import {format as d3Format} from 'd3-format';
 
 export default class Chart extends Component {
   static propTypes = {
     extent: PropTypes.array.isRequired,
     x: PropTypes.number,
     getEventMouse: PropTypes.func.isRequired,
+    leftLabel: PropTypes.string,
+    rightLabel: PropTypes.string,
+    renderLeftLabel: PropTypes.bool.isRequired,
+    renderRightLabel: PropTypes.bool.isRequired,
     onDragStart: PropTypes.func.isRequired,
     onDrag: PropTypes.func.isRequired,
     onDragEnd: PropTypes.func.isRequired,
@@ -13,6 +18,8 @@ export default class Chart extends Component {
 
   static defaultProps = {
     extent: [[0, 0], [1, 1]],
+    renderLeftLabel: false,
+    renderRightLabel: false,
     getEventMouse: event => [event.clientX, event.clientY],
     onDragStart: () => {},
     onDrag: () => {},
@@ -52,6 +59,48 @@ export default class Chart extends Component {
     } = this.props;
     const x = this._getX();
     return <rect x={x} y={y0} width={x1 - x} height={y1} fill="#c2c2d6" />;
+  }
+
+  _renderLeftLabel() {
+    if (!this.props.renderLeftLabel) {
+      return null;
+    }
+    const {
+      extent: [[x0, y0], [x1, y1]],
+      leftLabel,
+    } = this.props;
+    const x = this._getX();
+    return (
+      <text
+        x={x - 3}
+        y={(y0 + y1) / 2}
+        textAnchor="end"
+        dominantBaseline="middle"
+      >
+        {leftLabel || d3Format('.2s')(x)}
+      </text>
+    );
+  }
+
+  _renderRightLabel() {
+    if (!this.props.renderRightLabel) {
+      return null;
+    }
+    const {
+      extent: [[x0, y0], [x1, y1]],
+      rightLabel,
+    } = this.props;
+    const x = this._getX();
+    return (
+      <text
+        x={x + 3}
+        y={(y0 + y1) / 2}
+        textAnchor="start"
+        dominantBaseline="middle"
+      >
+        {rightLabel || d3Format('.2s')(x)}
+      </text>
+    );
   }
 
   _renderTip() {
@@ -114,6 +163,8 @@ export default class Chart extends Component {
         {this._renderLeftBar()}
         {this._renderRightBar()}
         {this._renderTip()}
+        {this._renderLeftLabel()}
+        {this._renderRightLabel()}
       </g>
     );
   }
