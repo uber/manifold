@@ -50,7 +50,7 @@ export default class Chart extends Component {
       extent: [[x0, y0], [x1, y1]],
     } = this.props;
     const x = this._getX();
-    return <rect x={x0} y={y0} width={x} height={y1} fill="#3399ff" />;
+    return <rect x={x0} y={y0} width={x - x0} height={y1} fill="#3399ff" />;
   }
 
   _renderRightBar() {
