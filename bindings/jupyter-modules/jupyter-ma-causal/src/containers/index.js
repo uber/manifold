@@ -50,9 +50,14 @@ class App extends Component {
           <div>
             <MultiLineChartContainer index={i} />
           </div>
-          <div>
-            <SlidebarContainer index={i} />
-          </div>
+          {data[i].lines.map(d => (
+            <div key={d.name}>
+              <div>{d.name}</div>
+              <div>
+                <SlidebarContainer index={i} lineName={d.name} />
+              </div>
+            </div>
+          ))}
         </div>
       );
     });
