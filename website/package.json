@@ -6,9 +6,9 @@
   "main": "dist/index.js",
   "version": "0.0.1",
   "engines": {
-    "node": ">=8.9.4 <9.0.0",
-    "npm": ">=5.6.0",
-    "yarn": ">=1.9.4"
+    "node": ">=10.15.0",
+    "npm": ">=6.4.0",
+    "yarn": ">=1.17.0"
   },
   "scripts": {
     "start": "webpack-dev-server --mode development --env.prod --progress --open",
@@ -39,7 +39,8 @@
   "devDependencies": {
     "webpack": "^4.27.1",
     "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.10"
+    "webpack-dev-server": "^3.1.10",
+    "terser-webpack-plugin": "^2.2.1"
   },
   "peerDependencies": {}
 }
