@@ -1,12 +1,46 @@
 node_modules
-yarn.lock
 package-lock.json
 examples/**/*-lock.json
+examples/**/data
 scripts/sync.sh
 scripts/traverse.sh
+scripts/traverse.py
+test/
 *.log
 .cache/
 coverage*/
 jsconfig.json
 dist
 data/
+.DS_Store
+.prettierrc.js
+
+# Python
+
+__pycache__
+*.pyc
+.idea
+*.egg-info
+.python-version
+
+# Jupyter Bindings
+.ipynb_checkpoints
+bindings/jupyter/**/static/
+bindings/jupyter/**/*env/
+bindings/jupyter/build
+bindings/jupyter/*.ipynb
+bindings/jupyter/**/metadata
+examples/jupyter/**/venv/
+examples/jupyter/**/lib/
+© 2019 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
