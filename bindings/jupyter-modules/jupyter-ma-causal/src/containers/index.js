@@ -50,7 +50,7 @@ class App extends Component {
           <div>
             <MultiLineChartContainer index={i} />
           </div>
-          {data[i].lines.map(d => (
+          {(data[i].lines || []).map(d => (
             <div key={d.name}>
               <div>{d.name}</div>
               <div>
