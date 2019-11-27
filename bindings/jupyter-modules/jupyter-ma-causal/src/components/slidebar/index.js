@@ -52,16 +52,7 @@ export default class Chart extends Component {
       extent: [[x0, y0], [x1, y1]],
     } = this.props;
     const x = this._getX();
-    return (
-      <rect
-        x={x0}
-        y={y0}
-        width={x - x0}
-        height={y1}
-        fill="#3399ff"
-        pointerEvents="none"
-      />
-    );
+    return <rect x={x0} y={y0} width={x - x0} height={y1} fill="#3399ff" />;
   }
 
   _renderRightBar() {
@@ -69,16 +60,7 @@ export default class Chart extends Component {
       extent: [[x0, y0], [x1, y1]],
     } = this.props;
     const x = this._getX();
-    return (
-      <rect
-        x={x}
-        y={y0}
-        width={x1 - x}
-        height={y1}
-        fill="#c2c2d6"
-        pointerEvents="none"
-      />
-    );
+    return <rect x={x} y={y0} width={x1 - x} height={y1} fill="#c2c2d6" />;
   }
 
   _renderLeftLabel() {
@@ -96,7 +78,6 @@ export default class Chart extends Component {
         y={(y0 + y1) / 2}
         textAnchor="end"
         dominantBaseline="middle"
-        pointerEvents="none"
       >
         {leftLabel || d3Format('.2s')(x)}
       </text>
@@ -118,7 +99,6 @@ export default class Chart extends Component {
         y={(y0 + y1) / 2}
         textAnchor="start"
         dominantBaseline="middle"
-        pointerEvents="none"
       >
         {rightLabel || d3Format('.2s')(x)}
       </text>
@@ -145,6 +125,7 @@ export default class Chart extends Component {
           if (this.props.disableDrag) {
             return;
           }
+          event.target.setPointerCapture(event.pointerId);
           this.move = this.props.getEventMouse(event);
           this.props.onDragStart({
             target: this,

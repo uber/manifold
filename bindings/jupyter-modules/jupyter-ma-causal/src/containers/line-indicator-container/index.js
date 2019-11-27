@@ -67,6 +67,7 @@ class Chart extends Component {
           cursor: 'ew-resize',
         }}
         onPointerDown={event => {
+          event.target.setPointerCapture(event.pointerId);
           this.move = this._getEventMouse(event);
         }}
         onPointerMove={event => {
