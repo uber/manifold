@@ -6,10 +6,7 @@ import {
   getChartPaddingRight,
 } from './base-selectors';
 
-export const getChartWidth = createSelector(
-  getColumnWidth,
-  width => width - 20
-);
+export const getChartWidth = createSelector(getColumnWidth, width => width);
 
 // TODO: move this to a constant or implement adjustable width logic depending on the needs
 export const getChartHeight = createSelector(getColumnHeight, height => 50);

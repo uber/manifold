@@ -16,6 +16,7 @@ export default class Chart extends Component {
     onDrag: PropTypes.func.isRequired,
     onDragEnd: PropTypes.func.isRequired,
     style: PropTypes.object,
+    disableDrag: PropTypes.bool,
   };
 
   static defaultProps = {

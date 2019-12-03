@@ -14,6 +14,7 @@ export default class Chart extends Component {
     onDragStart: PropTypes.func.isRequired,
     onDrag: PropTypes.func.isRequired,
     onDragEnd: PropTypes.func.isRequired,
+    disableDrag: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
@@ -24,6 +25,7 @@ export default class Chart extends Component {
     onDragStart: () => {},
     onDrag: () => {},
     onDragEnd: () => {},
+    disableDrag: false,
   };
 
   static getDerivedStateFromProps = (props, state) => ({
@@ -118,8 +120,12 @@ export default class Chart extends Component {
         width={10}
         height={y1}
         fill="none"
-        pointerEvents="visible"
+        pointerEvents={this.props.disableDrag ? 'none' : 'visible'}
         onPointerDown={event => {
+          if (this.props.disableDrag) {
+            return;
+          }
+          event.target.setPointerCapture(event.pointerId);
           this.move = this.props.getEventMouse(event);
           this.props.onDragStart({
             target: this,
@@ -129,6 +135,9 @@ export default class Chart extends Component {
           });
         }}
         onPointerMove={event => {
+          if (this.props.disableDrag) {
+            return;
+          }
           if (this.move) {
             const [x, y] = this.props.getEventMouse(event);
             const [sx, sy] = this.move;
@@ -145,6 +154,9 @@ export default class Chart extends Component {
           }
         }}
         onPointerUp={event => {
+          if (this.props.disableDrag) {
+            return;
+          }
           this.move = null;
           this.props.onDragEnd({
             target: this,
