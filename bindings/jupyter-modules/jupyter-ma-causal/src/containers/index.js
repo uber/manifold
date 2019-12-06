@@ -1,22 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {
-  getContainerWidth,
-  getContainerHeight,
-  getColumnWidth,
-  getColumnHeight,
-  getData,
-} from '../selectors/base-selectors';
+import {getColumnWidth, getData} from '../selectors/base-selectors';
 import {updateData} from '../actions';
 import MultiLineChartContainer from '../containers/multi-line-chart-container';
 import SlidebarContainer from '../containers/slidebar-svg-container';
 import LineIndicatorContainer from '../containers/line-indicator-container';
 
 const mapStateToProps = (state, props) => ({
-  containerWidth: getContainerWidth(state),
-  containerHeight: getContainerHeight(state),
   columnWidth: getColumnWidth(state),
-  columnHeight: getColumnHeight(state),
   data: getData(state),
   params: props,
 });
@@ -25,19 +16,19 @@ const mapDispatchToProps = {updateData};
 
 class App extends Component {
   get containerStyle() {
-    const {containerWidth, containerHeight} = this.props;
     return {
-      width: containerWidth,
-      height: containerHeight,
+      width: '100%',
       display: 'flex',
+      overflowX: 'auto',
+      overflowY: 'hidden',
     };
   }
 
   get columnStyle() {
-    const {columnWidth, columnHeight} = this.props;
+    const {columnWidth} = this.props;
     return {
+      position: 'relative',
       width: columnWidth,
-      height: columnHeight,
     };
   }
 
@@ -47,11 +38,11 @@ class App extends Component {
   }
 
   _renderColumns() {
-    const {data, columnWidth, columnHeight} = this.props;
+    const {data, columnWidth} = this.props;
     return data.map((d, i) => {
       return (
         <div key={i} style={this.columnStyle}>
-          <div style={{position: 'relative'}}>
+          <div style={{position: 'relative', width: columnWidth}}>
             <div>
               <MultiLineChartContainer index={i} />
             </div>

@@ -1,1 +1,0 @@
-export const CONTAINER_PADDING = {TOP: 10, BOTTOM: 10, LEFT: 10, RIGHT: 10};
