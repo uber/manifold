@@ -25,7 +25,7 @@ export const getColumnHeight = createSelector(
 export const getChartPaddingLeft = createSelector(rootSelector, () => 20);
 
 // TODO: move this to a constant or implement adjustable width logic depending on the needs
-export const getChartPaddingRight = createSelector(rootSelector, () => 10);
+export const getChartPaddingRight = createSelector(rootSelector, () => 20);
 
 export const getData = createSelector(rootSelector, state => state.data);
 

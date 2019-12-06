@@ -80,7 +80,7 @@ export default class Chart extends Component {
       padding: {bottom, left, right},
     } = this.props;
     const xScale = this._getXScale();
-    const format = d3Format('.1f');
+    const format = d3Format('.2d');
 
     return (
       <React.Fragment>
@@ -111,7 +111,7 @@ export default class Chart extends Component {
                 textAnchor="middle"
                 fontSize={10}
               >
-                {format(t)}
+                {`${format(t * 100)}%`}
               </text>
             </React.Fragment>
           );
