@@ -1,7 +1,7 @@
 import {createSelector} from 'reselect';
 import {
+  rootSelector,
   getColumnWidth,
-  getColumnHeight,
   getChartPaddingLeft,
   getChartPaddingRight,
 } from './base-selectors';
@@ -9,7 +9,7 @@ import {
 export const getChartWidth = createSelector(getColumnWidth, width => width);
 
 // TODO: move this to a constant or implement adjustable width logic depending on the needs
-export const getChartHeight = createSelector(getColumnHeight, height => 50);
+export const getChartHeight = createSelector(rootSelector, height => 50);
 
 export const getChartPadding = createSelector(
   [getChartPaddingLeft, getChartPaddingRight],
