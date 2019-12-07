@@ -49,7 +49,7 @@ export default class Chart extends Component {
 
   _renderLeftBar() {
     const {
-      extent: [[x0, y0], [x1, y1]],
+      extent: [[x0, y0], [, y1]],
     } = this.props;
     const x = this._getX();
     return <rect x={x0} y={y0} width={x - x0} height={y1} fill="#3399ff" />;
@@ -57,7 +57,7 @@ export default class Chart extends Component {
 
   _renderRightBar() {
     const {
-      extent: [[x0, y0], [x1, y1]],
+      extent: [[, y0], [x1, y1]],
     } = this.props;
     const x = this._getX();
     return <rect x={x} y={y0} width={x1 - x} height={y1} fill="#c2c2d6" />;
@@ -68,7 +68,7 @@ export default class Chart extends Component {
       return null;
     }
     const {
-      extent: [[x0, y0], [x1, y1]],
+      extent: [[, y0], [, y1]],
       leftLabel,
     } = this.props;
     const x = this._getX();
@@ -89,7 +89,7 @@ export default class Chart extends Component {
       return null;
     }
     const {
-      extent: [[x0, y0], [x1, y1]],
+      extent: [[, y0], [, y1]],
       rightLabel,
     } = this.props;
     const x = this._getX();
@@ -140,7 +140,7 @@ export default class Chart extends Component {
           }
           if (this.move) {
             const [x, y] = this.props.getEventMouse(event);
-            const [sx, sy] = this.move;
+            const [sx] = this.move;
             const dx = x - sx;
             const mx = Math.min(Math.max(x + dx, x0), x1);
             this.move = [x, y];

@@ -44,7 +44,6 @@ class Chart extends Component {
   render() {
     const {
       width,
-      height,
       sliderValue,
       padding: {top, bottom, left, right},
       index,
@@ -75,7 +74,7 @@ class Chart extends Component {
           onPointerMove={event => {
             if (this.move) {
               const [x, y] = this._getEventMouse(event);
-              const [sx, sy] = this.move;
+              const [sx] = this.move;
               const dx = x - sx;
               const mx = Math.min(Math.max(x + dx, left), width - right);
               this.move = [x, y];
@@ -91,7 +90,7 @@ class Chart extends Component {
           style={{
             position: 'absolute',
             left: x - 13,
-            top: '100%',
+            top: 'calc(100% - 3px)',
           }}
         >
           {`${d3Format('2d')(
