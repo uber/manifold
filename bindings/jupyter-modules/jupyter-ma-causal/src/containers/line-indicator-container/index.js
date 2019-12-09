@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {scaleLinear} from 'd3-scale';
+import {format as d3Format} from 'd3-format';
 
 import {clamp} from '../../utils';
 
@@ -55,36 +56,51 @@ class Chart extends Component {
     );
 
     return (
-      <div
-        ref={input => (this.div = input)}
-        style={{
-          position: 'absolute',
-          left: x,
-          top,
-          width: 1,
-          height: `calc(100% - ${bottom}px)`,
-          borderLeft: '1px dotted black',
-          cursor: 'ew-resize',
-        }}
-        onPointerDown={event => {
-          event.target.setPointerCapture(event.pointerId);
-          this.move = this._getEventMouse(event);
-        }}
-        onPointerMove={event => {
-          if (this.move) {
-            const [x, y] = this._getEventMouse(event);
-            const [sx, sy] = this.move;
-            const dx = x - sx;
-            const mx = Math.min(Math.max(x + dx, left), width - right);
-            this.move = [x, y];
-            const value = clamp(scale.invert(mx));
-            this.props.updateSliderValues({[index]: value});
-          }
-        }}
-        onPointerUp={event => {
-          this.move = null;
-        }}
-      />
+      <React.Fragment>
+        <div
+          ref={input => (this.div = input)}
+          style={{
+            position: 'absolute',
+            left: x,
+            top,
+            width: 0,
+            height: `calc(100% - ${bottom}px)`,
+            borderLeft: '1px dotted black',
+            cursor: 'ew-resize',
+          }}
+          onPointerDown={event => {
+            event.target.setPointerCapture(event.pointerId);
+            this.move = this._getEventMouse(event);
+          }}
+          onPointerMove={event => {
+            if (this.move) {
+              const [x, y] = this._getEventMouse(event);
+              const [sx, sy] = this.move;
+              const dx = x - sx;
+              const mx = Math.min(Math.max(x + dx, left), width - right);
+              this.move = [x, y];
+              const value = clamp(scale.invert(mx));
+              this.props.updateSliderValues({[index]: value});
+            }
+          }}
+          onPointerUp={event => {
+            this.move = null;
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            left: x - 13,
+            top: '100%',
+          }}
+        >
+          {`${d3Format('2d')(
+            (sliderValue === null || sliderValue === undefined
+              ? 1
+              : sliderValue) * 100
+          )}%`}
+        </div>
+      </React.Fragment>
     );
   }
 }
