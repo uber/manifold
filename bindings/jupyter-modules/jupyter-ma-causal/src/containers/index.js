@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {getColumnWidth, getData} from '../selectors/base-selectors';
+import {
+  getColumnWidth,
+  getData,
+  getChartPaddingLeft,
+} from '../selectors/base-selectors';
 import {updateData} from '../actions';
 import MultiLineChartContainer from '../containers/multi-line-chart-container';
 import SlidebarContainer from '../containers/slidebar-svg-container';
@@ -10,6 +14,7 @@ import StaticbarContainer from '../containers/staticbar-svg-container';
 const mapStateToProps = (state, props) => ({
   columnWidth: getColumnWidth(state),
   data: getData(state),
+  paddingLeft: getChartPaddingLeft(state),
   params: props,
 });
 
@@ -39,7 +44,7 @@ class App extends Component {
   }
 
   _renderColumns() {
-    const {data, columnWidth} = this.props;
+    const {data, columnWidth, paddingLeft} = this.props;
     return data.map((d, i) => {
       return (
         <div key={i} style={this.columnStyle}>
@@ -49,7 +54,7 @@ class App extends Component {
             </div>
             {(data[i].lines || []).map(d => (
               <div key={d.name}>
-                <div>{d.name}</div>
+                <div style={{paddingLeft}}>{d.name}</div>
                 <div>
                   <SlidebarContainer index={i} lineName={d.name} />
                 </div>
@@ -65,7 +70,9 @@ class App extends Component {
               <React.Fragment key={d.name}>
                 {['treatment', 'control'].map(groupName => (
                   <div key={groupName}>
-                    <div>{`${d.name} ${groupName} group`}</div>
+                    <div style={{paddingLeft}}>{`${
+                      d.name
+                    } ${groupName} group`}</div>
                     <div>
                       <StaticbarContainer
                         index={i}
