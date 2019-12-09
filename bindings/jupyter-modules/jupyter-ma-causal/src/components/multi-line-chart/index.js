@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {line as d3Line} from 'd3-shape';
 import {scaleLinear, scaleOrdinal} from 'd3-scale';
 import {schemeCategory10} from 'd3-scale-chromatic';
-import {extent as d3Extent} from 'd3-array';
 import {format as d3Format} from 'd3-format';
 
 const colorScale = scaleOrdinal(schemeCategory10);
@@ -45,8 +44,7 @@ export default class Chart extends Component {
     const {
       data,
       width,
-      height,
-      padding: {left, right, top},
+      padding: {right, top},
     } = this.props;
     if (!data || !data.lines) {
       return null;
@@ -211,7 +209,6 @@ export default class Chart extends Component {
       return null;
     }
 
-    const {width, height} = this.props;
     const xScale = this._getXScale();
     const yScale = this._getYScale();
 
@@ -235,7 +232,6 @@ export default class Chart extends Component {
     if (!data || !data.lines) {
       return null;
     }
-    const {width, height} = this.props;
     const xScale = this._getXScale();
     const yScale = this._getYScale();
 
