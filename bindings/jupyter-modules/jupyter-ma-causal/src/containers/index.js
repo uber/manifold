@@ -59,7 +59,6 @@ class App extends Component {
             <LineIndicatorContainer index={i} />
           </div>
           <div style={{position: 'relative', width: columnWidth}}>
-            {' '}
             {(data[i].lines || []).map(d => (
               <React.Fragment key={d.name}>
                 {['treatment', 'control'].map(groupName => (
