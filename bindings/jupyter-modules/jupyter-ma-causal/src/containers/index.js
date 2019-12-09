@@ -5,6 +5,7 @@ import {updateData} from '../actions';
 import MultiLineChartContainer from '../containers/multi-line-chart-container';
 import SlidebarContainer from '../containers/slidebar-svg-container';
 import LineIndicatorContainer from '../containers/line-indicator-container';
+import StaticbarContainer from '../containers/staticbar-svg-container';
 
 const mapStateToProps = (state, props) => ({
   columnWidth: getColumnWidth(state),
@@ -54,7 +55,26 @@ class App extends Component {
                 </div>
               </div>
             ))}
+
             <LineIndicatorContainer index={i} />
+          </div>
+          <div style={{position: 'relative', width: columnWidth}}>
+            {(data[i].lines || []).map(d => (
+              <React.Fragment key={d.name}>
+                {['treatment', 'control'].map(groupName => (
+                  <div key={groupName}>
+                    <div>{`${d.name} ${groupName} group`}</div>
+                    <div>
+                      <StaticbarContainer
+                        index={i}
+                        lineName={d.name}
+                        groupName={groupName}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </React.Fragment>
+            ))}
           </div>
         </div>
       );

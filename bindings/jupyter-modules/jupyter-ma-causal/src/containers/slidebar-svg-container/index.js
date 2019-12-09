@@ -44,12 +44,15 @@ class Chart extends Component {
   }
 
   getLeftLabel() {
+    const format = d3Format('.6f');
     const {sliderValue, data, lineName} = this.props;
+    if (!data.length) {
+      return null;
+    }
     if (sliderValue === null || sliderValue === undefined) {
-      return '1.0';
+      return format(data[data.length - 1].y);
     }
 
-    const format = d3Format('.6f');
     const idx = data.findIndex(d => d.x > sliderValue);
     if (idx === -1) {
       return format(data[data.length - 1].y);
@@ -57,6 +60,7 @@ class Chart extends Component {
       return format(data[idx && idx - 1].y);
     }
   }
+
   render() {
     const {
       width,
