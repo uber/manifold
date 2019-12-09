@@ -12,6 +12,7 @@ import {
 
 const mapStateToProps = (state, props) => {
   const {index, lineName} = props;
+  // lineName: the name of the line representing the uplifting effect
   const getLineData = getLineDataFactory(index, lineName);
   return {
     data: getLineData(state),
@@ -51,8 +52,12 @@ class Chart extends Component {
           dominantBaseline="middle"
         >
           {groupName === 'treatment'
-            ? format(data[data.length - 1].y)
-            : format(data[0].y)}
+            ? data.length
+              ? format(data[data.length - 1].y)
+              : null
+            : data.length
+              ? format(data[0].y)
+              : null}
         </text>
       </svg>
     );
