@@ -9,6 +9,7 @@ import {clamp} from '../../utils';
 import {
   getLineDataFactory,
   getSliderValueFactory,
+  getLineDataYDomainFactory,
 } from '../../selectors/factories';
 import {
   getChartWidth,
@@ -21,8 +22,10 @@ const mapStateToProps = (state, props) => {
   const {index, lineName} = props;
   const getLineData = getLineDataFactory(index, lineName);
   const getSliderValue = getSliderValueFactory(index);
+  const getLineDataYDomain = getLineDataYDomainFactory(getLineData);
   return {
     data: getLineData(state),
+    domain: getLineDataYDomain(state),
     sliderValue: getSliderValue(state),
     width: getChartWidth(state),
     height: getChartHeight(state),

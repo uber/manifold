@@ -1,5 +1,6 @@
 import {createSelector} from 'reselect';
 import {getData, getSliderValues} from './base-selectors';
+import {extent as d3Extent} from 'd3-array';
 
 export const getColumnDataFactory = index =>
   createSelector(getData, data => data[index]);
@@ -19,3 +20,6 @@ export const getLineDataFactory = (index, lineName) =>
       .line.map(d => ({...d}))
       .sort((a, b) => a.x - b.x)
   );
+
+export const getLineDataYDomainFactory = getLineData =>
+  createSelector(getLineData, data => d3Extent(data, d => d.y));

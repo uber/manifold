@@ -6,7 +6,7 @@ import {
   getChartPaddingLeft,
 } from '../selectors/base-selectors';
 import {updateData} from '../actions';
-import MultiLineChartContainer from '../containers/multi-line-chart-container';
+import LineChartsContainer from '../containers/line-charts-container';
 import SlidebarContainer from '../containers/slidebar-svg-container';
 import LineIndicatorContainer from '../containers/line-indicator-container';
 import StaticbarContainer from '../containers/staticbar-svg-container';
@@ -50,7 +50,7 @@ class App extends Component {
         <div key={i} style={this.columnStyle}>
           <div style={{position: 'relative', width: columnWidth}}>
             <div>
-              <MultiLineChartContainer index={i} />
+              <LineChartsContainer index={i} />
             </div>
             {(data[i].lines || []).map(d => (
               <div key={d.name}>
