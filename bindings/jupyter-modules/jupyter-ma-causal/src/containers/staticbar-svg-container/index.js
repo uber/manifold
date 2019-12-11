@@ -2,10 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {format as d3Format} from 'd3-format';
 
-import {
-  getLineDataFactory,
-  getLineDataYDomainFactory,
-} from '../../selectors/factories';
+import {getLineDataFactory} from '../../selectors/factories';
 
 import {
   getChartWidth,
@@ -17,10 +14,8 @@ const mapStateToProps = (state, props) => {
   const {index, lineName} = props;
   // lineName: the name of the line representing the uplifting effect
   const getLineData = getLineDataFactory(index, lineName);
-  const getLineDataYDomain = getLineDataYDomainFactory(getLineData);
   return {
     data: getLineData(state),
-    domain: getLineDataYDomain(state),
     width: getChartWidth(state),
     height: getChartHeight(state),
     padding: getChartPadding(state),
@@ -37,7 +32,6 @@ class Chart extends Component {
       height,
       padding: {left, right, top, bottom},
       groupName, // treatment or control
-      domain,
     } = this.props;
 
     const format = d3Format('.2f');
@@ -59,10 +53,10 @@ class Chart extends Component {
         >
           {groupName === 'treatment'
             ? data.length
-              ? format(domain[0])
+              ? format(data[data.length - 1].y)
               : null
             : data.length
-              ? format(domain[1])
+              ? format(data[0].y)
               : null}
         </text>
       </svg>
