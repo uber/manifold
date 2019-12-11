@@ -44,7 +44,7 @@ class Chart extends Component {
   }
 
   getLeftLabel() {
-    const format = d3Format('.6f');
+    const format = d3Format('.2f');
     const {sliderValue, data} = this.props;
     if (!data.length) {
       return null;

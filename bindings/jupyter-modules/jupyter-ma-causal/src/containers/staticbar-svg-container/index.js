@@ -40,7 +40,7 @@ class Chart extends Component {
       domain,
     } = this.props;
 
-    const format = d3Format('.6f');
+    const format = d3Format('.2f');
 
     return (
       <svg width={width} height={height}>
