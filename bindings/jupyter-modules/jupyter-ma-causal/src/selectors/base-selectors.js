@@ -6,7 +6,7 @@ export const rootSelector = state => state;
 export const getColumnWidth = createSelector(rootSelector, () => 300);
 
 // TODO: move this to a constant or implement adjustable width logic depending on the needs
-export const getChartPaddingLeft = createSelector(rootSelector, () => 20);
+export const getChartPaddingLeft = createSelector(rootSelector, () => 30);
 
 // TODO: move this to a constant or implement adjustable width logic depending on the needs
 export const getChartPaddingRight = createSelector(rootSelector, () => 20);

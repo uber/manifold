@@ -6,8 +6,8 @@ import {format as d3Format} from 'd3-format';
 
 export default class Chart extends Component {
   static propTypes = {
-    data: PropTypes.object.isRequired,
-    name: PropTypes.object.isRequired,
+    data: PropTypes.array.isRequired,
+    name: PropTypes.string.isRequired,
     domain: PropTypes.array.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
@@ -125,7 +125,6 @@ export default class Chart extends Component {
     } = this.props;
     const yScale = this._getYScale();
     const format = d3Format('.1f');
-
     return (
       <React.Fragment>
         <line

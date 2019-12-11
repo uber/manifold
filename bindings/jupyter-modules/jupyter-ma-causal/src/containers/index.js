@@ -60,7 +60,6 @@ class App extends Component {
                 </div>
               </div>
             ))}
-
             <LineIndicatorContainer index={i} />
           </div>
           <div
