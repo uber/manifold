@@ -16,7 +16,7 @@ export default (Component, name, renderCallback = function() {}) => {
       _update = () => {
         const props = JSON.parse(this.model.get('props') || '{}');
         props.widgetModel = this.model;
-        props.widgetView = this.view;
+        props.widgetView = this;
         const component = React.createElement(Component, props);
         ReactDom.render(component, this.el);
       };
