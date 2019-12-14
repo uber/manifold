@@ -28,7 +28,6 @@ export default props => {
           />
           <Manifold {...props} />
         </React.Fragment>
-        ]
       </StyletronProvider>
     </Provider>
   );
