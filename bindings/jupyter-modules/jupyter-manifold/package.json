@@ -26,6 +26,9 @@
     "reduce-reducers": "^1.0.4",
     "redux": "^4.0.0",
     "redux-actions": "^2.6.5",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "styled-components": "^4.3.2",
+    "styletron-engine-atomic": "^1.4.1",
+    "styletron-react": "^5.2.1"
   }
 }

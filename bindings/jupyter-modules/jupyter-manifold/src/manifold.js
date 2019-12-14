@@ -1,5 +1,9 @@
 import React, {PureComponent} from 'react';
-import {Manifold, loadProcessedData, validateInputData} from '@mlvis/manifold';
+import Manifold, {
+  THEME,
+  loadProcessedData,
+  validateInputData,
+} from '@mlvis/manifold';
 import {connect} from 'react-redux';
 
 const manifoldGetState = state => state;
@@ -28,6 +32,7 @@ class ManifoldApp extends PureComponent {
         width={width}
         height={height}
         mapboxToken={mapboxAccessToken}
+        theme={THEME}
       />
     );
   }
