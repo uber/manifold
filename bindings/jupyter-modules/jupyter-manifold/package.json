@@ -27,5 +27,10 @@
     "redux": "^4.0.0",
     "redux-actions": "^2.6.5",
     "redux-thunk": "^2.3.0"
+  },
+  "peerDependencies": {
+    "styled-components": "^4.2.0",
+    "styletron-engine-atomic": "^1.4.1",
+    "styletron-react": "^5.2.1"
   }
 }

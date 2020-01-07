@@ -3,6 +3,8 @@ import {createStore, compose, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
 import {manifoldReducer, enhanceReduxMiddleware} from '@mlvis/manifold';
+import {Client as Styletron} from 'styletron-engine-atomic';
+import {Provider as StyletronProvider} from 'styletron-react';
 import Manifold from './manifold';
 import Controls from './controls';
 import {window} from 'global';
@@ -15,15 +17,18 @@ export default props => {
     manifoldReducer,
     composeEnhancer(applyMiddleware(...enhanceReduxMiddleware([thunk])))
   );
+  const engine = new Styletron();
   return (
     <Provider store={store}>
-      <React.Fragment>
-        <Controls
-          widgetModel={props.widgetModel}
-          widgetView={props.widgetView}
-        />
-        <Manifold {...props} />
-      </React.Fragment>
+      <StyletronProvider value={engine}>
+        <React.Fragment>
+          <Controls
+            widgetModel={props.widgetModel}
+            widgetView={props.widgetView}
+          />
+          <Manifold {...props} />
+        </React.Fragment>
+      </StyletronProvider>
     </Provider>
   );
 };
