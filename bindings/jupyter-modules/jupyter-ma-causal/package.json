@@ -7,8 +7,6 @@
     "url": "git+https://github.com/uber/manifold.git"
   },
   "main": "index.js",
-  "-------- Avoid publishing the prototype for now --------": "",
-  "private": true,
   "publishConfig": {
     "access": "public"
   },
