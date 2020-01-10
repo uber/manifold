@@ -84,7 +84,7 @@
     "lerna:bump": "lerna version --no-push && npm run lerna:sync && npm run lerna:git",
     "lerna:sync": "jq -M --argfile lerna lerna.json '.version = $lerna.version' package.json > tmp.json && mv tmp.json package.json",
     "lerna:git": "git add package.json && git commit --amend",
-    "lerna:publish": "lerna exec cp package.json dist && lerna exec npm publish dist",
+    "lerna:publish": "lerna exec cp package.json dist && lerna exec --no-private npm publish dist",
     "-------- WEBSITE --------": "",
     "install:all": "yarn clean && yarn install && yarn install:web",
     "install:web": "yarn install:example && cd website && yarn install",
