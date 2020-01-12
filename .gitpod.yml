@@ -6,6 +6,9 @@ tasks:
       cd examples/manifold
       yarn
       npm run start
+    name: split-term
+  - command: echo split
+    openMode: split-right
 ports:
   - port: 8080
     onOpen: open-preview
