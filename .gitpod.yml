@@ -5,7 +5,7 @@ tasks:
       yarn test &&
       yarn &&
       cd examples/manifold &&
-      yarn &&
+      yarn
     command: npm run start
     name: split-term
   - command: echo split
