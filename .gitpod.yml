@@ -2,9 +2,9 @@ tasks:
   - init: >
       yarn install &&
       yarn run build &&
-      yarn test
-      cd examples/manifold
-      yarn
+      yarn test &&
+      yarn &&
+      cd examples/manifold &&
       npm run start
     name: split-term
   - command: echo split
