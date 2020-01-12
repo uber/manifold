@@ -1,12 +1,14 @@
 tasks:
   - init: >
+      yarn install &&
+      yarn build &&
+      yarn test &&
+      yarn &&
       cd examples/manifold &&
-      npm install &&
+      yarn &&
       npm run start
     name: split-term
-  - command: >
-      yarn install &&
-      yarn test
+  - command: echo split
     openMode: split-right
 ports:
   - port: 8080
