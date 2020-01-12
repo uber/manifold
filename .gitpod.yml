@@ -3,7 +3,6 @@ tasks:
       yarn install &&
       yarn run build &&
       yarn test &&
-      yarn &&
       cd examples/manifold &&
       npm run start
     name: split-term
