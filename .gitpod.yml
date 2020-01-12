@@ -6,7 +6,7 @@ tasks:
       yarn &&
       cd examples/manifold &&
       yarn
-    command: npm run start
+    command: cd examples/manifold npm run start
     name: split-term
   - command: echo split
     openMode: split-right
