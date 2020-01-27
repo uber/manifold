@@ -17,7 +17,7 @@ As a visual analytics tool, Manifold allows ML practitioners to look beyond over
 
 - [Prepare your data](#prepare-your-data)
 - [Interpret visualizations](#interpret-visualizations)
-- [Using the demo app](#using-demo-app)
+- [Using the demo app](#using-the-demo-app)
 - [Using the component](#using-the-component)
 - [Contributing](#contributing)
 - [Versioning](#versioning)
