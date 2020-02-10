@@ -79,7 +79,7 @@ Manifold consists of:
 
 - [Performance Comparison View](#performance-comparison-view) which compares
   prediction performance across models, across data subsets
-- [Feature Attribution View](#feature-distribution) which visualizes feature
+- [Feature Attribution View](#feature-attribution-view) which visualizes feature
   distributions of data subsets with various performance levels
 
 ### Performance Comparison View
