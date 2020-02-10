@@ -49,7 +49,7 @@ class Manifold(CommonComponent):
             if not isinstance(data[key], list) and not isinstance(data[key], np.ndarray) and not isinstance(data[key], pd.DataFrame):
                 return False if not give_exception else (False, Exception(key + ' must be a list/ndarray/dataframe.'))
         if not isinstance(data['yPred'], list) and not isinstance(data['yPred'], np.ndarray):
-            return False if not give_exception else (False, Exception(key + ' must be a list/ndarray.'))
+            return False if not give_exception else (False, Exception('yPred must be a list/ndarray.'))
         for key in ['x', 'yPred', 'yTrue']:
             if len(data[key]) == 0:
                 return False if not give_exception else (False, Exception(key + ' can not be empty.'))
