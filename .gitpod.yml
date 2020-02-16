@@ -1,0 +1,15 @@
+tasks:
+  - init: >
+      yarn install &&
+      yarn build &&
+      yarn test &&
+      yarn &&
+      cd examples/manifold &&
+      yarn
+    command: cd examples/manifold && npm run start
+    name: split-term
+  - command: echo split
+    openMode: split-right
+ports:
+  - port: 8080
+    onOpen: open-preview

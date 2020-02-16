@@ -1,3 +1,4 @@
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/uber/manifold) 
 [![Build Status](https://travis-ci.com/uber/manifold.svg?token=SZsMuk4iZZDLKwRXzyxu&branch=master)](https://travis-ci.com/uber/manifold)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3062/badge)](https://bestpractices.coreinfrastructure.org/projects/3062)
 
