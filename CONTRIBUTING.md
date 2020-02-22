@@ -19,7 +19,9 @@ If you find a bug, you can help us by submitting an [Issue][git-iss] to our GitH
 
 ## <a name="feature"></a> Feature Requests
 
-If you want to contribute or add new features, please use [Issue][git-iss] on github projects to start a new discussion. If you receive a Go ahead, you can submit your patch as PR to the repository.
+If you want to contribute or add new features, please use [Issue][git-iss] on github projects to start a new discussion. If you receive a go-ahead, you can submit your patch as PR to the repository.
+
+If you are looking for inspiration on feature ideas, we list our planned features in our [roadmap](https://github.com/uber/manifold/wiki/Manifold-one-year-roadmap). We will prioritize our review and support for pull requests related to items on the list.
 
 ## <a name="submit-pr"></a> Submitting Pull Request
 
