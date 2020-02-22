@@ -45,3 +45,11 @@ If you are looking for inspiration on feature ideas, we list our planned feature
 [git-iss]: https://github.com/uber/manifold/issues
 [git-pr]: https://github.com/uber/manifold/pulls
 [api-docs]: https://github.com/uber/manifold/tree/master/docs
+
+## Releases and versioning
+
+After changes are merged, a new version will be released as appropiate. Historical releases are maintained on separate branches. There are two lines of release branches, one for the main packages and one for the Jupyter bindings.
+```
+release-1.0.0 
+release-jupyter-0.1.0
+```
