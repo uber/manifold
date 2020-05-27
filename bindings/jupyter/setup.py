@@ -35,6 +35,9 @@ DEFAULT_JREQUIREMENTS = {
     },
     "MACausal": {
         "module": {"@mlvis/jupyter-ma-causal": "external"}
+    },
+    "NotebookSearch": {
+        "module": {"@mlvis/jupyter-notebook-search": "external"}
     }
 }
 
