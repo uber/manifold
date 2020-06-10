@@ -207,15 +207,14 @@ Otherwise, if you have a system that programmatically generates ML model outputs
 Run the following commands to set up your environment and run the demo:
 
 ```bash
-# under the root directory, install all dependencies
+# install all dependencies in the root directory
 yarn
 # demo app is in examples/manifold directory
 cd examples/manifold
-# instal demo app dependencies
+# install dependencies for the demo app
 yarn
-# start the app
-npm run start
-
+# run the app
+yarn start
 ```
 
 Now you should see the demo app running at `localhost:8080`.
