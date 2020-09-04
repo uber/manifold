@@ -31,7 +31,7 @@
     "global": "^4.3.2",
     "lodash.memoize": "^4.1.2",
     "mathjs": "^5.2.3",
-    "papaparse": "^4.6.3",
+    "papaparse": "^5.3.0",
     "prop-types": "^15.7.2",
     "random": "^2.1.1",
     "reselect": "^4.0.0"
