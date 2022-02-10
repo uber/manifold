@@ -55,7 +55,7 @@
     "less": "^3.8.1",
     "less-loader": "^5.0.0",
     "mini-css-extract-plugin": "^0.7.0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^7.0.0",
     "ocular-dev-tools": "0.0.30",
     "postcss-loader": "^3.0.0",
     "puppeteer": "^1.9.0",
