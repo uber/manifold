@@ -58,7 +58,7 @@ export const loadLocalData = ({
     // 3. validate data
     .then(validateInputData)
     // 4. get metadata from input data, also convert csv data to array of arrays instead of array of objects
-    // TODO: this change should happen in `parsePromse`. But that will break API of `dataTransformer` so push it later
+    // TODO: this change should happen in `parsePromise`. But that will break API of `dataTransformer` so push it later
     .then(computeMetaData)
     // 5. add data to redux state
     .then(result => {
