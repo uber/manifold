@@ -55,7 +55,7 @@ export function initCentroids(X, nClusters) {
  * @param {Tensor2D} samples - data points being clustered, shape = [nInstances, nDims]
  * @param {Tensor2D} centroids - positions of cluster centers, shape = [nClusters, nDims]
  * @param {Boolean} fillEmpty - whether to enforce all clusters to be non-empty
- * @returns {Tensor1D} indices of the nearest centroid to each data instance, shape = [nInscances]
+ * @returns {Tensor1D} indices of the nearest centroid to each data instance, shape = [nInstances]
  */
 export function assignClusterId(samples, centroids, fillEmpty = true) {
   return tf.tidy(() => {
@@ -78,10 +78,10 @@ export function assignClusterId(samples, centroids, fillEmpty = true) {
  * check whether nearest include all possible cluster Ids
  * (i.e.all clusters have non - zero number of instances)
  * if not, assign the one with farthest distance from center to the missing cluster
- * @param {Tensor2D} distances - distances between data instances and centroids, shape = [nClusters, nInscances]
+ * @param {Tensor2D} distances - distances between data instances and centroids, shape = [nClusters, nInstances]
  * @param {Number} minCount - minimum number of instances in a cluster
  * @returns {Tensor1D} indices of the nearest centroid to each data instance
- * (after empty clusters are filled), shape = [nInscances]
+ * (after empty clusters are filled), shape = [nInstances]
  * e.g. consider clustering a dataset with 4 data points into 3 clusters:
  * ```
  * distances = [
@@ -97,12 +97,12 @@ export function assignClusterId(samples, centroids, fillEmpty = true) {
  * ```
  * However we need to ensure cluster_1 and cluster_2 also have at least 1 data instance in them.
  * First for cluster_1, we mutate the cluster assignment of instance_0 from `0` to `1`,
- * because distnace between instances_0 and centroid_1 is `5`, smallest among all data instances:
+ * because distance between instances_0 and centroid_1 is `5`, smallest among all data instances:
  * ```
  * mins = [1, 0, 0, 0]
  * ```
  * Then for cluster_2, we mutate the cluster assignment of instance_1 from `0` to `2`,
- * because distnace between instances_1 and centroid_2 is `10`, smallest among
+ * because distance between instances_1 and centroid_2 is `10`, smallest among
  * all data instances except for instances_0 (which has already been mutated in previous round):
  * ```
  * mins = [1, 2, 0, 0]
@@ -111,7 +111,7 @@ export function assignClusterId(samples, centroids, fillEmpty = true) {
 export function fillEmptyClusters(distances, minCount = 1) {
   return tf.tidy(() => {
     const nClusters = distances.shape[0];
-    // mins: the IDs of centroid that's nearest to each data instance, shape = [nInscances]
+    // mins: the IDs of centroid that's nearest to each data instance, shape = [nInstances]
     let mins = tf.argMin(distances, 0).toInt();
     let mutatedIds = tf.tensor([]);
     let count = 0;

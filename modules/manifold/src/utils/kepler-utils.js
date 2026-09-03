@@ -82,7 +82,7 @@ export function getKeplerLayers(
 ) {
   // iterate each feature
   const layersInfoNested = geoFeatures.map((geoFeatureDef, geoFeatureId) => {
-    // no need to create 2 layers if this is an agregated layer
+    // no need to create 2 layers if this is an aggregated layer
     if (!geoFeatureDef.pair) {
       return {
         geoFeatureDef,
